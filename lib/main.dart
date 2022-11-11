@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:schoolproj/pages/homePage.dart';
 import 'package:get/get.dart';
+import 'package:schoolproj/pages/routePage.dart';
+import 'package:schoolproj/routes/route_helper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +29,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      // initialRoute: RouteHelper.initial,
+      // getPages: RouteHelper.routes,
+      home: const RoutePage(),
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:flutter/services.dart';
 
 class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
   HomeAppBar({super.key});
@@ -14,14 +13,6 @@ class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
 }
 
 class _HomeAppBarState extends State<HomeAppBar> {
-  late _MySearchDelegate _delegate;
-
-  @override
-  void initState() {
-    super.initState();
-    _delegate = _MySearchDelegate();
-  }
-
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -30,32 +21,40 @@ class _HomeAppBarState extends State<HomeAppBar> {
       actions: [
         IconButton(
           icon: const Icon(Icons.search),
-          onPressed: () async {
-            final String? selected =
-                await showSearch<String>(context: context, delegate: _delegate);
+          onPressed: () {
+            showSearch(context: context, delegate: _MySearchDelegate());
           },
         )
       ],
+      backgroundColor: Colors.green,
+      systemOverlayStyle: const SystemUiOverlayStyle(
+        statusBarColor: Colors.green,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.light
+      ),
     );
   }
 }
 
-
 class _MySearchDelegate extends SearchDelegate {
+  List<String> terms = ['jay', 'boy', 'Joe', 'John', 'Dan'];
+
   @override
   List<Widget>? buildActions(BuildContext context) {
-    // TODO: implement buildActions
-    throw UnimplementedError();
+    return [
+      IconButton(
+        onPressed: () {
+          query = '';
+        },
+        icon: const Icon(Icons.clear),
+      )
+    ];
   }
 
   @override
   Widget? buildLeading(BuildContext context) {
-    // TODO: implement buildLeading
     return IconButton(
-      icon: AnimatedIcon(
-        icon: AnimatedIcons.menu_arrow,
-        progress: transitionAnimation,
-      ),
+      icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, '');
       },
@@ -64,13 +63,45 @@ class _MySearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    throw UnimplementedError();
+    List<String> matchQuery = [];
+
+    for (var element in terms) {
+      if (element.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(element);
+      }
+    }
+
+    return ListView.builder(
+      itemCount: matchQuery.length,
+      itemBuilder: (context, index) {
+        var result = matchQuery[index];
+
+        return ListTile(
+          title: Text(result),
+        );
+      },
+    );
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // TODO: implement buildSuggestions
-    throw UnimplementedError();
+    List<String> matchQuery = [];
+
+    for (var element in terms) {
+      if (element.toLowerCase().contains(query.toLowerCase())) {
+        matchQuery.add(element);
+      }
+    }
+
+    return ListView.builder(
+      itemCount: matchQuery.length,
+      itemBuilder: (context, index) {
+        var result = matchQuery[index];
+
+        return ListTile(
+          title: Text(result),
+        );
+      },
+    );
   }
 }
