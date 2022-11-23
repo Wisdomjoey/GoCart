@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/pages/homePage.dart';
 import 'package:get/get.dart';
 import 'package:schoolproj/pages/routePage.dart';
 import 'package:schoolproj/routes/route_helper.dart';
@@ -29,9 +28,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       debugShowCheckedModeBanner: false,
-      // initialRoute: RouteHelper.initial,
-      // getPages: RouteHelper.routes,
-      home: const RoutePage(),
+      initialRoute: RouteHelper.getRoutePage(0),
+      getPages: RouteHelper.routes,
+      home: const RoutePage(
+        pageId: 0,
+      ),
     );
   }
 }

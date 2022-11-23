@@ -20,12 +20,42 @@ class _BottomNavigationState extends State<BottomNavigation> {
       backgroundColor: Colors.transparent,
       buttonBackgroundColor: Colors.green,
       height: 60,
-      items: const [
-        Icon(Icons.home_outlined),
-        Icon(Icons.category_outlined),
-        Icon(Icons.shopping_cart_outlined),
-        Icon(Icons.shop_2_outlined),
-        Icon(Icons.person_outline),
+      items: [
+        Column(children: const [
+          Icon(Icons.home_outlined),
+          Text(
+            'Home',
+            style: TextStyle(fontSize: 13),
+          )
+        ]),
+        Column(children: const [
+          Icon(Icons.list_alt_outlined),
+          Text(
+            'Category',
+            style: TextStyle(fontSize: 13),
+          )
+        ]),
+        Column(children: const [
+          Icon(Icons.shopping_cart_outlined),
+          Text(
+            'Cart',
+            style: TextStyle(fontSize: 13),
+          )
+        ]),
+        Column(children: const [
+          Icon(Icons.shop_2_outlined),
+          Text(
+            'Shops',
+            style: TextStyle(fontSize: 13),
+          )
+        ]),
+        Column(children: const [
+          Icon(Icons.person_outline),
+          Text(
+            'Account',
+            style: TextStyle(fontSize: 13),
+          )
+        ]),
       ],
       items2: const [
         Icon(
@@ -33,7 +63,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
           color: Colors.white,
         ),
         Icon(
-          Icons.category,
+          Icons.list_alt,
           color: Colors.white,
         ),
         Icon(

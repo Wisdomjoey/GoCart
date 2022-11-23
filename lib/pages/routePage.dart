@@ -1,19 +1,20 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:schoolproj/components/cartAppBar.dart';
+import 'package:schoolproj/components/accountAppBar.dart';
 import 'package:schoolproj/pages/accountPage.dart';
 import 'package:schoolproj/pages/cartPage.dart';
 import 'package:schoolproj/pages/categoriesPage.dart';
 import 'package:schoolproj/pages/homePage.dart';
 import 'package:schoolproj/pages/shopPage.dart';
+import 'package:schoolproj/utils/dimensions.dart';
+import 'package:schoolproj/widgets/navigationIconWidget.dart';
 
-import '../components/bottomNavigation.dart';
 import '../components/homeAppBar.dart';
 
 class RoutePage extends StatefulWidget {
-  const RoutePage({super.key});
+  final int pageId;
+
+  const RoutePage({super.key, this.pageId = 0});
 
   @override
   State<RoutePage> createState() => _RoutePageState();
@@ -21,71 +22,76 @@ class RoutePage extends StatefulWidget {
 
 class _RoutePageState extends State<RoutePage> {
   int _activePage = 0;
-  PreferredSizeWidget page = HomeAppBar();
+  bool _allowPageId = true;
+  PreferredSizeWidget page = HomeAppBar(title: 'GO-CART');
   final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
 
-    List<dynamic> _pages = [
-        HomePage(),
-        CategoriesPage(),
-        CartPage(),
-        ShopPage(),
-        AccountPage()
-    ];
+  final List<dynamic> _pages = const [
+    HomePage(),
+    CategoriesPage(),
+    CartPage(),
+    ShopPage(),
+    AccountPage()
+  ];
 
   @override
   Widget build(BuildContext context) {
+    print('changed $_activePage');
+
     return Scaffold(
-      appBar: page,
+      appBar: widget.pageId == 4 ? AccountAppBar() : page,
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),
-      body: _pages[_activePage],
+      body: _pages[_allowPageId ? widget.pageId : _activePage],
       bottomNavigationBar: CurvedNavigationBar(
         key: _globalKey,
-        index: 0,
+        index: _allowPageId ? widget.pageId : _activePage,
         backgroundColor: Colors.transparent,
         buttonBackgroundColor: Colors.green,
-        height: 60,
+        height: Dimensions.sizedBoxHeight65,
         items: const [
-            Icon(Icons.home_outlined),
-            Icon(Icons.category_outlined),
-            Icon(Icons.shopping_cart_outlined),
-            Icon(Icons.shop_2_outlined),
-            Icon(Icons.person_outline),
+          NavigationIcon(icon: Icon(Icons.home_outlined), text: 'Home'),
+          NavigationIcon(icon: Icon(Icons.list_alt_outlined), text: 'Category'),
+          NavigationIcon(
+              icon: Icon(Icons.shopping_cart_outlined), text: 'Cart'),
+          NavigationIcon(icon: Icon(Icons.shop_2_outlined), text: 'Shops'),
+          NavigationIcon(icon: Icon(Icons.person_outline), text: 'Account'),
         ],
         items2: const [
-            Icon(
+          Icon(
             Icons.home,
             color: Colors.white,
-            ),
-            Icon(
-            Icons.category,
+          ),
+          Icon(
+            Icons.list_alt,
             color: Colors.white,
-            ),
-            Icon(
+          ),
+          Icon(
             Icons.shopping_cart,
             color: Colors.white,
-            ),
-            Icon(
+          ),
+          Icon(
             Icons.shop_2,
             color: Colors.white,
-            ),
-            Icon(
+          ),
+          Icon(
             Icons.person,
             color: Colors.white,
-            ),
+          ),
         ],
         onTap: (index) {
-            if (index == 2) {
-                page = CartAppBar();
-            } else {
-                page = HomeAppBar();
-            }
-
-            setState(() {
+          setState(() {
             _activePage = index;
-            });
+            _allowPageId = false;
+            if (index == 4) {
+              page = AccountAppBar();
+            } else {
+              page = HomeAppBar(title: 'GO-CART');
+            }
+            print('changed$index $_activePage');
+          });
         },
         letIndexChange: (index) => true,
-        ),
+      ),
     );
   }
 }
