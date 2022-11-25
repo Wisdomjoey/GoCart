@@ -17,7 +17,7 @@ class RatingViewPage extends StatelessWidget {
         title: 'Verified Customer Feedback',
         showPopUp: true,
         showCart: true,
-        textSize: Dimensions.font25,
+        textSize: Dimensions.font24,
         implyLeading: true,
       ),
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),

@@ -1,11 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:schoolproj/components/accountAppBar.dart';
-import 'package:schoolproj/pages/accountPage.dart';
-import 'package:schoolproj/pages/cartPage.dart';
-import 'package:schoolproj/pages/categoriesPage.dart';
-import 'package:schoolproj/pages/homePage.dart';
-import 'package:schoolproj/pages/shopPage.dart';
+import 'package:schoolproj/routes/route_helper.dart';
 import 'package:schoolproj/utils/dimensions.dart';
 import 'package:schoolproj/widgets/navigationIconWidget.dart';
 
@@ -26,20 +22,18 @@ class _RoutePageState extends State<RoutePage> {
   PreferredSizeWidget page = HomeAppBar(title: 'GO-CART');
   final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
 
-  final List<dynamic> _pages = const [
-    HomePage(),
-    CategoriesPage(),
-    CartPage(),
-    ShopPage(),
-    AccountPage()
+  final List<dynamic> _pages = [
+    RouteHelper.getHomePage(),
+    RouteHelper.getCategoriesPage(),
+    RouteHelper.getCartPage(),
+    RouteHelper.getShopPage(),
+    RouteHelper.getAccountPage(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    print('changed $_activePage');
-
     return Scaffold(
-      appBar: widget.pageId == 4 ? AccountAppBar() : page,
+      appBar: _allowPageId ? (widget.pageId == 4 ? AccountAppBar() : page) : page,
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: _pages[_allowPageId ? widget.pageId : _activePage],
       bottomNavigationBar: CurvedNavigationBar(
@@ -87,7 +81,6 @@ class _RoutePageState extends State<RoutePage> {
             } else {
               page = HomeAppBar(title: 'GO-CART');
             }
-            print('changed$index $_activePage');
           });
         },
         letIndexChange: (index) => true,

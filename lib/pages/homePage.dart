@@ -5,6 +5,7 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolproj/pages/productDetailsPage.dart';
+import 'package:schoolproj/routes/route_helper.dart';
 import 'package:schoolproj/widgets/starRatingWidget.dart';
 
 import '../utils/dimensions.dart';
@@ -82,10 +83,12 @@ class _HomePageState extends State<HomePage> {
                         position: _currentPageValue,
                         decorator: DotsDecorator(
                           activeColor: Colors.green,
-                          size: const Size.square(9.0),
-                          activeSize: const Size(18.0, 9.0),
+                          size: Size.square(Dimensions.font18 / 2),
+                          activeSize:
+                              Size(Dimensions.font18, Dimensions.font18 / 2),
                           activeShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0)),
+                              borderRadius: BorderRadius.circular(
+                                  Dimensions.sizedBoxWidth10 / 2)),
                         ),
                       )
                     ],
@@ -102,11 +105,11 @@ class _HomePageState extends State<HomePage> {
                       height: Dimensions.sizedBoxHeight10 * 4,
                       padding: EdgeInsets.symmetric(
                           horizontal: Dimensions.sizedBoxWidth10 / 2),
-                      decoration: const BoxDecoration(boxShadow: [
+                      decoration: BoxDecoration(boxShadow: [
                         BoxShadow(
-                          color: Color.fromARGB(255, 243, 243, 243),
-                          blurRadius: 5.0,
-                          offset: Offset(0, 0),
+                          color: const Color.fromARGB(255, 243, 243, 243),
+                          blurRadius: Dimensions.sizedBoxWidth10 / 2,
+                          offset: const Offset(0, 0),
                         )
                       ]),
                       child: ListView.builder(
@@ -215,6 +218,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget _productsList(int index) {
     return Material(
+      animationDuration: const Duration(milliseconds: 100),
       child: InkWell(
         child: Ink(
           decoration: BoxDecoration(
@@ -285,7 +289,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         onTap: () {
-          Get.to(const ProductDetailsPage());
+          Get.toNamed(RouteHelper.getProductDetailsPage());
         },
       ),
     );

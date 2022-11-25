@@ -27,6 +27,7 @@ class Dimensions {
   static double sizedBoxWidth25 = screenWidth / 14.4;
   static double sizedBoxWidth32 = screenWidth / 11.25;
   static double sizedBoxWidth100 = screenWidth / 3.6;
+  static double sizedBoxWidth148 = screenWidth / 2.432432432432432;
 
   // Dynamic font and border radius, icon
   static double font11 = screenWidth / 32.72727272727273;

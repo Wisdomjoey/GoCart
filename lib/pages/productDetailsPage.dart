@@ -4,6 +4,7 @@ import 'package:schoolproj/components/ReviewBoxCon.dart';
 import 'package:schoolproj/components/detailsBottomNavigation.dart';
 import 'package:schoolproj/components/homeAppBar.dart';
 import 'package:schoolproj/pages/RatingViewPage.dart';
+import 'package:schoolproj/routes/route_helper.dart';
 import 'package:schoolproj/utils/dimensions.dart';
 import 'package:schoolproj/widgets/ListTileBtnWidget.dart';
 import 'package:schoolproj/widgets/headSectionWidget.dart';
@@ -25,7 +26,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     return Scaffold(
       appBar: HomeAppBar(
         title: 'Details',
-        textSize: Dimensions.font25,
+        textSize: Dimensions.font24,
         implyLeading: true,
         showPopUp: true,
         showCart: true,
@@ -243,7 +244,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       textSize: Dimensions.font16,
                       visualD: -3,
                       weight: FontWeight.w500,
-                      page: const DetailsPage(),
+                      page: RouteHelper.getDetailsPage(),
                     ),
                   ),
                   SizedBox(
@@ -277,7 +278,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2),
                     color: Colors.white,
                     child: ListTileBtn(
-                      page: const RatingViewPage(),
+                      page: RouteHelper.getRatingsViewPage(),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

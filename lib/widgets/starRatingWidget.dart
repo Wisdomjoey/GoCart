@@ -7,7 +7,6 @@ class StarRating extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
       children: [1, 2, 3, 4, 5]
           .map((e) => Icon(
                 Icons.star_rate_rounded,
