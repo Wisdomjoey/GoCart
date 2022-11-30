@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/categoryList.dart';
+import 'package:schoolproj/components/category_list.dart';
 import 'package:schoolproj/utils/dimensions.dart';
 
 class CategoriesPage extends StatefulWidget {
@@ -28,13 +28,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
                 decoration: data == index
                     ? BoxDecoration(
                         border: Border(
-                            left:
-                                BorderSide(color: Color(0XFF00923F), width: Dimensions.sizedBoxWidth10 / 2)))
+                            left: BorderSide(
+                                color: const Color(0XFF00923F),
+                                width: Dimensions.sizedBoxWidth10 / 2)))
                     : const BoxDecoration(),
-                margin: EdgeInsets.only(bottom: Dimensions.sizedBoxHeight10 / 5),
+                margin:
+                    EdgeInsets.only(bottom: Dimensions.sizedBoxHeight10 / 5),
                 child: ListTile(
-                  contentPadding:
-                     EdgeInsets.symmetric(vertical: Dimensions.sizedBoxHeight10 / 2, horizontal: Dimensions.sizedBoxWidth10),
+                  contentPadding: EdgeInsets.symmetric(
+                      vertical: Dimensions.sizedBoxHeight10 / 2,
+                      horizontal: Dimensions.sizedBoxWidth10),
                   title: Center(
                     child: Text(
                       'Category$index',

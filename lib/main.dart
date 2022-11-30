@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/pages/routePage.dart';
+import 'package:schoolproj/pages/route_page.dart';
 import 'package:schoolproj/routes/route_helper.dart';
 
 void main() {

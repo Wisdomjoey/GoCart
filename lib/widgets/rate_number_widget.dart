@@ -17,7 +17,7 @@ class RateNumber extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Container(
+        SizedBox(
           width: 70,
           child: Row(
             children: [

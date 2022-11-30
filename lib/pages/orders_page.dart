@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/homeAppBar.dart';
-import 'package:schoolproj/components/orderItemBox.dart';
+import 'package:schoolproj/components/home_app_bar.dart';
+import 'package:schoolproj/components/order_item_box.dart';
 import 'package:schoolproj/utils/dimensions.dart';
 
 class OrdersPage extends StatefulWidget {
@@ -13,7 +13,7 @@ class OrdersPage extends StatefulWidget {
 class _OrdersPageState extends State<OrdersPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  int _selectedIndex = 1;
+  // int _selectedIndex = 1;
 
   @override
   void initState() {

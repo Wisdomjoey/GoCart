@@ -48,7 +48,9 @@ class TxtButton extends StatelessWidget {
                       borderRadius:
                           BorderRadius.circular(Dimensions.sizedBoxWidth4)),
               shadowColor: Colors.transparent),
-          onPressed: () {},
+          onPressed: () {
+            // Get.to(OrderStatusPage());
+          },
           child: Text(text,
               style: TextStyle(
                   fontSize: textSize ?? Dimensions.font14,

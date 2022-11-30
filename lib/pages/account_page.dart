@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:schoolproj/routes/route_helper.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/ListTileBtnWidget.dart';
-import 'package:schoolproj/widgets/headSectionWidget.dart';
-import 'package:schoolproj/widgets/txtButtonWidget.dart';
+import 'package:schoolproj/widgets/list_tile_btn_widget.dart';
+import 'package:schoolproj/widgets/head_section_widget.dart';
+import 'package:schoolproj/widgets/txt_button_widget.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -27,11 +27,11 @@ class AccountPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
                 children: [
-                  ListTileBtn(title: 'Orders', leading: Icon(Icons.store_rounded, size: 23,), page: RouteHelper.getOrdersPage(),),
-                  ListTileBtn(title: 'Inbox', leading: Icon(Icons.mail_outline_rounded, size: 23,),),
-                  ListTileBtn(title: 'Saved Items', leading: Icon(Icons.favorite_outline_outlined, size: 23,),),
-                  ListTileBtn(title: 'Recently Viewed', leading: Icon(Icons.history_rounded, size: 23,),),
-                  ListTileBtn(title: 'Recently Searched', leading: Icon(Icons.youtube_searched_for_rounded, size: 23,),)
+                  ListTileBtn(title: 'Orders', leading: Icon(Icons.store_rounded, size: Dimensions.font20 + 2,), textSize: Dimensions.font14, page: RouteHelper.getOrdersPage(),),
+                  ListTileBtn(title: 'Inbox', leading: Icon(Icons.mail_outline_rounded, size: Dimensions.font20 + 2,), textSize: Dimensions.font14, page: RouteHelper.getInboxPage(),),
+                  ListTileBtn(title: 'Saved Items', leading: Icon(Icons.favorite_outline_outlined, size: Dimensions.font20 + 2,), textSize: Dimensions.font14, page: RouteHelper.getSavedItemsPage(),),
+                  ListTileBtn(title: 'Recently Viewed', leading: Icon(Icons.history_rounded, size: Dimensions.font20 + 2,), textSize: Dimensions.font14, page: RouteHelper.getRecentlyViewedPage(),),
+                  ListTileBtn(title: 'Recently Searched', leading: Icon(Icons.youtube_searched_for_rounded, size: Dimensions.font20 + 2,), textSize: Dimensions.font14, page: RouteHelper.getRecentlySearchedPage(),)
                 ],
               ),
             ),
@@ -44,9 +44,9 @@ class AccountPage extends StatelessWidget {
               color: Colors.white,
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
-                children: const [
-                  ListTileBtn(title: 'Account Management'),
-                  ListTileBtn(title: 'Close Account'),
+                children: [
+                  ListTileBtn(title: 'Account Management', textSize: Dimensions.font14),
+                  ListTileBtn(title: 'Close Account', textSize: Dimensions.font14),
                 ],
               ),
             ),

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:schoolproj/components/information_box.dart';
+import 'package:schoolproj/utils/dimensions.dart';
 
-import '../components/homeAppBar.dart';
+import '../components/home_app_bar.dart';
 
 class InboxPage extends StatefulWidget {
   const InboxPage({super.key});
@@ -21,6 +21,13 @@ class _InboxPageState extends State<InboxPage> {
         implyLeading: true,
       ),
       backgroundColor: const Color.fromARGB(255, 243, 243, 243),
+      body: ListView.builder(
+        padding: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
+        itemCount: 5,
+        itemBuilder: (context, index) {
+          return const InformationBox();
+        },
+      ),
     );
   }
 }

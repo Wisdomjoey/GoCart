@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/homeAppBar.dart';
+import 'package:schoolproj/components/home_app_bar.dart';
 import 'package:schoolproj/utils/dimensions.dart';
 
 class DetailsPage extends StatefulWidget {

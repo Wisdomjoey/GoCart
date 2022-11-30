@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/starRatingWidget.dart';
+import 'package:schoolproj/widgets/star_rating_widget.dart';
 
 class ReviewBoxCon extends StatelessWidget {
   final String date;

@@ -10,7 +10,6 @@ class AccountAppBar extends StatefulWidget with PreferredSizeWidget {
   State<AccountAppBar> createState() => _AccountAppBarState();
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => Size.fromHeight(Dimensions.sizedBoxHeight125);
 }
 

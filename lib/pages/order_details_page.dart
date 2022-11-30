@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/boxChipWidget.dart';
-import 'package:schoolproj/widgets/headSectionWidget.dart';
-import 'package:schoolproj/widgets/txtButtonWidget.dart';
+import 'package:schoolproj/widgets/box_chip_widget.dart';
+import 'package:schoolproj/widgets/head_section_widget.dart';
+import 'package:schoolproj/widgets/txt_button_widget.dart';
 
-import '../components/homeAppBar.dart';
+import '../components/home_app_bar.dart';
 import '../routes/route_helper.dart';
 
 class OrderDetailsPage extends StatefulWidget {
@@ -93,6 +95,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 animationDuration: const Duration(milliseconds: 100),
                 child: InkWell(
+                  splashFactory: InkRipple.splashFactory,
                   child: Ink(
                     decoration: BoxDecoration(
                       borderRadius:
@@ -224,7 +227,8 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     ),
                   ),
                   onTap: () {
-                    Get.toNamed(RouteHelper.getProductDetailsPage());
+                    Timer(const Duration(milliseconds: 200),
+                        () => Get.toNamed(RouteHelper.getProductDetailsPage()));
                   },
                 ),
               ),

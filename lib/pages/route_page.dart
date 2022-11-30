@@ -1,11 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/accountAppBar.dart';
+import 'package:schoolproj/components/account_app_bar.dart';
 import 'package:schoolproj/routes/route_helper.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/navigationIconWidget.dart';
+import 'package:schoolproj/widgets/navigation_icon_widget.dart';
 
-import '../components/homeAppBar.dart';
+import '../components/home_app_bar.dart';
 
 class RoutePage extends StatefulWidget {
   final int pageId;

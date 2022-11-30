@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/ReviewBoxCon.dart';
-import 'package:schoolproj/components/homeAppBar.dart';
+import 'package:schoolproj/components/review_box_con.dart';
+import 'package:schoolproj/components/home_app_bar.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/headSectionWidget.dart';
-import 'package:schoolproj/widgets/rateNumberWidget.dart';
-import 'package:schoolproj/widgets/starRatingWidget.dart';
-import 'package:schoolproj/widgets/txtButtonWidget.dart';
+import 'package:schoolproj/widgets/head_section_widget.dart';
+import 'package:schoolproj/widgets/rate_number_widget.dart';
+import 'package:schoolproj/widgets/star_rating_widget.dart';
+import 'package:schoolproj/widgets/txt_button_widget.dart';
 
 class RatingViewPage extends StatelessWidget {
   const RatingViewPage({super.key});

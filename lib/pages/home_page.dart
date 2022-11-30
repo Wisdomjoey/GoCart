@@ -4,9 +4,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/pages/productDetailsPage.dart';
 import 'package:schoolproj/routes/route_helper.dart';
-import 'package:schoolproj/widgets/starRatingWidget.dart';
+import 'package:schoolproj/widgets/star_rating_widget.dart';
 
 import '../utils/dimensions.dart';
 
@@ -47,7 +46,7 @@ class _HomePageState extends State<HomePage> {
                   decoration: const BoxDecoration(color: Colors.white),
                   child: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: Dimensions.pageViewContainer,
                         child: CarouselSlider.builder(
                           options: CarouselOptions(
@@ -122,50 +121,46 @@ class _HomePageState extends State<HomePage> {
                 SizedBox(
                   height: Dimensions.sizedBoxHeight15 * 2,
                 ),
-                Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: Dimensions.sizedBoxHeight10,
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: Dimensions.sizedBoxHeight10,
+                    ),
+                    Padding(
+                      padding:
+                          EdgeInsets.only(left: Dimensions.sizedBoxWidth10 / 2),
+                      child: Text(
+                        'Products',
+                        style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: Dimensions.font25,
+                            fontWeight: FontWeight.w600),
                       ),
-                      Padding(
-                        padding: EdgeInsets.only(
-                            left: Dimensions.sizedBoxWidth10 / 2),
-                        child: Text(
-                          'Products',
-                          style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontSize: Dimensions.font25,
-                              fontWeight: FontWeight.w600),
-                        ),
+                    ),
+                    SizedBox(
+                      height: Dimensions.sizedBoxHeight15 * 2,
+                    ),
+                    Container(
+                      padding: EdgeInsets.only(
+                          left: Dimensions.sizedBoxWidth10,
+                          right: Dimensions.sizedBoxWidth10,
+                          bottom: Dimensions.sizedBoxHeight10),
+                      child: GridView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        shrinkWrap: true,
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: Dimensions.sizedBoxHeight10 * 2,
+                            crossAxisSpacing: Dimensions.sizedBoxWidth10,
+                            childAspectRatio: 0.7),
+                        itemCount: 20,
+                        itemBuilder: (context, index) {
+                          return _productsList(index);
+                        },
                       ),
-                      SizedBox(
-                        height: Dimensions.sizedBoxHeight15 * 2,
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(
-                            left: Dimensions.sizedBoxWidth10,
-                            right: Dimensions.sizedBoxWidth10,
-                            bottom: Dimensions.sizedBoxHeight10),
-                        child: GridView.builder(
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  mainAxisSpacing:
-                                      Dimensions.sizedBoxHeight10 * 2,
-                                  crossAxisSpacing: Dimensions.sizedBoxWidth10,
-                                  childAspectRatio: 0.7),
-                          itemCount: 20,
-                          itemBuilder: (context, index) {
-                            return _productsList(index);
-                          },
-                        ),
-                      )
-                    ],
-                  ),
+                    )
+                  ],
                 )
               ],
             ),
@@ -220,6 +215,7 @@ class _HomePageState extends State<HomePage> {
     return Material(
       animationDuration: const Duration(milliseconds: 100),
       child: InkWell(
+        splashFactory: InkRipple.splashFactory,
         child: Ink(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
@@ -289,7 +285,8 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
         onTap: () {
-          Get.toNamed(RouteHelper.getProductDetailsPage());
+          Timer(const Duration(milliseconds: 200),
+              () => Get.toNamed(RouteHelper.getProductDetailsPage()));
         },
       ),
     );

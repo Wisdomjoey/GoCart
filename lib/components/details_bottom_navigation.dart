@@ -1,9 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/iconBoxWidget.dart';
+import 'package:schoolproj/widgets/icon_box_widget.dart';
 
 class DetailsBottomNav extends StatefulWidget {
   const DetailsBottomNav({super.key});
@@ -27,26 +24,24 @@ class _DetailsBottomNavState extends State<DetailsBottomNav> {
           color: Colors.white),
       child: Row(
         children: [
-          Container(
-            child: Row(
-              children: const [
-                IconBox(
-                  icon: Icons.home_outlined,
-                  text: 'Home',
-                ),
-                IconBox(
-                  icon: Icons.list_alt_outlined,
-                  text: 'Category',
-                ),
-                IconBox(
-                  icon: Icons.phone,
-                  text: 'Phone',
-                )
-              ],
-            ),
+          Row(
+            children: const [
+              IconBox(
+                icon: Icons.home_outlined,
+                text: 'Home',
+              ),
+              IconBox(
+                icon: Icons.list_alt_outlined,
+                text: 'Category',
+              ),
+              IconBox(
+                icon: Icons.phone,
+                text: 'Phone',
+              )
+            ],
           ),
           Expanded(
-            child: Container(
+            child: SizedBox(
               height: double.maxFinite,
               child: ElevatedButton(
                 onPressed: () {},

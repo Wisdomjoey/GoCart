@@ -1,6 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/widgets/boxChipWidget.dart';
+import 'package:schoolproj/widgets/box_chip_widget.dart';
 
 import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
@@ -30,6 +32,7 @@ class OrderItemBox extends StatelessWidget {
             borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
             animationDuration: const Duration(milliseconds: 100),
             child: InkWell(
+              splashFactory: InkRipple.splashFactory,
               child: Ink(
                 height: Dimensions.sizedBoxHeight10 * 11,
                 padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
@@ -95,7 +98,10 @@ class OrderItemBox extends StatelessWidget {
                 ),
               ),
               onTap: () {
-                Get.toNamed(RouteHelper.getOrderDetailsPage(state, text));
+                Timer(
+                    const Duration(milliseconds: 200),
+                    () => Get.toNamed(
+                        RouteHelper.getOrderDetailsPage(state, text)));
               },
             ),
           ),

@@ -27,7 +27,6 @@ class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
   State<HomeAppBar> createState() => _HomeAppBarState();
 
   @override
-  // TODO: implement preferredSize
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 

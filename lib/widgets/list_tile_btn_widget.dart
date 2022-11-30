@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:schoolproj/utils/dimensions.dart';
@@ -35,13 +37,13 @@ class ListTileBtn extends StatelessWidget {
             ),
         trailing: Icon(
           Icons.arrow_forward_ios_rounded,
-          size: textSize ?? Dimensions.font14,
+          size: textSize ?? Dimensions.font12,
         ),
         iconColor: const Color(0XFF111111),
         minLeadingWidth: 2.0,
         visualDensity: VisualDensity(vertical: visualD),
         onTap: () {
-          Get.toNamed(page!);
+          Timer(const Duration(milliseconds: 200), () => Get.toNamed(page!));
         },
       ),
     );

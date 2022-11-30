@@ -1,17 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/ReviewBoxCon.dart';
-import 'package:schoolproj/components/detailsBottomNavigation.dart';
-import 'package:schoolproj/components/homeAppBar.dart';
-import 'package:schoolproj/pages/RatingViewPage.dart';
+import 'package:schoolproj/components/review_box_con.dart';
+import 'package:schoolproj/components/details_bottom_navigation.dart';
+import 'package:schoolproj/components/home_app_bar.dart';
 import 'package:schoolproj/routes/route_helper.dart';
 import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/ListTileBtnWidget.dart';
-import 'package:schoolproj/widgets/headSectionWidget.dart';
-import 'package:schoolproj/widgets/iconBoxWidget.dart';
-import 'package:schoolproj/widgets/starRatingWidget.dart';
-
-import 'detailsPage.dart';
+import 'package:schoolproj/widgets/list_tile_btn_widget.dart';
+import 'package:schoolproj/widgets/head_section_widget.dart';
+import 'package:schoolproj/widgets/icon_box_widget.dart';
+import 'package:schoolproj/widgets/star_rating_widget.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   const ProductDetailsPage({super.key});
