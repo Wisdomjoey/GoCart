@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/box_chip_widget.dart';
-import 'package:schoolproj/widgets/head_section_widget.dart';
-import 'package:schoolproj/widgets/txt_button_widget.dart';
+import 'package:GOCart/utils/dimensions.dart';
+import 'package:GOCart/widgets/box_chip_widget.dart';
+import 'package:GOCart/widgets/head_section_widget.dart';
+import 'package:GOCart/widgets/txt_button_widget.dart';
 
 import '../components/home_app_bar.dart';
 import '../routes/route_helper.dart';
@@ -30,7 +30,6 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
         implyLeading: true,
         textSize: Dimensions.font24,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

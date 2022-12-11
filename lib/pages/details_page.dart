@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/home_app_bar.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/components/home_app_bar.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key});
@@ -20,7 +20,6 @@ class _DetailsPageState extends State<DetailsPage> {
         showPopUp: true,
         showCart: true,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +49,9 @@ class _DetailsPageState extends State<DetailsPage> {
             Container(
               width: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4)),
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.circular(Dimensions.sizedBoxWidth4)),
               margin: EdgeInsets.all(Dimensions.sizedBoxWidth10),
               padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
               child: Column(
@@ -79,7 +80,8 @@ class _DetailsPageState extends State<DetailsPage> {
               width: double.maxFinite,
               decoration: BoxDecoration(
                   color: Colors.white, borderRadius: BorderRadius.circular(4)),
-              margin: EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
+              margin:
+                  EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
               padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,7 +112,8 @@ class _DetailsPageState extends State<DetailsPage> {
                                     ),
                                     Text(
                                       'Something',
-                                      style: TextStyle(fontSize: Dimensions.font12),
+                                      style: TextStyle(
+                                          fontSize: Dimensions.font12),
                                     )
                                   ],
                                 ),

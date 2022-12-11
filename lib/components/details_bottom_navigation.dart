@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/icon_box_widget.dart';
+import 'package:GOCart/utils/dimensions.dart';
+import 'package:GOCart/widgets/elevated_button_widget.dart';
 
-class DetailsBottomNav extends StatefulWidget {
-  const DetailsBottomNav({super.key});
+class DetailsBottomNav extends StatelessWidget {
+  final Widget? leading;
+  final String text;
+  final Icon? icon;
 
-  @override
-  State<DetailsBottomNav> createState() => _DetailsBottomNavState();
-}
+  const DetailsBottomNav(
+      {super.key, this.leading, required this.text, this.icon});
 
-class _DetailsBottomNavState extends State<DetailsBottomNav> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -24,46 +24,11 @@ class _DetailsBottomNavState extends State<DetailsBottomNav> {
           color: Colors.white),
       child: Row(
         children: [
-          Row(
-            children: const [
-              IconBox(
-                icon: Icons.home_outlined,
-                text: 'Home',
-              ),
-              IconBox(
-                icon: Icons.list_alt_outlined,
-                text: 'Category',
-              ),
-              IconBox(
-                icon: Icons.phone,
-                text: 'Phone',
-              )
-            ],
-          ),
+          leading!,
           Expanded(
-            child: SizedBox(
-              height: double.maxFinite,
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0XFFF8C300),
-                ),
-                child: Stack(
-                  children: [
-                    const Align(
-                      alignment: Alignment.centerLeft,
-                      child: Icon(Icons.add_shopping_cart_rounded),
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        'ADD TO CART',
-                        style: TextStyle(fontSize: Dimensions.font14),
-                      ),
-                    )
-                  ],
-                ),
-              ),
+            child: ElevatedBtn(
+              text: text,
+              icon: icon,
             ),
           )
         ],

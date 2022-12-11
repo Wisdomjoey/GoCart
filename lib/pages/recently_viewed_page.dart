@@ -15,7 +15,6 @@ class RecentlyViewedPage extends StatelessWidget {
         implyLeading: true,
         textSize: Dimensions.font24,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [

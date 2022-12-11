@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/components/search.dart';
-import 'package:schoolproj/routes/route_helper.dart';
+import 'package:GOCart/components/search.dart';
+import 'package:GOCart/routes/route_helper.dart';
 
 class CartAppBar extends StatefulWidget with PreferredSizeWidget {
   CartAppBar({super.key});
@@ -20,7 +20,10 @@ class _CartAppBarState extends State<CartAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: true,
-      title: const Text('Details', style: TextStyle(fontSize: 25),),
+      title: const Text(
+        'Details',
+        style: TextStyle(fontSize: 25),
+      ),
       actions: [
         const Search(),
         PopupMenuButton(

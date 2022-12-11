@@ -1,4 +1,4 @@
-# schoolproj
+# GOCart
 
 A new Flutter project.
 

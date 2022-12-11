@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/home_app_bar.dart';
-import 'package:schoolproj/components/order_item_box.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/components/home_app_bar.dart';
+import 'package:GOCart/components/order_item_box.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
@@ -36,7 +36,6 @@ class _OrdersPageState extends State<OrdersPage>
         implyLeading: true,
         textSize: Dimensions.font24,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: Column(
         children: [
           Container(
@@ -71,8 +70,15 @@ class _OrdersPageState extends State<OrdersPage>
           ),
           Expanded(
             child: TabBarView(controller: _tabController, children: const [
-              OrderItemBox(text: 'DELIVERED', state: 'open',),
-              OrderItemBox(text: 'CANCELLED - PAYMENT UNSUCCESSFUL', color: Color.fromARGB(255, 100, 100, 100), state: 'closed',),
+              OrderItemBox(
+                text: 'DELIVERED',
+                state: 'open',
+              ),
+              OrderItemBox(
+                text: 'CANCELLED - PAYMENT UNSUCCESSFUL',
+                color: Color.fromARGB(255, 100, 100, 100),
+                state: 'closed',
+              ),
             ]),
           )
         ],

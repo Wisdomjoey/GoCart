@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 class NavigationIcon extends StatelessWidget {
   final Icon icon;

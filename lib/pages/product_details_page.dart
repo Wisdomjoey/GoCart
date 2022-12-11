@@ -1,14 +1,14 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/review_box_con.dart';
-import 'package:schoolproj/components/details_bottom_navigation.dart';
-import 'package:schoolproj/components/home_app_bar.dart';
-import 'package:schoolproj/routes/route_helper.dart';
-import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/list_tile_btn_widget.dart';
-import 'package:schoolproj/widgets/head_section_widget.dart';
-import 'package:schoolproj/widgets/icon_box_widget.dart';
-import 'package:schoolproj/widgets/star_rating_widget.dart';
+import 'package:GOCart/components/review_box_con.dart';
+import 'package:GOCart/components/details_bottom_navigation.dart';
+import 'package:GOCart/components/home_app_bar.dart';
+import 'package:GOCart/routes/route_helper.dart';
+import 'package:GOCart/utils/dimensions.dart';
+import 'package:GOCart/widgets/list_tile_btn_widget.dart';
+import 'package:GOCart/widgets/head_section_widget.dart';
+import 'package:GOCart/widgets/icon_box_widget.dart';
+import 'package:GOCart/widgets/star_rating_widget.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   const ProductDetailsPage({super.key});
@@ -28,7 +28,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
         showPopUp: true,
         showCart: true,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -93,7 +92,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                           ),
                           const Text(
                             '(90 ratings)',
-                            style: TextStyle(color: Color(0XFF00923F)),
+                            style: TextStyle(color: Color(0xFF4CAF50)),
                           )
                         ],
                       ),
@@ -229,12 +228,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
               width: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
+                  color: Colors.white,
+                  borderRadius:
+                      BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Material(
-                    borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2),
+                    borderRadius:
+                        BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2),
                     color: Colors.white,
                     child: ListTileBtn(
                       title: 'Description',
@@ -340,7 +342,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     ),
                   ),
                   Container(
-                      padding: EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: Dimensions.sizedBoxWidth10),
                       child: Column(
                         children: [
                           const ReviewBoxCon(
@@ -386,7 +389,23 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           ],
         ),
       ),
-      bottomNavigationBar: const DetailsBottomNav(),
+      bottomNavigationBar: DetailsBottomNav(
+        leading: Row(
+          children: const [
+            IconBox(
+              icon: Icons.home_outlined,
+            ),
+            IconBox(
+              icon: Icons.list_alt_outlined,
+            ),
+            IconBox(
+              icon: Icons.phone,
+            )
+          ],
+        ),
+        text: 'ADD TO CART',
+        icon: const Icon(Icons.add_shopping_cart_rounded),
+      ),
     );
   }
 
@@ -405,12 +424,16 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
 
   Widget _showDialog(context) {
     return Dialog(
-      insetPadding: EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
+      insetPadding:
+          EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10 * 2, vertical: Dimensions.sizedBoxHeight15),
+        padding: EdgeInsets.symmetric(
+            horizontal: Dimensions.sizedBoxWidth10 * 2,
+            vertical: Dimensions.sizedBoxHeight15),
         height: Dimensions.sizedBoxHeight230,
         decoration: BoxDecoration(
-            color: Colors.white, borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -419,7 +442,8 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               children: [
                 Text(
                   'DELIVERY DETAILS',
-                  style: TextStyle(fontWeight: FontWeight.w500, fontSize: Dimensions.font17),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w500, fontSize: Dimensions.font17),
                 ),
                 GestureDetector(
                   child: const Icon(Icons.close),
@@ -464,11 +488,13 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               children: [
                 Text(
                   'Total Delivery Amount',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: Dimensions.font14),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: Dimensions.font14),
                 ),
                 Text(
                   '\$ 10',
-                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: Dimensions.font14),
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: Dimensions.font14),
                 ),
               ],
             )

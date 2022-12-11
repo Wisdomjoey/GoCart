@@ -16,7 +16,7 @@ class Dimensions {
   static double sizedBoxHeight65 = screenHeight / 12.44615384615385;
   static double sizedBoxHeight100 = screenHeight / 8.09;
   static double sizedBoxHeight125 = screenHeight / 6.472;
-  static double sizedBoxHeight230 = screenHeight / 8.09;
+  static double sizedBoxHeight230 = screenHeight / 3.517391304347826;
   static double sizedBoxHeight320 = screenHeight / 2.528125;
 
   // Dynamic Width, padding and margin

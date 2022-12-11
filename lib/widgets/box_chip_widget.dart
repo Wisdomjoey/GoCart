@@ -4,14 +4,25 @@ import '../utils/dimensions.dart';
 
 class BoxChip extends StatelessWidget {
   final Color color;
+  final Color? textColor;
   final String text;
+  final EdgeInsets? pad;
+  final FontWeight? textWeight;
+  final double? textSize;
 
-  const BoxChip({super.key, this.color = const Color.fromARGB(255, 107, 205, 110), required this.text});
+  const BoxChip(
+      {super.key,
+      this.color = const Color.fromARGB(255, 107, 205, 110),
+      required this.text,
+      this.pad,
+      this.textColor,
+      this.textWeight,
+      this.textSize});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(
+      padding: pad ?? EdgeInsets.symmetric(
           horizontal: Dimensions.sizedBoxWidth4,
           vertical: Dimensions.sizedBoxHeight4 / 2),
       decoration: BoxDecoration(
@@ -20,9 +31,9 @@ class BoxChip extends StatelessWidget {
       child: Text(
         text,
         style: TextStyle(
-            fontSize: Dimensions.font11,
-            color: Colors.white,
-            fontWeight: FontWeight.w500),
+            fontSize: textSize ?? Dimensions.font11,
+            color: textColor ?? Colors.white,
+            fontWeight: textWeight ?? FontWeight.w500),
       ),
     );
   }

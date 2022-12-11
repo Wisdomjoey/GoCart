@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:schoolproj/components/search.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/components/search.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 class AccountAppBar extends StatefulWidget with PreferredSizeWidget {
   AccountAppBar({super.key});
@@ -20,7 +20,7 @@ class _AccountAppBarState extends State<AccountAppBar> {
       automaticallyImplyLeading: false,
       title: Text(
         'Account',
-        style: TextStyle(fontSize: Dimensions.font23),
+        style: TextStyle(fontSize: Dimensions.font24),
       ),
       actions: const [
         Search(),

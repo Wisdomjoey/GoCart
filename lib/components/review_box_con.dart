@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/star_rating_widget.dart';
+import 'package:GOCart/utils/dimensions.dart';
+import 'package:GOCart/widgets/star_rating_widget.dart';
 
 class ReviewBoxCon extends StatelessWidget {
   final String date;
@@ -16,7 +16,8 @@ class ReviewBoxCon extends StatelessWidget {
       required this.topic,
       required this.review,
       required this.name,
-      this.addHPad = false, this.rad});
+      this.addHPad = false,
+      this.rad});
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +26,7 @@ class ReviewBoxCon extends StatelessWidget {
           vertical: Dimensions.sizedBoxHeight10,
           horizontal: addHPad ? Dimensions.sizedBoxWidth10 : 0),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(rad ?? 0)
-      ),
+          color: Colors.white, borderRadius: BorderRadius.circular(rad ?? 0)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

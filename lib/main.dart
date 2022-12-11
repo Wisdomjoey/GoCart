@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/pages/route_page.dart';
-import 'package:schoolproj/routes/route_helper.dart';
+import 'package:GOCart/pages/login_page.dart';
+import 'package:GOCart/pages/register_page.dart';
+import 'package:GOCart/pages/route_page.dart';
+import 'package:GOCart/pages/splash_page.dart';
+import 'package:GOCart/routes/route_helper.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,23 +19,21 @@ class MyApp extends StatelessWidget {
     return GetMaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
+        scaffoldBackgroundColor: const Color.fromARGB(255, 243, 243, 243),
+        // brightness: Brightness.light
       ),
+      // darkTheme: ThemeData(
+      //   brightness: Brightness.dark
+      // ),
+      // themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
-      initialRoute: RouteHelper.getRoutePage(0),
+      initialRoute: RouteHelper.getSplashPage(),
       getPages: RouteHelper.routes,
-      home: const RoutePage(
-        pageId: 0,
-      ),
+      home: const SplashPage(),
+      // home: const RoutePage(
+      //   pageId: 0,
+      // ),
     );
   }
 }

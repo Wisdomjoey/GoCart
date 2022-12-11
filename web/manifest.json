@@ -1,6 +1,6 @@
 {
-    "name": "schoolproj",
-    "short_name": "schoolproj",
+    "name": "GOCart",
+    "short_name": "GOCart",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/utils/dimensions.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
 class RateNumber extends StatelessWidget {

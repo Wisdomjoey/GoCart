@@ -1,11 +1,9 @@
-import 'dart:async';
-
+import 'package:GOCart/routes/route_helper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/routes/route_helper.dart';
-import 'package:schoolproj/widgets/star_rating_widget.dart';
+import 'package:GOCart/components/product_box.dart';
 
 import '../utils/dimensions.dart';
 
@@ -104,18 +102,14 @@ class _HomePageState extends State<HomePage> {
                       height: Dimensions.sizedBoxHeight10 * 4,
                       padding: EdgeInsets.symmetric(
                           horizontal: Dimensions.sizedBoxWidth10 / 2),
-                      decoration: BoxDecoration(boxShadow: [
-                        BoxShadow(
-                          color: const Color.fromARGB(255, 243, 243, 243),
-                          blurRadius: Dimensions.sizedBoxWidth10 / 2,
-                          offset: const Offset(0, 0),
-                        )
-                      ]),
                       child: ListView.builder(
                           itemCount: 5,
                           scrollDirection: Axis.horizontal,
                           itemBuilder: ((context, index) {
-                            return _categoryList();
+                            return GestureDetector(
+                              child: _categoryList(),
+                              onTap: () => Get.toNamed(RouteHelper.getProductListPage()),
+                            );
                           }))),
                 ),
                 SizedBox(
@@ -141,25 +135,7 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                       height: Dimensions.sizedBoxHeight15 * 2,
                     ),
-                    Container(
-                      padding: EdgeInsets.only(
-                          left: Dimensions.sizedBoxWidth10,
-                          right: Dimensions.sizedBoxWidth10,
-                          bottom: Dimensions.sizedBoxHeight10),
-                      child: GridView.builder(
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            mainAxisSpacing: Dimensions.sizedBoxHeight10 * 2,
-                            crossAxisSpacing: Dimensions.sizedBoxWidth10,
-                            childAspectRatio: 0.7),
-                        itemCount: 20,
-                        itemBuilder: (context, index) {
-                          return _productsList(index);
-                        },
-                      ),
-                    )
+                    const ProductBox()
                   ],
                 )
               ],
@@ -202,92 +178,14 @@ class _HomePageState extends State<HomePage> {
       margin: EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10 / 2),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
-          color: Colors.white,
+          color: const Color.fromARGB(255, 248, 248, 248),
           border: Border.all(
               color: const Color(0XFFEDEDED), style: BorderStyle.solid)),
-      child: const Center(
-        child: Text('Category'),
-      ),
-    );
-  }
-
-  Widget _productsList(int index) {
-    return Material(
-      animationDuration: const Duration(milliseconds: 100),
-      child: InkWell(
-        splashFactory: InkRipple.splashFactory,
-        child: Ink(
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
-              color: Colors.white,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color.fromARGB(255, 232, 232, 232),
-                  blurRadius: 10.0,
-                  offset: Offset(0, 0),
-                )
-              ]),
-          child: Column(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-                  child: Ink(
-                    height: double.maxFinite,
-                    decoration: BoxDecoration(
-                        image: DecorationImage(
-                            image: index.isEven
-                                ? const AssetImage('assets/images/1.jpg')
-                                : const AssetImage('assets/images/build.jpg'),
-                            fit: BoxFit.contain)),
-                  ),
-                ),
-              ),
-              Ink(
-                padding: EdgeInsets.only(
-                    left: Dimensions.sizedBoxWidth10,
-                    right: Dimensions.sizedBoxWidth10,
-                    bottom: Dimensions.sizedBoxHeight10),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(Dimensions.sizedBoxWidth4),
-                        bottomRight:
-                            Radius.circular(Dimensions.sizedBoxWidth4)),
-                    color: Colors.white),
-                width: double.maxFinite,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Tractor with wide rollers and high maintainence',
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                          fontSize: Dimensions.font13,
-                          fontWeight: FontWeight.w300),
-                    ),
-                    SizedBox(
-                      height: Dimensions.sizedBoxHeight4,
-                    ),
-                    Text(
-                      '\$ 8000',
-                      style: TextStyle(
-                          fontSize: Dimensions.font16,
-                          fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(
-                      height: Dimensions.sizedBoxHeight4,
-                    ),
-                    const StarRating(),
-                  ],
-                ),
-              ),
-            ],
-          ),
+      child: Center(
+        child: Text(
+          'Category',
+          style: TextStyle(fontSize: Dimensions.font15),
         ),
-        onTap: () {
-          Timer(const Duration(milliseconds: 200),
-              () => Get.toNamed(RouteHelper.getProductDetailsPage()));
-        },
       ),
     );
   }

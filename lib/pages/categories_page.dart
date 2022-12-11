@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/category_list.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/components/category_list.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});

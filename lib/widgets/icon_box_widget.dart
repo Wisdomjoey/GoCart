@@ -1,14 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 class IconBox extends StatelessWidget {
   final Color borderColor;
   final Color iconColor;
+  final Color? color;
   final double? iconSize;
   final double? right;
   final IconData icon;
   final bool isClickable;
-  final String? text;
+  final bool isDisabled;
+  final double? borderRadius;
+  final double? width;
+  final double? height;
 
   const IconBox(
       {super.key,
@@ -17,28 +21,38 @@ class IconBox extends StatelessWidget {
       this.iconSize,
       required this.icon,
       this.isClickable = true,
-      this.text,
-      this.right});
+      this.isDisabled = false,
+      this.right,
+      this.borderRadius,
+      this.width,
+      this.height,
+      this.color});
 
   @override
   Widget build(BuildContext context) {
+    void run() {}
+    var disabled = isDisabled ? null : run;
+
     return Container(
       margin: EdgeInsets.only(right: right ?? Dimensions.sizedBoxWidth4 * 2),
-      width: Dimensions.sizedBoxWidth32,
-      height: Dimensions.sizedBoxWidth32,
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Dimensions.font12 / 3),
-          border: Border.all(color: borderColor)),
+      width: width ?? Dimensions.sizedBoxWidth32,
+      height: height ?? Dimensions.sizedBoxWidth32,
       child: isClickable
-          ? IconButton(
-              splashRadius: 16.5,
-              tooltip: text,
-              icon: Icon(
+          ? TextButton(
+              onPressed: disabled,
+              style: TextButton.styleFrom(
+                  padding: const EdgeInsets.all(0),
+                  backgroundColor: color ?? Colors.transparent,
+                  disabledBackgroundColor: Color.fromARGB(255, 243, 225, 158),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(
+                          borderRadius ?? Dimensions.font12 / 3),
+                      side: BorderSide(color: borderColor))),
+              child: Icon(
                 icon,
                 color: iconColor,
                 size: iconSize ?? Dimensions.font12,
               ),
-              onPressed: () {},
             )
           : Icon(
               icon,

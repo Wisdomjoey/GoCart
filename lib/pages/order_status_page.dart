@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/utils/dimensions.dart';
 import 'package:timelines/timelines.dart';
 
 import '../components/home_app_bar.dart';
@@ -16,7 +16,6 @@ class OrderStatusPage extends StatelessWidget {
         implyLeading: true,
         textSize: Dimensions.font24,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: Container(
           margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
           height: 700,

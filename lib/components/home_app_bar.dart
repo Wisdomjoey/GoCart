@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:schoolproj/components/search.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/components/search.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 import '../routes/route_helper.dart';
 
@@ -10,8 +10,9 @@ class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
   final bool implyLeading;
   final bool showPopUp;
   final bool showCart;
-  final bool showBottom;
-  final String title;
+  final String? title;
+  final Widget? logo;
+  final Icon? icon;
   final double? textSize;
 
   HomeAppBar(
@@ -19,9 +20,10 @@ class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
       this.implyLeading = false,
       this.showPopUp = false,
       this.showCart = false,
-      this.showBottom = false,
-      required this.title,
-      this.textSize});
+      this.title,
+      this.textSize,
+      this.logo,
+      this.icon});
 
   @override
   State<HomeAppBar> createState() => _HomeAppBarState();
@@ -35,21 +37,31 @@ class _HomeAppBarState extends State<HomeAppBar> {
   Widget build(BuildContext context) {
     return AppBar(
       automaticallyImplyLeading: widget.implyLeading,
-      titleSpacing: widget.implyLeading ? 0 : Dimensions.sizedBoxWidth10 * 2,
-      title: Text(
-        widget.title,
-        style: TextStyle(fontSize: widget.textSize ?? Dimensions.font20),
-      ),
+      leading: widget.icon ??
+          (widget.implyLeading
+              ? IconButton(
+                  splashRadius: 24,
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.pop(context),
+                )
+              : const Text('')),
+      titleSpacing: widget.implyLeading
+          ? 0
+          : (widget.icon != null ? 0 : -(Dimensions.sizedBoxWidth10 * 4)),
+      title: widget.logo ??
+          Text(
+            widget.title!,
+            style: TextStyle(fontSize: widget.textSize ?? Dimensions.font20),
+          ),
       actions: [
         const Search(),
         widget.showCart
             ? (Row(
                 children: [
-                  SizedBox(
-                    width: Dimensions.sizedBoxWidth3 * 2,
-                  ),
-                  GestureDetector(
-                    child: Stack(
+                  IconButton(
+                    splashRadius: 24,
+                    tooltip: 'Cart',
+                    icon: Stack(
                       alignment: Alignment.center,
                       children: [
                         const Icon(Icons.shopping_cart_outlined),
@@ -59,7 +71,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             width: Dimensions.font16,
                             height: Dimensions.font16,
                             margin: EdgeInsets.only(
-                                top: Dimensions.sizedBoxHeight10,
+                                // top: Dimensions.sizedBoxHeight10,
                                 left: Dimensions.sizedBoxWidth15),
                             decoration: BoxDecoration(
                                 color: const Color(0XFFF8C300),
@@ -80,18 +92,17 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         )
                       ],
                     ),
-                    onTap: () {
+                    onPressed: () {
                       Get.toNamed(RouteHelper.getRoutePage(2));
                     },
-                  ),
-                  SizedBox(
-                    width: Dimensions.sizedBoxWidth3 * 2,
                   ),
                 ],
               ))
             : const Text(''),
         widget.showPopUp
             ? (PopupMenuButton(
+                splashRadius: 24,
+                tooltip: 'Menu',
                 itemBuilder: (context) {
                   return [
                     PopupMenuItem(
@@ -113,8 +124,10 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           horizontalTitleGap: Dimensions.sizedBoxWidth3,
                           leading: const Icon(Icons.home_outlined),
                           title: const Text('Home'),
-                          onTap: (() =>
-                              Get.toNamed(RouteHelper.getRoutePage(0))),
+                          onTap: (() {
+                            // Get.toNamed(RouteHelper.getRoutePage(0));
+                            Get.offAllNamed(RouteHelper.getRoutePage(0));
+                          }),
                         ),
                       ),
                     ),
@@ -138,7 +151,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             leading: const Icon(Icons.category_outlined),
                             title: const Text('Category'),
                             onTap: (() =>
-                                Get.toNamed(RouteHelper.getRoutePage(1))),
+                            Get.offAllNamed(RouteHelper.getRoutePage(1))),
                           ),
                         )),
                     PopupMenuItem(
@@ -161,7 +174,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             leading: const Icon(Icons.shop_2_outlined),
                             title: const Text('Shops'),
                             onTap: (() =>
-                                Get.toNamed(RouteHelper.getRoutePage(3))),
+                            Get.offAllNamed(RouteHelper.getRoutePage(3))),
                           ),
                         )),
                     PopupMenuItem(
@@ -179,7 +192,7 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             leading: const Icon(Icons.person_outline),
                             title: const Text('Account'),
                             onTap: (() =>
-                                Get.toNamed(RouteHelper.getRoutePage(4))),
+                            Get.offAllNamed(RouteHelper.getRoutePage(4))),
                           ),
                         )),
                   ];

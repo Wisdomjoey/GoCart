@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/review_box_con.dart';
-import 'package:schoolproj/components/home_app_bar.dart';
-import 'package:schoolproj/utils/dimensions.dart';
-import 'package:schoolproj/widgets/head_section_widget.dart';
-import 'package:schoolproj/widgets/rate_number_widget.dart';
-import 'package:schoolproj/widgets/star_rating_widget.dart';
-import 'package:schoolproj/widgets/txt_button_widget.dart';
+import 'package:GOCart/components/review_box_con.dart';
+import 'package:GOCart/components/home_app_bar.dart';
+import 'package:GOCart/utils/dimensions.dart';
+import 'package:GOCart/widgets/head_section_widget.dart';
+import 'package:GOCart/widgets/rate_number_widget.dart';
+import 'package:GOCart/widgets/star_rating_widget.dart';
+import 'package:GOCart/widgets/txt_button_widget.dart';
 
 class RatingViewPage extends StatelessWidget {
   const RatingViewPage({super.key});
@@ -20,7 +20,6 @@ class RatingViewPage extends StatelessWidget {
         textSize: Dimensions.font24,
         implyLeading: true,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -116,8 +115,8 @@ class RatingViewPage extends StatelessWidget {
               ),
             ),
             Container(
-              padding: EdgeInsets.symmetric(
-                  horizontal: Dimensions.sizedBoxWidth4),
+              padding:
+                  EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth4),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -129,37 +128,37 @@ class RatingViewPage extends StatelessWidget {
                     child: Column(
                       children: [
                         ReviewBoxCon(
-                            date: '21-11-2022',
-                            topic: 'Status',
-                            review:
-                                'A very good product for public use, I recommend to all.',
-                            name: 'Jay Z',
-                            addHPad: true,
-                            rad: Dimensions.sizedBoxWidth3,
+                          date: '21-11-2022',
+                          topic: 'Status',
+                          review:
+                              'A very good product for public use, I recommend to all.',
+                          name: 'Jay Z',
+                          addHPad: true,
+                          rad: Dimensions.sizedBoxWidth3,
                         ),
                         SizedBox(
                           height: Dimensions.sizedBoxHeight15 / 2,
                         ),
                         ReviewBoxCon(
-                            date: '21-11-2022',
-                            topic: 'Status',
-                            review:
-                                'A very good product for public use, I recommend to all.',
-                            name: 'Jay Z',
-                            addHPad: true,
-                            rad: Dimensions.sizedBoxWidth3,
+                          date: '21-11-2022',
+                          topic: 'Status',
+                          review:
+                              'A very good product for public use, I recommend to all.',
+                          name: 'Jay Z',
+                          addHPad: true,
+                          rad: Dimensions.sizedBoxWidth3,
                         ),
                         SizedBox(
-                          height: Dimensions.sizedBoxHeight15 /2,
+                          height: Dimensions.sizedBoxHeight15 / 2,
                         ),
                         ReviewBoxCon(
-                            date: '21-11-2022',
-                            topic: 'Status',
-                            review:
-                                'A very good product for public use, I recommend to all.',
-                            name: 'Jay Z',
-                            addHPad: true,
-                            rad: Dimensions.sizedBoxWidth3,
+                          date: '21-11-2022',
+                          topic: 'Status',
+                          review:
+                              'A very good product for public use, I recommend to all.',
+                          name: 'Jay Z',
+                          addHPad: true,
+                          rad: Dimensions.sizedBoxWidth3,
                         ),
                       ],
                     ),

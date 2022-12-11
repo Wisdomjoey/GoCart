@@ -1,4 +1,4 @@
-package com.example.schoolproj
+package com.example.GOCart
 
 import io.flutter.embedding.android.FlutterActivity
 

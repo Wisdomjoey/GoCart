@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:schoolproj/components/information_box.dart';
-import 'package:schoolproj/utils/dimensions.dart';
+import 'package:GOCart/components/information_box.dart';
+import 'package:GOCart/utils/dimensions.dart';
 
 import '../components/home_app_bar.dart';
 
@@ -20,7 +20,6 @@ class _InboxPageState extends State<InboxPage> {
         showCart: true,
         implyLeading: true,
       ),
-      backgroundColor: const Color.fromARGB(255, 243, 243, 243),
       body: ListView.builder(
         padding: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
         itemCount: 5,
