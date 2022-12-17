@@ -1,10 +1,12 @@
+import 'package:GOCart/UI/pages/intro_page.dart';
+import 'package:GOCart/UI/pages/shop_register_page.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:GOCart/pages/login_page.dart';
-import 'package:GOCart/pages/register_page.dart';
-import 'package:GOCart/pages/route_page.dart';
-import 'package:GOCart/pages/splash_page.dart';
-import 'package:GOCart/routes/route_helper.dart';
+import 'package:GOCart/UI/pages/login_page.dart';
+import 'package:GOCart/UI/pages/register_page.dart';
+import 'package:GOCart/UI/pages/route_page.dart';
+import 'package:GOCart/UI/pages/splash_page.dart';
+import 'package:GOCart/UI/routes/route_helper.dart';
 
 void main() {
   runApp(const MyApp());
