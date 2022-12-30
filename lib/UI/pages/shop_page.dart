@@ -5,6 +5,7 @@ import 'package:bouncing_widget/bouncing_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class ShopPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _ShopPageState extends State<ShopPage> {
               const Center(
                 child: Text(
                   'No Shops At The Moment',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Constants.grey),
                 ),
               ),
             ],
@@ -125,7 +126,7 @@ class _ShopPageState extends State<ShopPage> {
                                         Text(
                                           'Mr. Kola Shop',
                                           style: TextStyle(
-                                              color: Colors.white,
+                                              color: Constants.white,
                                               fontSize: Dimensions.font18,
                                               fontWeight: FontWeight.w500),
                                         ),

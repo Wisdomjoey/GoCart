@@ -8,6 +8,8 @@ import 'package:GOCart/UI/pages/route_page.dart';
 import 'package:GOCart/UI/pages/splash_page.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 
+import 'UI/constants/constants.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -19,10 +21,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
-      title: 'Flutter Demo',
+      title: 'GO Cart',
       theme: ThemeData(
-        primarySwatch: Colors.green,
-        scaffoldBackgroundColor: const Color.fromARGB(255, 243, 243, 243),
+        primarySwatch: Constants.primary,
+        scaffoldBackgroundColor: Constants.backgroundColor,
         // brightness: Brightness.light
       ),
       // darkTheme: ThemeData(

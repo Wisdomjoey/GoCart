@@ -68,7 +68,7 @@ class _MySearchDelegate extends SearchDelegate {
     //     return ListTile(
     //       title: Text(result),
     //       visualDensity: const VisualDensity(vertical: -2),
-    //       shape: const Border(bottom: BorderSide(color: Colors.grey)),
+    //       shape: const Border(bottom: BorderSide(color: Constants.grey)),
     //       onTap: () => query = result,
     //     );
     //   },

@@ -5,6 +5,8 @@ import 'package:GOCart/UI/widgets/list_tile_btn_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
+import '../constants/constants.dart';
+
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
 
@@ -23,7 +25,7 @@ class AccountPage extends StatelessWidget {
               weight: FontWeight.w500,
             ),
             Material(
-              color: Colors.white,
+              color: Constants.white,
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
                 children: [
@@ -81,7 +83,7 @@ class AccountPage extends StatelessWidget {
               weight: FontWeight.w500,
             ),
             Material(
-              color: Colors.white,
+              color: Constants.white,
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
                 children: [

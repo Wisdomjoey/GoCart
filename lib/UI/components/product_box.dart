@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/constants.dart';
 import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
 import '../widgets/star_rating_widget.dart';
@@ -49,7 +50,7 @@ class ProductBox extends StatelessWidget {
         child: Ink(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
-            color: Colors.white,
+            color: Constants.white,
           ),
           child: Column(
             children: [
@@ -77,7 +78,7 @@ class ProductBox extends StatelessWidget {
                         bottomLeft: Radius.circular(Dimensions.sizedBoxWidth4),
                         bottomRight:
                             Radius.circular(Dimensions.sizedBoxWidth4)),
-                    color: Colors.white),
+                    color: Constants.white),
                 width: double.maxFinite,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

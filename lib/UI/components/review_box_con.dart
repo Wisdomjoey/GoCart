@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 
+import '../constants/constants.dart';
+
 class ReviewBoxCon extends StatelessWidget {
   final String date;
   final String topic;
@@ -26,7 +28,8 @@ class ReviewBoxCon extends StatelessWidget {
           vertical: Dimensions.sizedBoxHeight10,
           horizontal: addHPad ? Dimensions.sizedBoxWidth10 : 0),
       decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(rad ?? 0)),
+          color: Constants.white,
+          borderRadius: BorderRadius.circular(rad ?? 0)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -36,8 +39,8 @@ class ReviewBoxCon extends StatelessWidget {
               const StarRating(),
               Text(
                 date,
-                style:
-                    TextStyle(color: Colors.grey, fontSize: Dimensions.font12),
+                style: TextStyle(
+                    color: Constants.grey, fontSize: Dimensions.font12),
               )
             ],
           ),
@@ -64,14 +67,14 @@ class ReviewBoxCon extends StatelessWidget {
             children: [
               Text(
                 'by $name',
-                style:
-                    TextStyle(color: Colors.grey, fontSize: Dimensions.font12),
+                style: TextStyle(
+                    color: Constants.grey, fontSize: Dimensions.font12),
               ),
               Row(
                 children: [
                   Icon(
                     Icons.task_alt,
-                    color: Colors.green,
+                    color: Constants.primary,
                     size: Dimensions.font18,
                   ),
                   SizedBox(

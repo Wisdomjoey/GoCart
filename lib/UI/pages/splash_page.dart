@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
@@ -58,7 +60,7 @@ class _SplashPageState extends State<SplashPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0XFF00923F),
+      backgroundColor: Constants.secondary,
       body: AnimatedAlign(
         alignment: _alignment,
         curve: Curves.elasticOut,
@@ -68,7 +70,7 @@ class _SplashPageState extends State<SplashPage> {
           width: _w,
           height: _h,
           decoration: BoxDecoration(
-              color: Colors.white,
+              color: Constants.white,
               borderRadius:
                   BorderRadius.circular(Dimensions.sizedBoxWidth10 * 3.5)),
           child: AnimatedOpacity(

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key});
 
@@ -26,7 +28,7 @@ class _DetailsPageState extends State<DetailsPage> {
           children: [
             Container(
               width: double.maxFinite,
-              color: Colors.white,
+              color: Constants.white,
               margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
               padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
               child: Column(
@@ -49,7 +51,7 @@ class _DetailsPageState extends State<DetailsPage> {
             Container(
               width: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Constants.white,
                   borderRadius:
                       BorderRadius.circular(Dimensions.sizedBoxWidth4)),
               margin: EdgeInsets.all(Dimensions.sizedBoxWidth10),
@@ -79,7 +81,8 @@ class _DetailsPageState extends State<DetailsPage> {
             Container(
               width: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.white, borderRadius: BorderRadius.circular(4)),
+                  color: Constants.white,
+                  borderRadius: BorderRadius.circular(4)),
               margin:
                   EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
               padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),

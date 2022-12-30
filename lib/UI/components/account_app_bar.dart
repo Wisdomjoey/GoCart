@@ -3,6 +3,8 @@ import 'package:flutter/services.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class AccountAppBar extends StatefulWidget with PreferredSizeWidget {
   AccountAppBar({super.key});
 
@@ -25,9 +27,9 @@ class _AccountAppBarState extends State<AccountAppBar> {
       actions: const [
         Search(),
       ],
-      backgroundColor: const Color(0XFF00923F),
+      backgroundColor: Constants.secondary,
       systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Color(0XFF00923F),
+          statusBarColor: Constants.secondary,
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light),
       bottom: PreferredSize(
@@ -45,7 +47,7 @@ class _AccountAppBarState extends State<AccountAppBar> {
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: Dimensions.font23,
-                    color: const Color(0XFFF8C300)),
+                    color: Constants.tetiary),
               ),
               SizedBox(height: Dimensions.sizedBoxHeight10 / 2),
               const Text('example@gmail.com',

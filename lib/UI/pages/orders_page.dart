@@ -3,6 +3,8 @@ import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/components/order_item_box.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
@@ -40,13 +42,13 @@ class _OrdersPageState extends State<OrdersPage>
         children: [
           Container(
             width: double.maxFinite,
-            color: Colors.white,
+            color: Constants.white,
             height: Dimensions.sizedBoxHeight10 * 4,
             child: Material(
               child: TabBar(
                 controller: _tabController,
-                indicatorColor: const Color(0XFFF8C300),
-                labelColor: const Color(0XFFF8C300),
+                indicatorColor: Constants.tetiary,
+                labelColor: Constants.tetiary,
                 unselectedLabelColor: const Color.fromARGB(255, 125, 125, 125),
                 onTap: (value) {},
                 isScrollable: true,

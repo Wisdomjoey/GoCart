@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class TxtButton extends StatelessWidget {
   final Color color;
   final Color? bgColor;
@@ -15,7 +17,7 @@ class TxtButton extends StatelessWidget {
 
   const TxtButton(
       {super.key,
-      this.color = const Color(0XFF00923F),
+      this.color = Constants.secondary,
       this.visualD = 0,
       required this.text,
       this.addHPad = true,

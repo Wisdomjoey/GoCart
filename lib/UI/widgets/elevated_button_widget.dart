@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class ElevatedBtn extends StatelessWidget {
@@ -30,8 +31,7 @@ class ElevatedBtn extends StatelessWidget {
     return ElevatedButton(
       onPressed: pressed ?? () {},
       style: ElevatedButton.styleFrom(
-          backgroundColor:
-              addBorder ? Colors.transparent : const Color(0XFFF8C300),
+          backgroundColor: addBorder ? Colors.transparent : Constants.tetiary,
           shadowColor: isElevated ? Colors.black : Colors.transparent,
           visualDensity: VisualDensity(
             vertical: visualVD ?? 0,
@@ -41,9 +41,7 @@ class ElevatedBtn extends StatelessWidget {
               borderRadius:
                   BorderRadius.circular(radius ?? Dimensions.sizedBoxWidth4),
               side: BorderSide(
-                  color: addBorder
-                      ? const Color(0XFFF8C300)
-                      : Colors.transparent))),
+                  color: addBorder ? Constants.tetiary : Colors.transparent))),
       child: Stack(
         children: [
           Align(
@@ -56,7 +54,7 @@ class ElevatedBtn extends StatelessWidget {
               text,
               style: TextStyle(
                   fontSize: Dimensions.font14,
-                  color: textColor ?? Colors.white),
+                  color: textColor ?? Constants.white),
             ),
           )
         ],

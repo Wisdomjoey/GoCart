@@ -3,6 +3,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/constants.dart';
 import '../widgets/list_tile_btn_widget.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 weight: FontWeight.w500,
               ),
               Material(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 child: Column(
                   children: [
@@ -59,7 +60,7 @@ class _SettingsPageState extends State<SettingsPage> {
                             Text(
                               'System',
                               style: TextStyle(
-                                  color: Colors.grey,
+                                  color: Constants.grey,
                                   fontSize: Dimensions.font12),
                             ),
                           ],
@@ -72,7 +73,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 weight: FontWeight.w500,
               ),
               Material(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 child: Column(
                   children: [
@@ -81,7 +82,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       textSize: Dimensions.font15,
                       trailing: Switch(
                           value: _switch,
-                          activeColor: const Color(0XFFF8C300),
+                          activeColor: Constants.tetiary,
                           onChanged: ((value) {
                             setState(() {
                               _switch = !_switch;
@@ -107,7 +108,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 weight: FontWeight.w500,
               ),
               Material(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 child: Column(
                   children: [
@@ -133,7 +134,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           Text(
                             'v1.02.13',
                             style: TextStyle(
-                                color: Colors.grey,
+                                color: Constants.grey,
                                 fontSize: Dimensions.font12),
                           ),
                         ],
@@ -160,7 +161,7 @@ class _SettingsPageState extends State<SettingsPage> {
             vertical: Dimensions.sizedBoxHeight15),
         height: Dimensions.sizedBoxHeight100 * 2,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Constants.white,
             borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

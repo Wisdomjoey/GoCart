@@ -6,6 +6,8 @@ import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../constants/constants.dart';
+
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});
 
@@ -41,7 +43,7 @@ class IntroPage extends StatelessWidget {
                       'Welcome to GOCART, a YabaTech sales app meant for sellers within Yaba College vicinity. You can buy and sell to students, lecturers and everyone within the school. Thank you for using our app 😊.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                          color: Colors.white,
+                          color: Constants.white,
                           letterSpacing: Dimensions.sizedBoxWidth3 / 2,
                           // wordSpacing: Dimensions.sizedBoxWidth3,
                           height: Dimensions.sizedBoxHeight3 / 2,

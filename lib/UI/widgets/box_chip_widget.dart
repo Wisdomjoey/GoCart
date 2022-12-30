@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class BoxChip extends StatelessWidget {
@@ -22,9 +23,10 @@ class BoxChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: pad ?? EdgeInsets.symmetric(
-          horizontal: Dimensions.sizedBoxWidth4,
-          vertical: Dimensions.sizedBoxHeight4 / 2),
+      padding: pad ??
+          EdgeInsets.symmetric(
+              horizontal: Dimensions.sizedBoxWidth4,
+              vertical: Dimensions.sizedBoxHeight4 / 2),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4 / 2),
           color: color),
@@ -32,7 +34,7 @@ class BoxChip extends StatelessWidget {
         text,
         style: TextStyle(
             fontSize: textSize ?? Dimensions.font11,
-            color: textColor ?? Colors.white,
+            color: textColor ?? Constants.white,
             fontWeight: textWeight ?? FontWeight.w500),
       ),
     );

@@ -4,6 +4,8 @@ import 'package:get/get.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 
+import '../constants/constants.dart';
+
 class CartAppBar extends StatefulWidget with PreferredSizeWidget {
   CartAppBar({super.key});
 
@@ -108,11 +110,11 @@ class _CartAppBarState extends State<CartAppBar> {
           },
         ),
       ],
-      backgroundColor: const Color(0XFF00923F),
+      backgroundColor: Constants.secondary,
       systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light,
-          statusBarColor: Color(0XFF00923F)),
+          statusBarColor: Constants.secondary),
     );
   }
 }

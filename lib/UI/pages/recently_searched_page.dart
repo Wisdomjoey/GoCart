@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class RecentlySearchedPage extends StatelessWidget {
@@ -30,7 +31,7 @@ class RecentlySearchedPage extends StatelessWidget {
           const Center(
             child: Text(
               'Your search history is shown here',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Constants.grey),
             ),
           ),
         ],

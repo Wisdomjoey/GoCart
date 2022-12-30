@@ -10,6 +10,8 @@ import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 
+import '../constants/constants.dart';
+
 class ProductDetailsPage extends StatefulWidget {
   const ProductDetailsPage({super.key});
 
@@ -59,7 +61,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   horizontal: Dimensions.sizedBoxWidth10 * 2,
                   vertical: Dimensions.sizedBoxHeight10),
               width: double.maxFinite,
-              color: Colors.white,
+              color: Constants.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -100,14 +102,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         children: [
                           const Icon(
                             Icons.share,
-                            color: Color(0XFFF8C300),
+                            color: Constants.tetiary,
                           ),
                           SizedBox(
                             width: Dimensions.sizedBoxWidth25,
                           ),
                           const Icon(
                             Icons.favorite_border_outlined,
-                            color: Color(0XFFF8C300),
+                            color: Constants.tetiary,
                           ),
                         ],
                       )
@@ -122,7 +124,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   horizontal: Dimensions.sizedBoxWidth10 * 2,
                   vertical: Dimensions.sizedBoxHeight10),
               width: double.maxFinite,
-              color: Colors.white,
+              color: Constants.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -134,7 +136,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                         right: Dimensions.sizedBoxWidth10,
                         iconSize: Dimensions.font23,
                         isClickable: false,
-                        iconColor: Colors.grey,
+                        iconColor: Constants.grey,
                         borderColor: const Color.fromARGB(156, 158, 158, 158),
                       ),
                       Expanded(
@@ -189,7 +191,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                       IconBox(
                         icon: Icons.history,
                         right: Dimensions.sizedBoxWidth10,
-                        iconColor: Colors.grey,
+                        iconColor: Constants.grey,
                         iconSize: Dimensions.font23,
                         isClickable: false,
                         borderColor: const Color.fromARGB(156, 158, 158, 158),
@@ -228,7 +230,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
               width: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Constants.white,
                   borderRadius:
                       BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
               child: Column(
@@ -237,7 +239,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   Material(
                     borderRadius:
                         BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2),
-                    color: Colors.white,
+                    color: Constants.white,
                     child: ListTileBtn(
                       title: 'Description',
                       textSize: Dimensions.font16,
@@ -250,7 +252,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     width: double.maxFinite,
                     child: Container(
                       height: 1,
-                      color: const Color(0XFFEDEDED),
+                      color: Constants.lightGrey,
                     ),
                   ),
                   Container(
@@ -267,7 +269,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
               width: double.maxFinite,
               decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: Constants.white,
                   borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +277,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   Material(
                     borderRadius:
                         BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2),
-                    color: Colors.white,
+                    color: Constants.white,
                     child: ListTileBtn(
                       page: RouteHelper.getRatingsViewPage(),
                       child: Column(
@@ -307,14 +309,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                       Text(
                                         '4.9',
                                         style: TextStyle(
-                                            color: const Color(0XFFF8C300),
+                                            color: Constants.tetiary,
                                             fontWeight: FontWeight.w600,
                                             fontSize: Dimensions.font12),
                                       ),
                                       Text(
                                         '/5',
                                         style: TextStyle(
-                                            color: const Color(0XFFF8C300),
+                                            color: Constants.tetiary,
                                             fontSize: Dimensions.font12),
                                       ),
                                     ],
@@ -338,7 +340,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     width: double.maxFinite,
                     child: Container(
                       height: 1,
-                      color: const Color(0XFFEDEDED),
+                      color: Constants.lightGrey,
                     ),
                   ),
                   Container(
@@ -356,7 +358,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             width: double.maxFinite,
                             child: Container(
                               height: 1,
-                              color: const Color(0XFFEDEDED),
+                              color: Constants.lightGrey,
                             ),
                           ),
                           const ReviewBoxCon(
@@ -369,7 +371,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                             width: double.maxFinite,
                             child: Container(
                               height: 1,
-                              color: const Color(0XFFEDEDED),
+                              color: Constants.lightGrey,
                             ),
                           ),
                           const ReviewBoxCon(
@@ -416,7 +418,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       margin: EdgeInsets.all(Dimensions.sizedBoxWidth10),
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimensions.font25 / 5),
-          color: Colors.white,
+          color: Constants.white,
           image: const DecorationImage(
               image: AssetImage('assets/images/emptyCart.png'))),
     );
@@ -432,7 +434,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
             vertical: Dimensions.sizedBoxHeight15),
         height: Dimensions.sizedBoxHeight230,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Constants.white,
             borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -461,7 +463,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: Dimensions.font14,
-                  color: Colors.grey),
+                  color: Constants.grey),
             ),
             SizedBox(
               height: Dimensions.sizedBoxHeight10,
@@ -478,7 +480,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
               style: TextStyle(
                   fontWeight: FontWeight.w500,
                   fontSize: Dimensions.font14,
-                  color: Colors.grey),
+                  color: Constants.grey),
             ),
             SizedBox(
               height: Dimensions.sizedBoxHeight10,

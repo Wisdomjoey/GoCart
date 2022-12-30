@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/product_box.dart';
 
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,7 +42,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   padding: EdgeInsets.symmetric(
                       vertical: Dimensions.sizedBoxHeight15),
-                  decoration: const BoxDecoration(color: Colors.white),
+                  decoration: const BoxDecoration(color: Constants.white),
                   child: Column(
                     children: [
                       SizedBox(
@@ -79,7 +80,7 @@ class _HomePageState extends State<HomePage> {
                         dotsCount: 5,
                         position: _currentPageValue,
                         decorator: DotsDecorator(
-                          activeColor: Colors.green,
+                          activeColor: Constants.primary,
                           size: Size.square(Dimensions.font18 / 2),
                           activeSize:
                               Size(Dimensions.font18, Dimensions.font18 / 2),
@@ -97,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                 Container(
                   height: Dimensions.sizedBoxHeight10 * 6,
                   alignment: Alignment.center,
-                  decoration: const BoxDecoration(color: Colors.white),
+                  decoration: const BoxDecoration(color: Constants.white),
                   child: Container(
                       height: Dimensions.sizedBoxHeight10 * 4,
                       padding: EdgeInsets.symmetric(
@@ -180,8 +181,8 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
           color: const Color.fromARGB(255, 248, 248, 248),
-          border: Border.all(
-              color: const Color(0XFFEDEDED), style: BorderStyle.solid)),
+          border:
+              Border.all(color: Constants.lightGrey, style: BorderStyle.solid)),
       child: Center(
         child: Text(
           'Category',
@@ -273,7 +274,7 @@ class _HomePageState extends State<HomePage> {
 //                   dotsCount: 5,
 //                   position: _currentPageValue,
 //                   decorator: DotsDecorator(
-//                     activeColor: Colors.green,
+//                     activeColor: Constants.primary,
 //                     size: const Size.square(9.0),
 //                     activeSize: const Size(18.0, 9.0),
 //                     activeShape: RoundedRectangleBorder(
@@ -418,7 +419,7 @@ class _HomePageState extends State<HomePage> {
 //       margin: const EdgeInsets.symmetric(horizontal: 5),
 //       decoration: BoxDecoration(
 //         borderRadius: BorderRadius.circular(4),
-//         color: Colors.white,
+//         color: Constants.white,
 //       ),
 //       child: const Center(
 //         child: Text('Category'),

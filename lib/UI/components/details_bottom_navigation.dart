@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 
+import '../constants/constants.dart';
+
 class DetailsBottomNav extends StatelessWidget {
   final Widget? leading;
   final String text;
@@ -20,8 +22,8 @@ class DetailsBottomNav extends StatelessWidget {
       decoration: const BoxDecoration(
           border: Border(
               top: BorderSide(
-                  color: Color(0XFFEDEDED), style: BorderStyle.solid)),
-          color: Colors.white),
+                  color: Constants.lightGrey, style: BorderStyle.solid)),
+          color: Constants.white),
       child: Row(
         children: [
           leading!,

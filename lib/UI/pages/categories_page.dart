@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/category_list.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
 
@@ -29,7 +31,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                     ? BoxDecoration(
                         border: Border(
                             left: BorderSide(
-                                color: const Color(0XFF00923F),
+                                color: Constants.secondary,
                                 width: Dimensions.sizedBoxWidth10 / 2)))
                     : const BoxDecoration(),
                 margin:
@@ -47,7 +49,9 @@ class _CategoriesPageState extends State<CategoriesPage> {
                   ),
                   tileColor: data == index
                       ? Colors.transparent
-                      : (selected[index] ? Colors.transparent : Colors.white),
+                      : (selected[index]
+                          ? Colors.transparent
+                          : Constants.white),
                   onTap: () {
                     setState(() {
                       selected[data] = false;

@@ -9,6 +9,7 @@ import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class CartPage extends StatefulWidget {
@@ -48,7 +49,7 @@ class _CartPageState extends State<CartPage> {
               const Center(
                 child: Text(
                   'Add products to cart to see them here',
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: Constants.grey),
                 ),
               ),
             ],
@@ -64,7 +65,7 @@ class _CartPageState extends State<CartPage> {
                 ),
                 Container(
                   width: double.maxFinite,
-                  color: Colors.white,
+                  color: Constants.white,
                   padding: EdgeInsets.only(
                       top: Dimensions.sizedBoxHeight15,
                       bottom: Dimensions.sizedBoxHeight10,
@@ -124,7 +125,7 @@ class _CartPageState extends State<CartPage> {
                           decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   Dimensions.sizedBoxWidth10 / 2),
-                              color: Colors.white),
+                              color: Constants.white),
                           padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
                           margin: EdgeInsets.only(
                               bottom: Dimensions.sizedBoxHeight10),
@@ -172,7 +173,7 @@ class _CartPageState extends State<CartPage> {
                                               'Seller:',
                                               style: TextStyle(
                                                   fontSize: Dimensions.font12,
-                                                  color: Colors.grey),
+                                                  color: Constants.grey),
                                             ),
                                             SizedBox(
                                               width:
@@ -225,8 +226,7 @@ class _CartPageState extends State<CartPage> {
                                               textWeight: FontWeight.w600,
                                               color: const Color.fromARGB(
                                                   35, 248, 194, 0),
-                                              textColor:
-                                                  const Color(0XFFF8C300),
+                                              textColor: Constants.tetiary,
                                             )
                                           ],
                                         ),
@@ -234,7 +234,7 @@ class _CartPageState extends State<CartPage> {
                                           'In Stock',
                                           style: TextStyle(
                                               fontSize: Dimensions.font12,
-                                              color: Colors.grey),
+                                              color: Constants.grey),
                                         ),
                                         SizedBox(
                                           height:
@@ -256,7 +256,7 @@ class _CartPageState extends State<CartPage> {
                                         children: [
                                           const Icon(
                                             Icons.delete_outline,
-                                            color: Color(0XFFF8C300),
+                                            color: Constants.tetiary,
                                           ),
                                           SizedBox(
                                             width: Dimensions.sizedBoxWidth10,
@@ -264,7 +264,7 @@ class _CartPageState extends State<CartPage> {
                                           Text(
                                             'REMOVE',
                                             style: TextStyle(
-                                                color: const Color(0XFFF8C300),
+                                                color: Constants.tetiary,
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: Dimensions.font15),
                                           )
@@ -289,10 +289,10 @@ class _CartPageState extends State<CartPage> {
                                           width: Dimensions.sizedBoxWidth10 * 3,
                                           height:
                                               Dimensions.sizedBoxWidth10 * 3,
-                                          color: const Color(0XFFF8C300),
+                                          color: Constants.tetiary,
                                           borderColor: Colors.transparent,
                                           iconSize: Dimensions.font24,
-                                          iconColor: Colors.white,
+                                          iconColor: Constants.white,
                                           isDisabled: true,
                                           right: 0,
                                         ),
@@ -312,10 +312,10 @@ class _CartPageState extends State<CartPage> {
                                           width: Dimensions.sizedBoxWidth10 * 3,
                                           height:
                                               Dimensions.sizedBoxWidth10 * 3,
-                                          color: const Color(0XFFF8C300),
+                                          color: Constants.tetiary,
                                           borderColor: Colors.transparent,
                                           iconSize: Dimensions.font24,
-                                          iconColor: Colors.white,
+                                          iconColor: Constants.white,
                                           isDisabled: false,
                                           right: 0,
                                         ),
@@ -340,7 +340,7 @@ class _CartPageState extends State<CartPage> {
                     icon: Icons.phone,
                     height: Dimensions.sizedBoxHeight65,
                     width: Dimensions.sizedBoxWidth100 / 2,
-                    borderColor: const Color(0XFFF8C300),
+                    borderColor: Constants.tetiary,
                     iconSize: Dimensions.sizedBoxWidth15 * 2,
                   ),
                   text: 'CHECKOUT (\$1,000)',
@@ -354,6 +354,7 @@ class _CartPageState extends State<CartPage> {
   }
 
   Widget _showDialog(context) {
+    // SnackBar(content: Text('content'));
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10 * 2),
@@ -363,7 +364,7 @@ class _CartPageState extends State<CartPage> {
             vertical: Dimensions.sizedBoxHeight10 * 2),
         height: Dimensions.sizedBoxHeight10 * 25,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Constants.white,
             borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -401,12 +402,12 @@ class _CartPageState extends State<CartPage> {
               width: double.maxFinite,
               child: const ElevatedBtn(
                 text: 'SAVE FOR LATER',
-                textColor: Color(0XFFF8C300),
+                textColor: Constants.tetiary,
                 isElevated: false,
                 addBorder: true,
                 icon: Icon(
                   Icons.favorite_border,
-                  color: Color(0XFFF8C300),
+                  color: Constants.tetiary,
                 ),
               ),
             ),
@@ -420,7 +421,7 @@ class _CartPageState extends State<CartPage> {
                 text: 'REMOVE ITEM',
                 icon: Icon(
                   Icons.delete_outline,
-                  color: Colors.white,
+                  color: Constants.white,
                 ),
               ),
             ),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class InformationBox extends StatelessWidget {
   const InformationBox({super.key});
 
@@ -14,7 +16,7 @@ class InformationBox extends StatelessWidget {
       padding: EdgeInsets.all(Dimensions.sizedBoxWidth4 * 2),
       width: double.maxFinite,
       decoration: BoxDecoration(
-          color: Colors.white,
+          color: Constants.white,
           borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4)),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -48,7 +50,7 @@ class InformationBox extends StatelessWidget {
             width: double.maxFinite,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
-                border: Border.all(color: const Color(0XFFEDEDED))),
+                border: Border.all(color: Constants.lightGrey)),
             padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,

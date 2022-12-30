@@ -6,6 +6,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/navigation_icon_widget.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 
 class RoutePage extends StatefulWidget {
   final int pageId;
@@ -49,7 +50,7 @@ class _RoutePageState extends State<RoutePage> {
         key: _globalKey,
         index: _allowPageId ? widget.pageId : _activePage,
         backgroundColor: Colors.transparent,
-        buttonBackgroundColor: Colors.green,
+        buttonBackgroundColor: Constants.primary,
         height: Dimensions.sizedBoxHeight65,
         items: const [
           NavigationIcon(icon: Icon(Icons.home_outlined), text: 'Home'),
@@ -62,23 +63,23 @@ class _RoutePageState extends State<RoutePage> {
         items2: const [
           Icon(
             Icons.home,
-            color: Colors.white,
+            color: Constants.white,
           ),
           Icon(
             Icons.list_alt,
-            color: Colors.white,
+            color: Constants.white,
           ),
           Icon(
             Icons.shopping_cart,
-            color: Colors.white,
+            color: Constants.white,
           ),
           Icon(
             Icons.store,
-            color: Colors.white,
+            color: Constants.white,
           ),
           Icon(
             Icons.person,
-            color: Colors.white,
+            color: Constants.white,
           ),
         ],
         onTap: (index) {

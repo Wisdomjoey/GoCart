@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class CurvedPainter extends StatelessWidget with PreferredSizeWidget {
@@ -35,14 +36,14 @@ class CurvedPainter extends StatelessWidget with PreferredSizeWidget {
                     text1,
                     style: TextStyle(
                         fontSize: Dimensions.font13 * 3,
-                        color: const Color(0XFFF8C300),
+                        color: Constants.tetiary,
                         fontWeight: FontWeight.w500),
                   ),
                   Text(
                     text2,
                     style: TextStyle(
                         fontSize: Dimensions.font13 * 3,
-                        color: Colors.white,
+                        color: Constants.white,
                         fontWeight: FontWeight.w500),
                   ),
                 ],
@@ -62,7 +63,7 @@ class CustomCurvedPainter extends CustomPainter {
     paint.shader = ui.Gradient.linear(
         Offset(0, size.height / 2),
         Offset(size.width, size.height / 2),
-        [const Color(0XFF00923F), const Color.fromARGB(255, 1, 191, 84)]);
+        [Constants.secondary, const Color.fromARGB(255, 1, 191, 84)]);
 
     var path = Path();
 

@@ -7,6 +7,8 @@ import 'package:GOCart/UI/widgets/rate_number_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
+import '../constants/constants.dart';
+
 class RatingViewPage extends StatelessWidget {
   const RatingViewPage({super.key});
 
@@ -27,7 +29,7 @@ class RatingViewPage extends StatelessWidget {
             const HeadSedction(text: 'VERIFIED PRODUCT RATINGS (13)'),
             Container(
               width: double.maxFinite,
-              color: Colors.white,
+              color: Constants.white,
               padding: EdgeInsets.only(
                   top: Dimensions.sizedBoxHeight15,
                   bottom: Dimensions.sizedBoxHeight15,
@@ -38,7 +40,7 @@ class RatingViewPage extends StatelessWidget {
                     width: Dimensions.sizedBoxWidth10 * 11,
                     height: Dimensions.sizedBoxWidth10 * 11,
                     decoration: BoxDecoration(
-                        color: const Color.fromARGB(255, 243, 243, 243),
+                        color: Constants.backgroundColor,
                         borderRadius:
                             BorderRadius.circular(Dimensions.font12 / 6)),
                     child: Center(
@@ -52,14 +54,14 @@ class RatingViewPage extends StatelessWidget {
                               Text(
                                 '4.9',
                                 style: TextStyle(
-                                    color: const Color(0XFFF8C300),
+                                    color: Constants.tetiary,
                                     fontWeight: FontWeight.w600,
                                     fontSize: Dimensions.font14 * 2),
                               ),
                               Text(
                                 '/5',
                                 style: TextStyle(
-                                    color: const Color(0XFFF8C300),
+                                    color: Constants.tetiary,
                                     fontSize: Dimensions.font14 * 2),
                               ),
                             ],
@@ -167,7 +169,7 @@ class RatingViewPage extends StatelessWidget {
                     text: 'READ MORE VIEWS',
                     visualD: -3,
                     addHPad: false,
-                    color: Color(0XFFF8C300),
+                    color: Constants.tetiary,
                   )
                 ],
               ),

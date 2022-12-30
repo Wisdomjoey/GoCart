@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class RecentlyViewedPage extends StatelessWidget {
@@ -30,7 +31,7 @@ class RecentlyViewedPage extends StatelessWidget {
           const Center(
             child: Text(
               'You haven\'t viewed any item recently',
-              style: TextStyle(color: Colors.grey),
+              style: TextStyle(color: Constants.grey),
             ),
           ),
         ],

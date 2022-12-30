@@ -8,6 +8,7 @@ import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 import '../routes/route_helper.dart';
 
 class OrderDetailsPage extends StatefulWidget {
@@ -40,7 +41,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   horizontal: Dimensions.sizedBoxWidth15,
                   vertical: Dimensions.sizedBoxHeight10),
               margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
-              color: Colors.white,
+              color: Constants.white,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -99,7 +100,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                     decoration: BoxDecoration(
                       borderRadius:
                           BorderRadius.circular(Dimensions.sizedBoxWidth4),
-                      color: Colors.white,
+                      color: Constants.white,
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +132,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                         Ink(
                           width: double.maxFinite,
                           height: 1,
-                          color: const Color(0XFFEDEDED),
+                          color: Constants.lightGrey,
                         ),
                         Ink(
                           height: Dimensions.sizedBoxHeight10 * 11,
@@ -190,13 +191,13 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                         Ink(
                           width: double.maxFinite,
                           height: 1,
-                          color: const Color(0XFFEDEDED),
+                          color: Constants.lightGrey,
                         ),
                         TxtButton(
                           text: 'BUY AGAIN',
                           pad: Dimensions.sizedBoxWidth4 * 2,
-                          bgColor: const Color(0XFFF8C300),
-                          color: Colors.white,
+                          bgColor: Constants.tetiary,
+                          color: Constants.white,
                           visualD: -4,
                           textSize: Dimensions.font12,
                           top: Dimensions.sizedBoxHeight4 * 2,
@@ -205,19 +206,19 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                         Ink(
                           width: double.maxFinite,
                           height: 1,
-                          color: const Color(0XFFEDEDED),
+                          color: Constants.lightGrey,
                         ),
                         TxtButton(
                           text: 'SEE STATUS HISTORY',
                           pad: Dimensions.sizedBoxWidth4 * 2,
-                          color: const Color(0XFFF8C300),
+                          color: Constants.tetiary,
                           visualD: -4,
                           textSize: Dimensions.font12,
                           top: Dimensions.sizedBoxHeight4 * 2,
                           bottom: Dimensions.sizedBoxHeight4 * 2,
                           borderColor: RoundedRectangleBorder(
                               side: const BorderSide(
-                                color: Color(0XFFF8C300),
+                                color: Constants.tetiary,
                               ),
                               borderRadius: BorderRadius.circular(
                                   Dimensions.sizedBoxWidth4)),
@@ -245,7 +246,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               decoration: BoxDecoration(
                   borderRadius:
                       BorderRadius.circular(Dimensions.sizedBoxWidth4),
-                  color: Colors.white),
+                  color: Constants.white),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -273,7 +274,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   Container(
                     width: double.maxFinite,
                     height: 1,
-                    color: const Color(0XFFEDEDED),
+                    color: Constants.lightGrey,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -379,7 +380,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
               decoration: BoxDecoration(
                   borderRadius:
                       BorderRadius.circular(Dimensions.sizedBoxWidth4),
-                  color: Colors.white),
+                  color: Constants.white),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -407,7 +408,7 @@ class _OrderDetailsPageState extends State<OrderDetailsPage> {
                   Container(
                     width: double.maxFinite,
                     height: 1,
-                    color: const Color(0XFFEDEDED),
+                    color: Constants.lightGrey,
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,

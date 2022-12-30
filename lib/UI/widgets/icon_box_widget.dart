@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class IconBox extends StatelessWidget {
   final Color borderColor;
   final Color iconColor;
@@ -16,8 +18,8 @@ class IconBox extends StatelessWidget {
 
   const IconBox(
       {super.key,
-      this.borderColor = const Color(0XFFF8C300),
-      this.iconColor = const Color(0XFFF8C300),
+      this.borderColor = Constants.tetiary,
+      this.iconColor = Constants.tetiary,
       this.iconSize,
       required this.icon,
       this.isClickable = true,

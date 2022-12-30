@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
+
 class CategoryList extends StatelessWidget {
   final int index;
 
@@ -17,7 +19,7 @@ class CategoryList extends StatelessWidget {
                   left: Dimensions.sizedBoxWidth15,
                   right: Dimensions.sizedBoxWidth15),
               child: Material(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 child: ListTile(
                   title: Text(
@@ -47,7 +49,7 @@ class CategoryList extends StatelessWidget {
                 horizontal: Dimensions.sizedBoxWidth10,
                 vertical: Dimensions.sizedBoxHeight15),
             decoration: BoxDecoration(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.all(
                     Radius.circular(Dimensions.sizedBoxHeight4))),
             child: GridView.builder(
@@ -65,7 +67,7 @@ class CategoryList extends StatelessWidget {
                       decoration: BoxDecoration(
                         borderRadius:
                             BorderRadius.circular(Dimensions.sizedBoxWidth4),
-                        color: Colors.white,
+                        color: Constants.white,
                       ),
                       child: Column(
                         children: [

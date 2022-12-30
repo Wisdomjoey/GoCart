@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
+import '../constants/constants.dart';
+
 class RateNumber extends StatelessWidget {
   final String rateNo;
   final String rateCount;
@@ -27,7 +29,7 @@ class RateNumber extends StatelessWidget {
               ),
               Icon(
                 Icons.star_rate_rounded,
-                color: const Color(0XFFF8C300),
+                color: Constants.tetiary,
                 size: Dimensions.font16,
               ),
               SizedBox(
@@ -35,16 +37,16 @@ class RateNumber extends StatelessWidget {
               ),
               Text(
                 '($rateCount)',
-                style: const TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Constants.grey),
               )
             ],
           ),
         ),
         LinearPercentIndicator(
           lineHeight: Dimensions.sizedBoxHeight4,
-          backgroundColor: const Color.fromARGB(255, 243, 243, 243),
+          backgroundColor: Constants.backgroundColor,
           width: Dimensions.sizedBoxWidth10 * 12,
-          progressColor: const Color(0XFFF8C300),
+          progressColor: Constants.tetiary,
           percent: value,
         )
       ],

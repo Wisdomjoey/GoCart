@@ -3,6 +3,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:timelines/timelines.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 
 class OrderStatusPage extends StatelessWidget {
   const OrderStatusPage({super.key});
@@ -32,7 +33,7 @@ class OrderStatusPage extends StatelessWidget {
                       indicatorTheme:
                           const IndicatorThemeData(size: 22, color: Colors.red),
                       connectorTheme: const ConnectorThemeData(
-                          color: Colors.grey, space: 5, thickness: 5)),
+                          color: Constants.grey, space: 5, thickness: 5)),
                   builder: TimelineTileBuilder.fromStyle(
                     indicatorStyle: IndicatorStyle.outlined,
                     endConnectorStyle: ConnectorStyle.dashedLine,

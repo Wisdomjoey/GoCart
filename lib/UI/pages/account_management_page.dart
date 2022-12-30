@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 import '../widgets/head_section_widget.dart';
 import '../widgets/list_tile_btn_widget.dart';
@@ -33,7 +34,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 weight: FontWeight.w500,
               ),
               Material(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 child: Column(
                   children: [
@@ -50,7 +51,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 weight: FontWeight.w500,
               ),
               Material(
-                color: Colors.white,
+                color: Constants.white,
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
                 child: Column(
                   children: [

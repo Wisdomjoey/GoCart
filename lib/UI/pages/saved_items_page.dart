@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/home_app_bar.dart';
+import '../constants/constants.dart';
 import '../utils/dimensions.dart';
 
 class SavedItemsPage extends StatelessWidget {
@@ -31,7 +32,8 @@ class SavedItemsPage extends StatelessWidget {
           Center(
             child: Text(
               'You don\'t have any saved items',
-              style: TextStyle(color: Colors.grey, fontSize: Dimensions.font16),
+              style:
+                  TextStyle(color: Constants.grey, fontSize: Dimensions.font16),
             ),
           ),
         ],

@@ -1,5 +1,7 @@
 import 'package:GOCart/UI/pages/account_management_page.dart';
 import 'package:GOCart/UI/pages/intro_page.dart';
+import 'package:GOCart/UI/pages/phone_auth_page.dart';
+import 'package:GOCart/UI/pages/phone_register_page.dart';
 import 'package:GOCart/UI/pages/settings_page.dart';
 import 'package:GOCart/UI/pages/shop_register_page.dart';
 import 'package:flutter/animation.dart';
@@ -45,6 +47,8 @@ class RouteHelper {
   static const String splashPage = '/splash';
   static const String registerPage = '/register';
   static const String shopRegisterPage = '/shop-register';
+  static const String phoneRegisterPage = '/phone-register';
+  static const String phoneAuthPage = '/phone-auth';
   static const String settingsPage = '/settings';
   static const String productListPage = '/product-list';
   static const String introPage = '/intro';
@@ -59,8 +63,10 @@ class RouteHelper {
   static getCategoriesPage() => const CategoriesPage();
   static String getDetailsPage() => detailsPage;
   static String getOrderStatusPage() => orderStatusPage;
+  static String getPhoneAuthPage() => phoneAuthPage;
   static String getProductListPage() => productListPage;
   static String getShopRegisterPage() => shopRegisterPage;
+  static String getPhoneRegisterPage() => phoneRegisterPage;
   static String getOrdersPage() => ordersPage;
   static String getSettingsPage() => settingsPage;
   static String getInboxPage() => inboxPage;
@@ -90,6 +96,12 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 300),
         name: ordersPage,
         page: () => const OrdersPage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
+        name: phoneAuthPage,
+        page: () => const PhoneAuthPage()),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -186,6 +198,12 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 300),
         name: registerPage,
         page: () => const RegisterPage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
+        name: phoneRegisterPage,
+        page: () => PhoneRegisterPage()),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,

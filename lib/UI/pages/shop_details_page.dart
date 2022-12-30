@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../components/search.dart';
+import '../constants/constants.dart';
 import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
 
@@ -78,7 +79,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                               Text(
                                 'Mr. Kola Shop',
                                 style: TextStyle(
-                                    color: const Color(0XFFF8C300),
+                                    color: Constants.tetiary,
                                     fontSize: Dimensions.font24,
                                     fontWeight: FontWeight.w500),
                               ),
@@ -121,7 +122,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                   // top: Dimensions.sizedBoxHeight10,
                                   left: Dimensions.sizedBoxWidth15),
                               decoration: BoxDecoration(
-                                  color: const Color(0XFFF8C300),
+                                  color: Constants.tetiary,
                                   border: Border.all(color: Colors.transparent),
                                   borderRadius: BorderRadius.circular(
                                       Dimensions.sizedBoxWidth4 * 2)),
@@ -129,7 +130,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                 child: Text(
                                   '3',
                                   style: TextStyle(
-                                      color: Colors.white,
+                                      color: Constants.white,
                                       fontSize: Dimensions.font11,
                                       fontWeight: FontWeight.w500),
                                 ),
@@ -158,7 +159,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                           decoration: const BoxDecoration(
                             border: Border(
                                 bottom: BorderSide(
-                                    color: Color.fromARGB(255, 225, 225, 225))),
+                                    color: Constants.white)),
                           ),
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(
@@ -185,7 +186,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                               border: Border(
                                   bottom: BorderSide(
                                       color:
-                                          Color.fromARGB(255, 225, 225, 225))),
+                                          Constants.white)),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
@@ -209,7 +210,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                               border: Border(
                                   bottom: BorderSide(
                                       color:
-                                          Color.fromARGB(255, 225, 225, 225))),
+                                          Constants.white)),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
@@ -285,7 +286,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                           child: Material(
                             borderRadius: BorderRadius.circular(
                                 Dimensions.sizedBoxWidth4),
-                            color: Colors.white,
+                            color: Constants.white,
                             child: InkWell(
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
@@ -352,7 +353,8 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                 FontWeight.w500,
                                                             fontSize: Dimensions
                                                                 .font12,
-                                                            color: Colors.grey),
+                                                            color:
+                                                                Constants.grey),
                                                       ),
                                                       SizedBox(
                                                         width: Dimensions
@@ -405,7 +407,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                               .location_on_outlined,
                                                           size:
                                                               Dimensions.font12,
-                                                          color: Colors.grey,
+                                                          color: Constants.grey,
                                                         ),
                                                         SizedBox(
                                                           width: Dimensions
@@ -450,7 +452,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                           Icons.storefront,
                                                           size:
                                                               Dimensions.font12,
-                                                          color: Colors.grey,
+                                                          color: Constants.grey,
                                                         ),
                                                         SizedBox(
                                                           width: Dimensions
@@ -467,8 +469,8 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                               fontSize:
                                                                   Dimensions
                                                                       .font12,
-                                                              color:
-                                                                  Colors.grey),
+                                                              color: Constants
+                                                                  .grey),
                                                         ),
                                                       ],
                                                     ),
@@ -543,7 +545,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
             vertical: Dimensions.sizedBoxHeight15),
         height: Dimensions.sizedBoxHeight10 * 27,
         decoration: BoxDecoration(
-            color: Colors.white,
+            color: Constants.white,
             borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -578,12 +580,12 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
               decoration: InputDecoration(
                 icon: Icon(
                   Icons.attach_money,
-                  color: Color(0XFFF8C300),
+                  color: Constants.tetiary,
                 ),
                 label: Text('Amount'),
                 errorText: 'Please enter at least \$ 10',
               ),
-              cursorColor: Color(0XFFF8C300),
+              cursorColor: Constants.tetiary,
             ),
             SizedBox(
               height: Dimensions.sizedBoxHeight15 * 2,

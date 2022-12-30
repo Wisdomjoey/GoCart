@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/widgets/box_chip_widget.dart';
 
+import '../constants/constants.dart';
 import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
 
@@ -38,7 +39,7 @@ class OrderItemBox extends StatelessWidget {
                 decoration: BoxDecoration(
                   borderRadius:
                       BorderRadius.circular(Dimensions.sizedBoxWidth4),
-                  color: Colors.white,
+                  color: Constants.white,
                 ),
                 child: Row(
                   children: [

@@ -1,6 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 
+import '../constants/constants.dart';
+
 class BottomNavigation extends StatefulWidget {
   const BottomNavigation({super.key});
 
@@ -18,7 +20,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
       key: _globalKey,
       index: 0,
       backgroundColor: Colors.transparent,
-      buttonBackgroundColor: Colors.green,
+      buttonBackgroundColor: Constants.primary,
       height: 60,
       items: [
         Column(children: const [
@@ -60,23 +62,23 @@ class _BottomNavigationState extends State<BottomNavigation> {
       items2: const [
         Icon(
           Icons.home,
-          color: Colors.white,
+          color: Constants.white,
         ),
         Icon(
           Icons.list_alt,
-          color: Colors.white,
+          color: Constants.white,
         ),
         Icon(
           Icons.shopping_cart,
-          color: Colors.white,
+          color: Constants.white,
         ),
         Icon(
           Icons.shop_2,
-          color: Colors.white,
+          color: Constants.white,
         ),
         Icon(
           Icons.person,
-          color: Colors.white,
+          color: Constants.white,
         ),
       ],
       onTap: (index) {

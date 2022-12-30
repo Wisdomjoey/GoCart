@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
+import '../constants/constants.dart';
 import '../routes/route_helper.dart';
 
 class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
@@ -74,16 +75,15 @@ class _HomeAppBarState extends State<HomeAppBar> {
                                 // top: Dimensions.sizedBoxHeight10,
                                 left: Dimensions.sizedBoxWidth15),
                             decoration: BoxDecoration(
-                                color: const Color(0XFFF8C300),
-                                border:
-                                    Border.all(color: const Color(0XFF00923F)),
+                                color: Constants.tetiary,
+                                border: Border.all(color: Constants.secondary),
                                 borderRadius: BorderRadius.circular(
                                     Dimensions.sizedBoxWidth4 * 2)),
                             child: Center(
                               child: Text(
                                 '3',
                                 style: TextStyle(
-                                    color: Colors.white,
+                                    color: Constants.white,
                                     fontSize: Dimensions.font11,
                                     fontWeight: FontWeight.w500),
                               ),
@@ -200,9 +200,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
               ))
             : const Text('')
       ],
-      backgroundColor: const Color(0XFF00923F),
+      backgroundColor: Constants.secondary,
       systemOverlayStyle: const SystemUiOverlayStyle(
-          statusBarColor: Color(0XFF00923F),
+          statusBarColor: Constants.secondary,
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light),
     );
