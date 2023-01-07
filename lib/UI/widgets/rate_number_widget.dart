@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:percent_indicator/linear_percent_indicator.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class RateNumber extends StatelessWidget {
   final String rateNo;

@@ -5,7 +5,7 @@ import 'package:bouncing_widget/bouncing_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class ShopPage extends StatefulWidget {

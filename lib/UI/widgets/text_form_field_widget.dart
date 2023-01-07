@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class TextFormFieldWidget extends StatefulWidget {
@@ -51,7 +51,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
       } else {
         if (widget.controller!.text == '') {
           setState(() {
-            err = 'Field cannot be empty';
+            err = Constants.err;
             bt = null;
           });
         } else {
@@ -97,7 +97,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
             setState(() {
               bt = null;
             });
-            return 'Field cannot be empty';
+            return Constants.err;
           } else {
             if (err != null) {
               setState(() {
@@ -121,7 +121,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
             widget.node?.nextFocus();
           } else {
             setState(() {
-              err = 'Field cannot be empty';
+              err = Constants.err;
               bt = null;
             });
           }

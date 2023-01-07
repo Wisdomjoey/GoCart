@@ -1,7 +1,9 @@
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:provider/provider.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class CategoryList extends StatelessWidget {
   final int index;

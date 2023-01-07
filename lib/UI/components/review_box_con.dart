@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class ReviewBoxCon extends StatelessWidget {
   final String date;

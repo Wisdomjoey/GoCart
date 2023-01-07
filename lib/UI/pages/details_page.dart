@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class DetailsPage extends StatefulWidget {
   const DetailsPage({super.key});

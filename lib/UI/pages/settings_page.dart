@@ -3,7 +3,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:flutter/material.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../widgets/list_tile_btn_widget.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -151,7 +151,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _showDialog(context) {
+  Widget _showDialog(BuildContext context) {
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth15 * 2),
@@ -182,6 +182,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           setState(() {
                             _gValue = value;
                           });
+                          Navigator.pop(context);
                         })),
                     Text(
                       'System',
@@ -203,6 +204,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           setState(() {
                             _gValue = value;
                           });
+                          Navigator.pop(context);
                         })),
                     Text(
                       'Light',
@@ -218,12 +220,13 @@ class _SettingsPageState extends State<SettingsPage> {
                         // toggleable: true,
                         visualDensity:
                             const VisualDensity(vertical: -1, horizontal: -3),
-                        value: 1,
+                        value: 2,
                         groupValue: _gValue,
                         onChanged: ((dynamic value) {
                           setState(() {
                             _gValue = value;
                           });
+                          Navigator.pop(context);
                         })),
                     Text(
                       'Dark',

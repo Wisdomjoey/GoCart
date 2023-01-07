@@ -7,7 +7,7 @@ import 'package:GOCart/UI/components/custom_painter.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../widgets/text_form_field_widget.dart';
 
 class LoginPage extends StatefulWidget {

@@ -5,7 +5,7 @@ import 'package:GOCart/UI/widgets/list_tile_btn_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -29,6 +29,15 @@ class AccountPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
                 children: [
+                  ListTileBtn(
+                    title: 'Dashboard',
+                    leading: Icon(
+                      Icons.dashboard_outlined,
+                      size: Dimensions.font20 + 2,
+                    ),
+                    textSize: Dimensions.font14,
+                    page: RouteHelper.getDashboardPage(),
+                  ),
                   ListTileBtn(
                     title: 'Orders',
                     leading: Icon(

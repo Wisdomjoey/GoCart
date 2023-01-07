@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class CurvedPainter extends StatelessWidget with PreferredSizeWidget {

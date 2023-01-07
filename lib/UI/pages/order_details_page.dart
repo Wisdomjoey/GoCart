@@ -8,7 +8,7 @@ import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
 import '../components/home_app_bar.dart';
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../routes/route_helper.dart';
 
 class OrderDetailsPage extends StatefulWidget {

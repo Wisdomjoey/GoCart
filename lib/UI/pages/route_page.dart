@@ -6,7 +6,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/navigation_icon_widget.dart';
 
 import '../components/home_app_bar.dart';
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class RoutePage extends StatefulWidget {
   final int pageId;
@@ -29,6 +29,33 @@ class _RoutePageState extends State<RoutePage> {
               image: AssetImage('assets/images/GoCart  sample4.png'))),
     ),
   );
+  List<PreferredSizeWidget> page1 = [
+    HomeAppBar(
+      logo: Container(
+        width: Dimensions.sizedBoxWidth10 * 9,
+        height: Dimensions.sizedBoxHeight100 / 2,
+        decoration: const BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage('assets/images/GoCart  sample4.png'))),
+      ),
+    ),
+    HomeAppBar(
+      title: 'Category',
+      textSize: Dimensions.font24,
+      icon: const Icon(Icons.list_alt_outlined),
+    ),
+    HomeAppBar(
+      title: 'Cart',
+      textSize: Dimensions.font24,
+      icon: const Icon(Icons.shopping_cart_outlined),
+    ),
+    HomeAppBar(
+      title: 'Shops',
+      textSize: Dimensions.font24,
+      icon: const Icon(Icons.store_outlined),
+    ),
+    AccountAppBar()
+  ];
   final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
 
   final List<dynamic> _pages = [
@@ -43,7 +70,7 @@ class _RoutePageState extends State<RoutePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar:
-          _allowPageId ? (widget.pageId == 4 ? AccountAppBar() : page) : page,
+          _allowPageId ? (widget.pageId == 4 ? AccountAppBar() : page1[widget.pageId]) : page,
       body: _pages[_allowPageId ? widget.pageId : _activePage],
       // extendBody: true,
       bottomNavigationBar: CurvedNavigationBar(

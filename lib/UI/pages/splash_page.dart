@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});

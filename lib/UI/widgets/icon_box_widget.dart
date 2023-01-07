@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class IconBox extends StatelessWidget {
   final Color borderColor;

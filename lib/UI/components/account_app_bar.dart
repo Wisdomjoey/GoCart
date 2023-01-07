@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class AccountAppBar extends StatefulWidget with PreferredSizeWidget {
   AccountAppBar({super.key});

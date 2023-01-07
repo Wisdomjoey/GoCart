@@ -6,7 +6,7 @@ import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class IntroPage extends StatelessWidget {
   const IntroPage({super.key});

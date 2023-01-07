@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/category_list.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class CategoriesPage extends StatefulWidget {
   const CategoriesPage({super.key});
@@ -13,7 +13,7 @@ class CategoriesPage extends StatefulWidget {
 
 class _CategoriesPageState extends State<CategoriesPage> {
   int data = 0;
-  List<bool> selected = List.generate(10, (index) => false);
+  List<bool> selected = List.generate(Constants.categories.length, (index) => false);
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +24,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
           decoration: const BoxDecoration(color: Colors.transparent),
           child: ListView.builder(
             addAutomaticKeepAlives: false,
-            itemCount: 10,
+            itemCount: Constants.categories.length,
             itemBuilder: (context, index) {
               return Container(
                 decoration: data == index
@@ -42,7 +42,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       horizontal: Dimensions.sizedBoxWidth10),
                   title: Center(
                     child: Text(
-                      'Category$index',
+                      Constants.categories[index],
                       style: TextStyle(fontSize: Dimensions.font13),
                       textAlign: TextAlign.center,
                     ),

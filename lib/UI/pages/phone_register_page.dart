@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_multi_formatter/flutter_multi_formatter.dart';
 import 'package:get/get.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
 
@@ -77,7 +77,7 @@ class PhoneRegisterPage extends StatelessWidget {
                               child: TextFormField(
                                 validator: (value) {
                                   if (value == '') {
-                                    return 'Field cannot be empty';
+                                    return Constants.err;
                                   } else {
                                     return null;
                                   }

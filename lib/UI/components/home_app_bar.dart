@@ -1,10 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../routes/route_helper.dart';
 
 class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
@@ -13,7 +15,7 @@ class HomeAppBar extends StatefulWidget with PreferredSizeWidget {
   final bool showCart;
   final String? title;
   final Widget? logo;
-  final Icon? icon;
+  final Widget? icon;
   final double? textSize;
 
   HomeAppBar(

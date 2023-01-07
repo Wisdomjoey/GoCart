@@ -8,7 +8,7 @@ import 'package:get/get.dart';
 import 'package:GOCart/UI/components/custom_painter.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class RegisterPage extends StatefulWidget {

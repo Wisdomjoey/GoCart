@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class DetailsBottomNav extends StatelessWidget {
   final Widget? leading;

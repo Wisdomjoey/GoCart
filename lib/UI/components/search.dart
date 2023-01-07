@@ -1,8 +1,8 @@
-import 'dart:async';
-
+import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/UI/routes/route_helper.dart';
+import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:GOCart/UI/routes/route_helper.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -19,93 +19,155 @@ class _SearchState extends State<Search> {
       splashRadius: 24,
       tooltip: 'Search',
       onPressed: () {
-        showSearch(context: context, delegate: _MySearchDelegate());
+        Navigator.of(context).push(
+            MaterialPageRoute(builder: ((context) => _MySearchDelegate())));
       },
     );
   }
 }
 
-class _MySearchDelegate extends SearchDelegate {
-  List<String> terms = ['jay', 'boy', 'Joe', 'John', 'Dan'];
+class _MySearchDelegate extends StatefulWidget {
+  @override
+  State<_MySearchDelegate> createState() => _MySearchDelegateState();
+}
+
+class _MySearchDelegateState extends State<_MySearchDelegate> {
+  late TextEditingController textEditingController;
+
+  List<String> suggestions = [];
 
   @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
-      IconButton(
-        onPressed: () {
-          query = '';
-        },
-        icon: const Icon(Icons.clear),
-      )
-    ];
+  void initState() {
+    textEditingController = TextEditingController();
+
+    super.initState();
   }
 
   @override
-  Widget? buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, '');
-      },
-    );
+  void dispose() {
+    textEditingController.dispose();
+
+    super.dispose();
   }
 
   @override
-  Widget buildResults(BuildContext context) {
-    // List<String> matchQuery = [];
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Column(
+          children: [
+            Container(
+              margin: EdgeInsets.only(
+                  left: Dimensions.sizedBoxWidth10,
+                  right: Dimensions.sizedBoxWidth10,
+                  top: Dimensions.sizedBoxWidth10),
+              child: Material(
+                color: Constants.white,
+                shape: RoundedRectangleBorder(
+                    borderRadius:
+                        BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
+                elevation: 5,
+                child: InkWell(
+                  child: Ink(
+                    width: double.maxFinite,
+                    height: Dimensions.sizedBoxHeight10 * 5.5,
+                    decoration: BoxDecoration(
+                        color: Constants.white,
+                        borderRadius: BorderRadius.circular(
+                            Dimensions.sizedBoxWidth10 / 2)),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        IconButton(
+                            onPressed: (() => Navigator.pop(context)),
+                            splashRadius: 30,
+                            icon: const Icon(
+                              Icons.arrow_back,
+                              color: Constants.grey,
+                            )),
+                        Expanded(
+                          child: TextFormField(
+                            controller: textEditingController,
+                            onChanged: (value) {
+                              setState(() {
+                                suggestions.clear();
+                              });
 
-    // for (var element in terms) {
-    //   if (element.toLowerCase().contains(query.toLowerCase())) {
-    //     matchQuery.add(element);
-    //   }
-    // }
-
-    // return ListView.builder(
-    //   itemCount: matchQuery.length,
-    //   itemBuilder: (context, index) {
-    //     var result = matchQuery[index];
-
-    //     return ListTile(
-    //       title: Text(result),
-    //       visualDensity: const VisualDensity(vertical: -2),
-    //       shape: const Border(bottom: BorderSide(color: Constants.grey)),
-    //       onTap: () => query = result,
-    //     );
-    //   },
-    // );
-    // Timer(const Duration(milliseconds: 100), (() {
-    // Get.toNamed(RouteHelper.getProductListPage());
-    print('added');
-    // }));
-    return const Text('added');
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    List<String> matchQuery = [];
-
-    for (var element in terms) {
-      if (element.toLowerCase().contains(query.toLowerCase())) {
-        matchQuery.add(element);
-      }
-    }
-
-    return ListView.builder(
-      itemCount: matchQuery.length,
-      itemBuilder: (context, index) {
-        var result = matchQuery[index];
-
-        return ListTile(
-          title: Text(result),
-          visualDensity: const VisualDensity(vertical: -2),
-          shape: const Border(
-              bottom: BorderSide(color: Color.fromARGB(255, 203, 203, 203))),
-          onTap: () {
-            // query = result;
-            Get.offNamed(RouteHelper.getProductListPage());
-          },
-        );
-      },
+                              if (value != '') {
+                                for (var element in Constants.suggestions) {
+                                  if (element.toLowerCase().contains(value)) {
+                                    setState(() {
+                                      suggestions.add(element);
+                                    });
+                                  }
+                                }
+                              }
+                            },
+                            onEditingComplete: (() {
+                              if (textEditingController.text != '') {
+                                Get.toNamed(RouteHelper.getProductListPage(), arguments: textEditingController.text);
+                              }
+                            }),
+                            autofocus: true,
+                            decoration: const InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide.none)),
+                          ),
+                        ),
+                        IconButton(
+                            onPressed: (() {
+                              textEditingController.clear();
+                            }),
+                            splashRadius: 30,
+                            icon: const Icon(
+                              Icons.close,
+                              color: Constants.grey,
+                            )),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: suggestions.map((e) {
+                    return GestureDetector(
+                      onTap: () {
+                        Get.offNamed(RouteHelper.getProductListPage(), arguments: e);
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        width: double.maxFinite,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: Dimensions.sizedBoxHeight10 / 2,
+                              width: double.maxFinite,
+                            ),
+                            Text(e),
+                            SizedBox(
+                              height: Dimensions.sizedBoxHeight10 / 2,
+                              width: double.maxFinite,
+                            ),
+                            const Divider(
+                              color: Constants.grey,
+                            )
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 }

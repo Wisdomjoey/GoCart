@@ -1,7 +1,7 @@
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   const PhoneAuthPage({super.key});

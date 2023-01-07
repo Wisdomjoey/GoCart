@@ -1,7 +1,11 @@
 import 'package:GOCart/UI/pages/account_management_page.dart';
+import 'package:GOCart/UI/pages/dashboard/add_product_page.dart';
+import 'package:GOCart/UI/pages/dashboard/edit_product_page.dart';
+import 'package:GOCart/UI/pages/dashboard/manage_shop_page.dart';
 import 'package:GOCart/UI/pages/intro_page.dart';
 import 'package:GOCart/UI/pages/phone_auth_page.dart';
 import 'package:GOCart/UI/pages/phone_register_page.dart';
+import 'package:GOCart/UI/pages/dashboard/seller_dasboard.dart';
 import 'package:GOCart/UI/pages/settings_page.dart';
 import 'package:GOCart/UI/pages/shop_register_page.dart';
 import 'package:flutter/animation.dart';
@@ -47,14 +51,18 @@ class RouteHelper {
   static const String splashPage = '/splash';
   static const String registerPage = '/register';
   static const String shopRegisterPage = '/shop-register';
+  static const String manageShopPage = '/manage-shop';
   static const String phoneRegisterPage = '/phone-register';
   static const String phoneAuthPage = '/phone-auth';
   static const String settingsPage = '/settings';
   static const String productListPage = '/product-list';
+  static const String addProductPage = '/add-product';
+  static const String editProductPage = '/edit-product';
   static const String introPage = '/intro';
+  static const String dashboardPage = '/dashboard';
 
-  static String getInitial() => initial;
   static getCartPage() => const CartPage();
+  static String getInitial() => initial;
   static getShopPage() => const ShopPage();
   static getShopDetailsPage() => shopDetailsPage;
   static getHomePage() => const HomePage();
@@ -65,10 +73,12 @@ class RouteHelper {
   static String getOrderStatusPage() => orderStatusPage;
   static String getPhoneAuthPage() => phoneAuthPage;
   static String getProductListPage() => productListPage;
+
   static String getShopRegisterPage() => shopRegisterPage;
   static String getPhoneRegisterPage() => phoneRegisterPage;
   static String getOrdersPage() => ordersPage;
   static String getSettingsPage() => settingsPage;
+  static String getManageShopPage() => manageShopPage;
   static String getInboxPage() => inboxPage;
   static String getOrderDetailsPage(String state, String text) =>
       '$orderDetailsPage?state=$state&text=$text';
@@ -81,6 +91,9 @@ class RouteHelper {
   static String getRegisterPage() => registerPage;
   static String getLoginPage() => loginPage;
   static String getSplashPage() => splashPage;
+  static String getDashboardPage() => dashboardPage;
+  static String getAddProductPage() => addProductPage;
+  static String getEditProductPage() => editProductPage;
   static String getRoutePage(int pageId) => '$routePage?pageId=$pageId';
 
   static List<GetPage> routes = [
@@ -94,8 +107,32 @@ class RouteHelper {
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
+        name: dashboardPage,
+        page: () => const SellerDashboard()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
         name: ordersPage,
         page: () => const OrdersPage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
+        name: addProductPage,
+        page: () => const AddProductPage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
+        name: manageShopPage,
+        page: () => const ManageShopPage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
+        name: editProductPage,
+        page: () => const EditProductPage()),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -143,7 +180,14 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: productListPage,
-        page: () => const ProductListPage()),
+        page: () {
+        //   String? title = Get.parameters['title'];
+          String? title = Get.arguments;
+
+          return ProductListPage(
+            title: title!,
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,

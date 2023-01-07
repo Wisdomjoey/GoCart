@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class BoxChip extends StatelessWidget {

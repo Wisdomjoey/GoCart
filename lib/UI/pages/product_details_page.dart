@@ -10,7 +10,7 @@ import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   const ProductDetailsPage({super.key});
@@ -45,14 +45,15 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                   autoPlay: true,
                   autoPlayInterval: const Duration(seconds: 7),
                   autoPlayAnimationDuration: const Duration(milliseconds: 800),
-                  viewportFraction: 1,
+                  viewportFraction: 0.8,
                   enableInfiniteScroll: false,
                   scrollDirection: Axis.horizontal,
+                  padEnds: false,
                   initialPage: 0,
                 ),
                 itemCount: 5,
                 itemBuilder: (context, index, realIndex) {
-                  return _buildPageItem();
+                  return _buildPageItem(index);
                 },
               ),
             ),
@@ -411,16 +412,57 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     );
   }
 
-  Widget _buildPageItem() {
+  Widget _buildPageItem(int index) {
     return Container(
-      width: double.maxFinite,
-      height: double.maxFinite,
       margin: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-      decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(Dimensions.font25 / 5),
-          color: Constants.white,
-          image: const DecorationImage(
-              image: AssetImage('assets/images/emptyCart.png'))),
+      child: InkWell(
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: ((context) => Scaffold(
+                    body: Container(
+                      width: double.maxFinite,
+                      height: double.maxFinite,
+                      padding: EdgeInsets.symmetric(vertical: Dimensions.sizedBoxHeight100 / 2),
+                      child: Stack(
+                        alignment: Alignment.topRight,
+                        children: [
+                          InteractiveViewer(
+                            child: SizedBox(
+                              width: double.maxFinite,
+                              height: double.maxFinite,
+                              child: Hero(
+                                  tag: 'preview$index',
+                                  child:
+                                      Image.asset('assets/images/emptyCart.png')),
+                            ),
+                          ),
+                          IconButton(
+                              onPressed: (() => Navigator.of(context).pop()),
+                              icon: Icon(
+                                Icons.close,
+                                size: Dimensions.sizedBoxWidth15 * 2,
+                              )),
+                        ],
+                      ),
+                    ),
+                  ))));
+        },
+        child: Ink(
+          width: double.maxFinite,
+          height: double.maxFinite,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(Dimensions.font25 / 5),
+            color: Constants.white,
+            // image: const DecorationImage(
+            //     image: AssetImage('assets/images/emptyCart.png'),
+            //     fit: BoxFit.contain)
+          ),
+          child: Hero(
+            tag: 'preview$index',
+            child: Image.asset('assets/images/emptyCart.png'),
+          ),
+        ),
+      ),
     );
   }
 
@@ -429,15 +471,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
       child: Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: Dimensions.sizedBoxWidth10 * 2,
-            vertical: Dimensions.sizedBoxHeight15),
-        height: Dimensions.sizedBoxHeight230,
+        padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 * 2),
+        // height: Dimensions.sizedBoxHeight230,
         decoration: BoxDecoration(
             color: Constants.white,
             borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

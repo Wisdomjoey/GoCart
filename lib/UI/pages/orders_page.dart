@@ -3,7 +3,7 @@ import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/components/order_item_box.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});

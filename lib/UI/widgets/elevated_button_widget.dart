@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class ElevatedBtn extends StatelessWidget {
   final String text;
   final Color? textColor;
+  final Color? bgColor;
   final bool isElevated;
   final bool addBorder;
+  final bool disabled;
   final Icon? icon;
   final double? radius;
   final double? visualVD;
@@ -21,17 +23,18 @@ class ElevatedBtn extends StatelessWidget {
       this.textColor,
       this.isElevated = true,
       this.addBorder = false,
+      this.disabled = false,
       this.radius,
       this.pressed,
       this.visualVD,
-      this.visualHD});
+      this.visualHD, this.bgColor});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: pressed ?? () {},
+      onPressed: disabled ? null : (pressed ?? () {}),
       style: ElevatedButton.styleFrom(
-          backgroundColor: addBorder ? Colors.transparent : Constants.tetiary,
+          backgroundColor: addBorder ? Colors.transparent : (bgColor ?? Constants.tetiary),
           shadowColor: isElevated ? Colors.black : Colors.transparent,
           visualDensity: VisualDensity(
             vertical: visualVD ?? 0,

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../components/home_app_bar.dart';
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class RecentlySearchedPage extends StatelessWidget {

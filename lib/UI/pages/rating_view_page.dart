@@ -7,7 +7,7 @@ import 'package:GOCart/UI/widgets/rate_number_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class RatingViewPage extends StatelessWidget {
   const RatingViewPage({super.key});

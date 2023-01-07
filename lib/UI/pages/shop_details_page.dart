@@ -9,7 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../components/search.dart';
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
 
@@ -21,6 +21,8 @@ class ShopDetailsPage extends StatefulWidget {
 }
 
 class _ShopDetailsPageState extends State<ShopDetailsPage> {
+  GlobalKey<FormState> key = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -158,8 +160,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                               EdgeInsets.only(left: Dimensions.sizedBoxWidth15),
                           decoration: const BoxDecoration(
                             border: Border(
-                                bottom: BorderSide(
-                                    color: Constants.white)),
+                                bottom: BorderSide(color: Color.fromARGB(255, 225, 225, 225))),
                           ),
                           child: ListTile(
                             contentPadding: const EdgeInsets.symmetric(
@@ -184,9 +185,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                 left: Dimensions.sizedBoxWidth15),
                             decoration: const BoxDecoration(
                               border: Border(
-                                  bottom: BorderSide(
-                                      color:
-                                          Constants.white)),
+                                  bottom: BorderSide(color: Color.fromARGB(255, 225, 225, 225))),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
@@ -208,9 +207,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                 left: Dimensions.sizedBoxWidth15),
                             decoration: const BoxDecoration(
                               border: Border(
-                                  bottom: BorderSide(
-                                      color:
-                                          Constants.white)),
+                                  bottom: BorderSide(color: Color.fromARGB(255, 225, 225, 225))),
                             ),
                             child: ListTile(
                               contentPadding: const EdgeInsets.symmetric(
@@ -260,7 +257,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: Dimensions.sizedBoxHeight15 * 2,
+                      height: Dimensions.sizedBoxHeight10 * 2,
                     ),
                     Text(
                       'FOOD',
@@ -501,7 +498,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                   ],
                 ),
                 SizedBox(
-                  height: Dimensions.sizedBoxHeight15 * 2,
+                  height: Dimensions.sizedBoxHeight10 * 2,
                 ),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -547,57 +544,79 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
         decoration: BoxDecoration(
             color: Constants.white,
             borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Food Cart',
-                  style: TextStyle(
-                      fontWeight: FontWeight.w500, fontSize: Dimensions.font18),
-                ),
-                GestureDetector(
-                  child: const Icon(Icons.close),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ),
-            SizedBox(
-              height: Dimensions.sizedBoxHeight10 * 2,
-            ),
-            const Text(
-                'Do you want to add this item to your food cart? If so enter the amount you would love to purchase'),
-            SizedBox(
-              height: Dimensions.sizedBoxHeight10,
-            ),
-            const TextField(
-              keyboardType: TextInputType.number,
-              autofocus: true,
-              decoration: InputDecoration(
-                icon: Icon(
-                  Icons.attach_money,
-                  color: Constants.tetiary,
-                ),
-                label: Text('Amount'),
-                errorText: 'Please enter at least \$ 10',
+        child: Form(
+          key: key,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Food Cart',
+                    style: TextStyle(
+                        fontWeight: FontWeight.w500,
+                        fontSize: Dimensions.font18),
+                  ),
+                  GestureDetector(
+                    child: const Icon(Icons.close),
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                  )
+                ],
               ),
-              cursorColor: Constants.tetiary,
-            ),
-            SizedBox(
-              height: Dimensions.sizedBoxHeight15 * 2,
-            ),
-            SizedBox(
-                width: double.maxFinite,
-                height: Dimensions.sizedBoxHeight100 / 2,
-                child: const ElevatedBtn(
-                  text: 'ADD TO FOOD CART',
-                  icon: Icon(Icons.add_shopping_cart_outlined),
-                ))
-          ],
+              SizedBox(
+                height: Dimensions.sizedBoxHeight10 * 2,
+              ),
+              const Text(
+                  'Do you want to add this item to your food cart? If so enter the amount you would love to purchase'),
+              SizedBox(
+                height: Dimensions.sizedBoxHeight10,
+              ),
+              TextFormField(
+                keyboardType: TextInputType.number,
+                autofocus: true,
+                validator: (value) {
+                  if (value == '') {
+                    return Constants.err;
+                  } else {
+                    if (RegExp(r'^[0-9]*$').hasMatch(value!)) {
+                      if (int.parse(value) < 10) {
+                        return 'Please enter at least \$ 10';
+                      }
+                    } else {
+                      return 'Invalid amount!';
+                    }
+                  }
+
+                  return null;
+                },
+                decoration: const InputDecoration(
+                  icon: Icon(
+                    Icons.attach_money,
+                    color: Constants.tetiary,
+                  ),
+                  labelText: 'Amount',
+                  helperText: 'Please enter at least \$ 10',
+                ),
+                cursorColor: Constants.tetiary,
+              ),
+              SizedBox(
+                height: Dimensions.sizedBoxHeight15 * 2,
+              ),
+              SizedBox(
+                  width: double.maxFinite,
+                  height: Dimensions.sizedBoxHeight100 / 2,
+                  child: ElevatedBtn(
+                    text: 'ADD TO FOOD CART',
+                    icon: const Icon(Icons.add_shopping_cart_outlined),
+                    pressed: () {
+                      if (key.currentState!.validate()) {}
+                    },
+                  ))
+            ],
+          ),
         ),
       ),
     );

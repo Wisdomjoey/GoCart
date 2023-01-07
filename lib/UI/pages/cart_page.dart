@@ -9,7 +9,7 @@ import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class CartPage extends StatefulWidget {

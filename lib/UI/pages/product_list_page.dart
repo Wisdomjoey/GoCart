@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/container.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/components/product_box.dart';
 
 import '../utils/dimensions.dart';
 
 class ProductListPage extends StatefulWidget {
-  const ProductListPage({super.key});
+  final String title;
+
+  const ProductListPage({super.key, required this.title});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
@@ -21,13 +21,13 @@ class _ProductListPageState extends State<ProductListPage> {
         implyLeading: true,
         showCart: true,
         showPopUp: true,
-        textSize: Dimensions.font24,
-        title: '',
+        textSize: Dimensions.font23,
+        title: widget.title,
       ),
       body: SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
-          child: ProductBox(),
+          child: const ProductBox(),
         ),
       ),
     );

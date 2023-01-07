@@ -3,7 +3,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:timelines/timelines.dart';
 
 import '../components/home_app_bar.dart';
-import '../constants/constants.dart';
+import '../../CONSTANTS/constants.dart';
 
 class OrderStatusPage extends StatelessWidget {
   const OrderStatusPage({super.key});
