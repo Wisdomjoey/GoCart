@@ -5,17 +5,13 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 
 import '../../CONSTANTS/constants.dart';
 
-class AccountAppBar extends StatefulWidget with PreferredSizeWidget {
-  AccountAppBar({super.key});
+class AccountAppBar extends StatelessWidget with PreferredSizeWidget {
+  final String firstname;
+  final String lastname;
+  final String email;
+  
+  AccountAppBar({super.key, required this.firstname, required this.lastname, required this.email});
 
-  @override
-  State<AccountAppBar> createState() => _AccountAppBarState();
-
-  @override
-  Size get preferredSize => Size.fromHeight(Dimensions.sizedBoxHeight125);
-}
-
-class _AccountAppBarState extends State<AccountAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
@@ -33,7 +29,7 @@ class _AccountAppBarState extends State<AccountAppBar> {
           statusBarBrightness: Brightness.light,
           statusBarIconBrightness: Brightness.light),
       bottom: PreferredSize(
-        preferredSize: widget.preferredSize,
+        preferredSize: preferredSize,
         // child: Expanded(
         child: Container(
           width: double.maxFinite,
@@ -43,15 +39,15 @@ class _AccountAppBarState extends State<AccountAppBar> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Jonathan Wisdom',
+                '${lastname[0].toUpperCase() + lastname.substring(1)} ${firstname[0].toUpperCase() + firstname.substring(1)}',
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: Dimensions.font23,
                     color: Constants.tetiary),
               ),
               SizedBox(height: Dimensions.sizedBoxHeight10 / 2),
-              const Text('example@gmail.com',
-                  style: TextStyle(color: Color.fromARGB(255, 233, 233, 233))),
+              Text(email,
+                  style: const TextStyle(color: Color.fromARGB(255, 233, 233, 233))),
             ],
           ),
         ),
@@ -59,4 +55,7 @@ class _AccountAppBarState extends State<AccountAppBar> {
       ),
     );
   }
+
+  @override
+  Size get preferredSize => Size.fromHeight(Dimensions.sizedBoxHeight125);
 }

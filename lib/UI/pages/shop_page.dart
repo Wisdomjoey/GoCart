@@ -1,9 +1,8 @@
-import 'dart:ffi';
-
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
-import 'package:bouncing_widget/bouncing_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
@@ -21,7 +20,7 @@ class _ShopPageState extends State<ShopPage> {
 
   @override
   Widget build(BuildContext context) {
-    return isEmpty
+    return Provider.of<ShopProvider>(context).shops.isEmpty
         ? Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -43,7 +42,7 @@ class _ShopPageState extends State<ShopPage> {
             ],
           )
         : ListView.builder(
-            itemCount: 10,
+            itemCount: Provider.of<ShopProvider>(context).shops.length,
             itemBuilder: ((context, index) {
               return Container(
                 padding: EdgeInsets.all(Dimensions.sizedBoxWidth15),
@@ -67,8 +66,10 @@ class _ShopPageState extends State<ShopPage> {
                           Ink(
                             height: Dimensions.sizedBoxHeight10 * 17,
                             decoration: BoxDecoration(
-                              image: const DecorationImage(
-                                  image: AssetImage('assets/images/med.gif'),
+                              image: DecorationImage(
+                                  image: NetworkImage(
+                                      Provider.of<ShopProvider>(context)
+                                          .shops[index][Constants.imgUrls][0]),
                                   fit: BoxFit.cover),
                               borderRadius: BorderRadius.circular(
                                   Dimensions.sizedBoxWidth10),
@@ -124,7 +125,8 @@ class _ShopPageState extends State<ShopPage> {
                                           MainAxisAlignment.center,
                                       children: [
                                         Text(
-                                          'Mr. Kola Shop',
+                                          Provider.of<ShopProvider>(context)
+                                              .shops[index][Constants.shopName],
                                           style: TextStyle(
                                               color: Constants.white,
                                               fontSize: Dimensions.font18,
@@ -151,7 +153,10 @@ class _ShopPageState extends State<ShopPage> {
                         ],
                       ),
                     ),
-                    onTap: () => Get.toNamed(RouteHelper.getShopDetailsPage()),
+                    onTap: () => Get.toNamed(RouteHelper.getShopDetailsPage(),
+                        arguments:
+                            Provider.of<ShopProvider>(context, listen: false)
+                                .shops[index][Constants.uid]),
                   ),
                 ),
               );

@@ -14,6 +14,7 @@ class TxtButton extends StatelessWidget {
   final double? pad;
   final String text;
   final bool addHPad;
+  final VoidCallback? pressed;
 
   const TxtButton(
       {super.key,
@@ -26,7 +27,7 @@ class TxtButton extends StatelessWidget {
       this.pad,
       this.bgColor,
       this.borderColor,
-      this.textSize});
+      this.textSize, this.pressed});
 
   @override
   Widget build(BuildContext context) {
@@ -50,9 +51,7 @@ class TxtButton extends StatelessWidget {
                       borderRadius:
                           BorderRadius.circular(Dimensions.sizedBoxWidth4)),
               shadowColor: Colors.transparent),
-          onPressed: () {
-            // Get.to(OrderStatusPage());
-          },
+          onPressed: pressed ?? () {},
           child: Text(text,
               style: TextStyle(
                   fontSize: textSize ?? Dimensions.font14,

@@ -1,3 +1,4 @@
+import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../components/home_app_bar.dart';
@@ -39,6 +40,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 child: Column(
                   children: [
                     ListTileBtn(
+                      page: RouteHelper.getProfilePage(),
                         title: 'Basic Details', textSize: Dimensions.font14),
                     ListTileBtn(
                         title: 'Edit Phone Number',

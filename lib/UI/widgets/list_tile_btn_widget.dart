@@ -18,6 +18,8 @@ class ListTileBtn extends StatelessWidget {
   final String? page;
   final bool showTrailing;
   final bool selected;
+  final dynamic args;
+
   const ListTileBtn(
       {super.key,
       this.visualD = -1,
@@ -29,7 +31,10 @@ class ListTileBtn extends StatelessWidget {
       this.child,
       this.showTrailing = true,
       this.trailing,
-      this.onTap, this.hr, this.textColor, this.selected = false});
+      this.onTap,
+      this.hr,
+      this.textColor,
+      this.selected = false, this.args});
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,8 @@ class ListTileBtn extends StatelessWidget {
       title: child ??
           Text(
             title!,
-            style: TextStyle(fontSize: textSize, fontWeight: weight, color: textColor),
+            style: TextStyle(
+                fontSize: textSize, fontWeight: weight, color: textColor),
           ),
       trailing: showTrailing
           ? (trailing ??
@@ -56,7 +62,7 @@ class ListTileBtn extends StatelessWidget {
       onTap: page != null
           ? () {
               Timer(
-                  const Duration(milliseconds: 200), () => Get.toNamed(page!));
+                  const Duration(milliseconds: 200), () => Get.toNamed(page!, arguments: args));
             }
           : onTap,
     );

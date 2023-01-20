@@ -4,14 +4,13 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 
 import '../../CONSTANTS/constants.dart';
 
-class DetailsPage extends StatefulWidget {
-  const DetailsPage({super.key});
+class DetailsPage extends StatelessWidget {
+  final String description;
+  final List features;
+  final List specifications;
+  
+  const DetailsPage({super.key, required this.description, required this.features, required this.specifications});
 
-  @override
-  State<DetailsPage> createState() => _DetailsPageState();
-}
-
-class _DetailsPageState extends State<DetailsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,7 +41,7 @@ class _DetailsPageState extends State<DetailsPage> {
                     height: Dimensions.sizedBoxHeight10,
                   ),
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ducimus deserunt cumque doloremque sequi facilis, ipsum quae atque vero repellat molestiae ipsam delectus ratione pariatur totam officia minima animi accusantium veritatis.',
+                    description,
                     style: TextStyle(fontSize: Dimensions.font12),
                   ),
                 ],
@@ -68,9 +67,9 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [1, 2, 3, 4, 5]
+                    children: features
                         .map((e) => Text(
-                              '- Test',
+                              '- $e',
                               style: TextStyle(fontSize: Dimensions.font12),
                             ))
                         .toList(),
@@ -98,27 +97,14 @@ class _DetailsPageState extends State<DetailsPage> {
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [1, 2, 3, 4, 5]
+                    children: specifications
                         .map((e) => (Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Row(
-                                  children: [
-                                    Text(
-                                      'H23:',
-                                      style: TextStyle(
-                                          fontSize: Dimensions.font12,
-                                          fontWeight: FontWeight.w500),
-                                    ),
-                                    SizedBox(
-                                      width: Dimensions.sizedBoxWidth10,
-                                    ),
-                                    Text(
-                                      'Something',
-                                      style: TextStyle(
-                                          fontSize: Dimensions.font12),
-                                    )
-                                  ],
+                                Text(
+                                  '- $e',
+                                  style: TextStyle(
+                                      fontSize: Dimensions.font12),
                                 ),
                                 SizedBox(
                                   height: Dimensions.sizedBoxHeight10 / 2,

@@ -1,23 +1,38 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:GOCart/CONSTANTS/constants.dart';
-import 'package:GOCart/PREFS/preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/PREFS/preferences.dart';
+
 class CartProvider extends ChangeNotifier {
+  final BuildContext context;
+
+  CartProvider(this.context);
+
   int _cartListNo = 0;
   Map<String, dynamic> _cart = {};
 
+  double _cartSubtotal = 0;
+  double get cartSubtotal => _cartSubtotal;
+
   int get cartListNo => _cartListNo;
   Map<String, dynamic> get cart => _cart;
+
+  List _carts = [];
+  List get carts => _carts;
+
+  List _foodCarts = [];
+  List get foodCarts => _foodCarts;
 
   CollectionReference userCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionUsers);
   CollectionReference productCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionProducts);
 
-  Future initializeCart(String userId, String cartData) async {
+  Future initializeCart(String userId) async {
     QuerySnapshot foodSnapshot = await userCollectionRef
         .doc(userId)
         .collection(Constants.collectionFoodCart)
@@ -27,8 +42,16 @@ class CartProvider extends ChangeNotifier {
         .collection(Constants.collectionCart)
         .get();
 
+    await getCart(userId);
+    await getFoodCart(userId);
+
+    double? subtotal = await Preferences().getDoubleData(Constants.subtotal);
+    String? cartData =
+        await Preferences().getStringData(Constants.prefsCartData);
+
     _cartListNo = foodSnapshot.docs.length + cartSnapshot.docs.length;
-    _cart = jsonDecode(cartData);
+    _cart = cartData != null ? jsonDecode(cartData) : {};
+    _cartSubtotal = subtotal ?? 0;
     notifyListeners();
   }
 
@@ -50,7 +73,7 @@ class CartProvider extends ChangeNotifier {
       String userId, String productId, double? amount, String shopName) async {
     try {
       QuerySnapshot querySnapshot = await productCollectionRef
-          .where(Constants.prodCategory, isEqualTo: 'cooked')
+          .where(Constants.prodCategory, isEqualTo: 'food')
           .where(Constants.uid, isEqualTo: productId)
           .get();
 
@@ -87,14 +110,16 @@ class CartProvider extends ChangeNotifier {
 
           await documentReference.update({
             Constants.uid: documentReference.id,
+          }).then((value) async {
+            await getFoodCart(userId);
+
+            _cart[shopName] = 1;
+            Preferences()
+                .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
+            _cartListNo++;
+            notifyListeners();
           });
         }
-
-        _cart['food'] = 1;
-        Preferences()
-            .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
-        _cartListNo++;
-        notifyListeners();
       } else {
         DocumentSnapshot snapshot =
             await productCollectionRef.doc(productId).get();
@@ -107,8 +132,8 @@ class CartProvider extends ChangeNotifier {
           DocumentReference documentReference = await collectionReference.add({
             Constants.uid: '',
             Constants.quantity: 1,
-            Constants.productId: [productId],
-            Constants.amount: [amount],
+            Constants.productId: productId,
+            Constants.amount: amount,
             Constants.shopName: shopName,
             Constants.createdAt:
                 DateTime.now().millisecondsSinceEpoch.toString(),
@@ -118,43 +143,60 @@ class CartProvider extends ChangeNotifier {
 
           await documentReference.update({
             Constants.uid: documentReference.id,
+          }).then((value) async {
+            await getCart(userId);
+
+            _cart[productId] = 1;
+            Preferences()
+                .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
+            _cartListNo++;
+            notifyListeners();
           });
         } else {
           return 'Product is out of stock ❗';
         }
-
-        _cart[productId] = 1;
-        Preferences()
-            .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
-        _cartListNo++;
-        notifyListeners();
       }
 
-      // return 'Product added to cart successfully! ✅';
-      return true;
+      _cartSubtotal += amount!;
+      Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+      notifyListeners();
+
+      return 'Product added to cart successfully! ✅';
+      // return true;
     } on FirebaseException catch (e) {
       return e.message;
     }
   }
 
-  Future removeFromCart(String userId, String productId, String cartId) async {
+  Future removeFromCart(
+      String userId, String productId, String cartId, double amount) async {
     try {
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
           .collection(Constants.collectionCart)
           .doc(cartId);
 
-      await documentReference.delete();
+      await documentReference.delete().then((value) async {
+        _cart.remove(productId);
+        Preferences()
+            .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
+        _cartListNo--;
+        _cartSubtotal -= amount;
+        Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+        notifyListeners();
 
-      _cart.remove(productId);
-      Preferences().saveStringData(Constants.prefsCartData, jsonEncode(_cart));
-      _cartListNo--;
-      notifyListeners();
+        await getCart(userId).then((value) {
+          Constants(context).snackBar(
+              'Product removed from cart successfully! ✅', Constants.tetiary);
+        });
+      });
 
       // return 'Product removed from cart successfully! ✅';
       return true;
     } on FirebaseException catch (e) {
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -170,6 +212,15 @@ class CartProvider extends ChangeNotifier {
         Constants.productId: FieldValue.arrayRemove([productId]),
         Constants.amount: FieldValue.arrayRemove([amount]),
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
+      }).then((value) async {
+        _cartSubtotal -= amount;
+        Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+        notifyListeners();
+
+        await getFoodCart(userId).then((value) {
+          Constants(context).snackBar(
+              'Product removed from cart successfully! ✅', Constants.tetiary);
+        });
       });
 
       // return 'Product removed from cart successfully! ✅';
@@ -179,8 +230,8 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future increaseCartProduct(
-      String? productId, String userId, String cartId, String category) async {
+  Future increaseCartProduct(String? productId, String userId, String cartId,
+      String category, String shopName, double amount) async {
     if (category == 'food') {
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
@@ -194,13 +245,18 @@ class CartProvider extends ChangeNotifier {
         Constants.quantity: quantity + 1,
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
       }).then((_) {
-        _cart.update('food', (value) => value++);
+        _cart.update(shopName, (value) => value++);
         Preferences()
             .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
+        _cartSubtotal += amount;
+        Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
         notifyListeners();
+
+        Constants(context)
+            .snackBar('Cart updated successfully! ✅', Constants.tetiary);
       });
 
-      return 'Your cart has been updated successfully! ✅';
+      return true;
     } else {
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
@@ -210,30 +266,39 @@ class CartProvider extends ChangeNotifier {
       DocumentSnapshot cartDocSnapshot = await documentReference.get();
       int quantity = cartDocSnapshot[Constants.quantity];
 
-      DocumentSnapshot documentSnapshot =
-          await productCollectionRef.doc(productId).get();
-      int stock = documentSnapshot[Constants.prodTotalStock];
+      await productCollectionRef.doc(productId).get().then((value) async {
+        int stock = value[Constants.prodTotalStock];
 
-      if (quantity + 1 > stock) {
-        return 'No more products in stock ❗';
-      } else {
-        await documentReference.update({
-          Constants.quantity: quantity + 1,
-          Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
-        }).then((_) {
-          _cart.update(productId!, (value) => value++);
-          Preferences()
-              .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
-          notifyListeners();
-        });
+        if (quantity + 1 > stock) {
+          Constants(context)
+              .snackBar('No more products in stock ❗', Colors.red);
 
-        return 'Your cart has been updated successfully! ✅';
-      }
+          return false;
+        } else {
+          await documentReference.update({
+            Constants.quantity: quantity + 1,
+            Constants.updatedAt:
+                DateTime.now().millisecondsSinceEpoch.toString(),
+          }).then((_) {
+            _cart.update(productId!, (value) => value++);
+            Preferences()
+                .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
+            _cartSubtotal += amount;
+            Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+            notifyListeners();
+
+            Constants(context)
+                .snackBar('Cart updated successfully! ✅', Constants.tetiary);
+          });
+
+          return true;
+        }
+      });
     }
   }
 
-  Future decreaseCartProduct(
-      String? productId, String userId, String cartId, String category) async {
+  Future decreaseCartProduct(String? productId, String userId, String cartId,
+      String category, double amount) async {
     if (category == 'food') {
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
@@ -253,6 +318,10 @@ class CartProvider extends ChangeNotifier {
         notifyListeners();
       });
 
+      _cartSubtotal -= amount;
+      Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+      notifyListeners();
+
       return 'Your cart has been updated successfully! ✅';
     } else {
       DocumentReference documentReference = userCollectionRef
@@ -263,25 +332,35 @@ class CartProvider extends ChangeNotifier {
       DocumentSnapshot cartDocSnapshot = await documentReference.get();
       int quantity = cartDocSnapshot[Constants.quantity];
 
-      DocumentSnapshot documentSnapshot =
-          await productCollectionRef.doc(productId).get();
-      int stock = documentSnapshot[Constants.prodTotalStock];
+      await productCollectionRef.doc(productId).get().then((value) async {
+        int stock = value[Constants.prodTotalStock];
 
-      if (quantity + 1 > stock) {
-        return 'No more products in stock ❗';
-      } else {
-        await documentReference.update({
-          Constants.quantity: quantity + 1,
-          Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
-        }).then((_) {
-          _cart.update(productId!, (value) => value++);
-          Preferences()
-              .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
-          notifyListeners();
-        });
+        if (quantity + 1 > stock) {
+          Constants(context)
+              .snackBar('No more products in stock ❗', Colors.red);
 
-        return 'Your cart has been updated successfully! ✅';
-      }
+          return false;
+        } else {
+          await documentReference.update({
+            Constants.quantity: quantity + 1,
+            Constants.updatedAt:
+                DateTime.now().millisecondsSinceEpoch.toString(),
+          }).then((_) {
+            _cart.update(productId!, (value) => value++);
+            Preferences()
+                .saveStringData(Constants.prefsCartData, jsonEncode(_cart));
+            _cartSubtotal -= amount;
+            Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+            notifyListeners();
+
+            Constants(context).snackBar(
+                'Your cart has been updated successfully! ✅',
+                Constants.tetiary);
+          });
+
+          return true;
+        }
+      });
     }
   }
 
@@ -292,9 +371,13 @@ class CartProvider extends ChangeNotifier {
           .collection(Constants.collectionCart)
           .get();
 
-      return querySnapshot;
+      _carts = querySnapshot.docs;
+      notifyListeners();
     } on FirebaseException catch (e) {
-      return e.message;
+      _carts = [];
+      notifyListeners();
+
+      Constants(context).snackBar(e.message!, Colors.red);
     }
   }
 
@@ -305,14 +388,18 @@ class CartProvider extends ChangeNotifier {
           .collection(Constants.collectionFoodCart)
           .get();
 
-      return querySnapshot;
+      _foodCarts = querySnapshot.docs;
+      notifyListeners();
     } on FirebaseException catch (e) {
-      return e.message;
+      _foodCarts = [];
+      notifyListeners();
+      
+      Constants(context).snackBar(e.message!, Colors.red);
     }
   }
 
-  Future updateFoodCartItemAmount(
-      String userId, double amount, String cartId, String productId) async {
+  Future updateFoodCartItemAmount(String userId, double firstAmount,
+      double amount, String cartId, String productId) async {
     try {
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
@@ -331,7 +418,15 @@ class CartProvider extends ChangeNotifier {
         Constants.amount: data,
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
       }).then((_) {
-        return 'Food amount has been changed successfully! ✅';
+        _cartSubtotal -= firstAmount;
+        _cartSubtotal += amount;
+        Preferences().saveDoubleData(Constants.subtotal, _cartSubtotal);
+        notifyListeners();
+
+        Constants(context).snackBar(
+            'Food amount has been changed successfully! ✅', Constants.tetiary);
+
+        return true;
       });
     } on FirebaseException catch (e) {
       return e.message;

@@ -63,7 +63,7 @@ class IntroPage extends StatelessWidget {
                           Timer(
                               const Duration(milliseconds: 200),
                               (() =>
-                                  Get.toNamed(RouteHelper.getRegisterPage())));
+                                  Get.offNamed(RouteHelper.getRegisterPage())));
                         },
                       ),
                     )

@@ -15,6 +15,7 @@ class IconBox extends StatelessWidget {
   final double? borderRadius;
   final double? width;
   final double? height;
+  final VoidCallback? pressed;
 
   const IconBox(
       {super.key,
@@ -28,7 +29,7 @@ class IconBox extends StatelessWidget {
       this.borderRadius,
       this.width,
       this.height,
-      this.color});
+      this.color, this.pressed});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class IconBox extends StatelessWidget {
       height: height ?? Dimensions.sizedBoxWidth32,
       child: isClickable
           ? TextButton(
-              onPressed: disabled,
+              onPressed: pressed ?? disabled,
               style: TextButton.styleFrom(
                   padding: const EdgeInsets.all(0),
                   backgroundColor: color ?? Colors.transparent,

@@ -6,6 +6,7 @@ import 'package:GOCart/UI/pages/intro_page.dart';
 import 'package:GOCart/UI/pages/phone_auth_page.dart';
 import 'package:GOCart/UI/pages/phone_register_page.dart';
 import 'package:GOCart/UI/pages/dashboard/seller_dasboard.dart';
+import 'package:GOCart/UI/pages/profile_page.dart';
 import 'package:GOCart/UI/pages/settings_page.dart';
 import 'package:GOCart/UI/pages/shop_register_page.dart';
 import 'package:flutter/animation.dart';
@@ -59,6 +60,7 @@ class RouteHelper {
   static const String addProductPage = '/add-product';
   static const String editProductPage = '/edit-product';
   static const String introPage = '/intro';
+  static const String profilePage = '/profile';
   static const String dashboardPage = '/dashboard';
 
   static getCartPage() => const CartPage();
@@ -67,9 +69,12 @@ class RouteHelper {
   static getShopDetailsPage() => shopDetailsPage;
   static getHomePage() => const HomePage();
   static getIntroPage() => introPage;
-  static getAccountPage() => const AccountPage();
+  static getAccountPage(bool isSeller) => AccountPage(
+        isSeller: isSeller,
+      );
   static getCategoriesPage() => const CategoriesPage();
   static String getDetailsPage() => detailsPage;
+  static String getProfilePage() => profilePage;
   static String getOrderStatusPage() => orderStatusPage;
   static String getPhoneAuthPage() => phoneAuthPage;
   static String getProductListPage() => productListPage;
@@ -94,7 +99,7 @@ class RouteHelper {
   static String getDashboardPage() => dashboardPage;
   static String getAddProductPage() => addProductPage;
   static String getEditProductPage() => editProductPage;
-  static String getRoutePage(int pageId) => '$routePage?pageId=$pageId';
+  static String getRoutePage() => routePage;
 
   static List<GetPage> routes = [
     GetPage(
@@ -125,6 +130,12 @@ class RouteHelper {
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
+        name: profilePage,
+        page: () => const ProfilePage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
         name: manageShopPage,
         page: () => const ManageShopPage()),
     GetPage(
@@ -138,13 +149,23 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: phoneAuthPage,
-        page: () => const PhoneAuthPage()),
+        page: () {
+          String phone = Get.arguments;
+
+          return PhoneAuthPage(phoneNumber: phone);
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: shopDetailsPage,
-        page: () => const ShopDetailsPage()),
+        page: () {
+          var shopUserId = Get.arguments;
+
+          return ShopDetailsPage(
+            shopId: shopUserId,
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -162,7 +183,15 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: detailsPage,
-        page: () => const DetailsPage()),
+        page: () {
+          List data = Get.arguments;
+
+          return DetailsPage(
+            description: data[0],
+            features: data[1],
+            specifications: data[2],
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -181,7 +210,7 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 300),
         name: productListPage,
         page: () {
-        //   String? title = Get.parameters['title'];
+          //   String? title = Get.parameters['title'];
           String? title = Get.arguments;
 
           return ProductListPage(
@@ -217,7 +246,13 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: ratingsViewPage,
-        page: () => const RatingViewPage()),
+        page: () {
+          List data = Get.arguments;
+
+          return RatingViewPage(
+            reviews: data,
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -267,17 +302,23 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: productDetailsPage,
-        page: () => const ProductDetailsPage()),
+        page: () {
+          String prodId = Get.arguments;
+
+          return ProductDetailsPage(
+            prodId: prodId,
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: routePage,
         page: () {
-          var pageId = Get.parameters['pageId'];
+          int pageId = Get.arguments;
 
           return RoutePage(
-            pageId: int.parse(pageId!),
+            pageId: pageId,
           );
         }),
   ];

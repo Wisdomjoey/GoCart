@@ -1,18 +1,26 @@
 import 'dart:io';
 
 import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 enum Load { processing, processComplete, processError, uninitialized }
 
 class ShopProvider extends ChangeNotifier {
-  Load _load = Load.uninitialized;
+  final BuildContext context;
 
+  ShopProvider(this.context);
+
+  Load _load = Load.uninitialized;
   Load get load => _load;
+
+  List _shops = [];
+  List get shops => _shops;
 
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection(Constants.collectionShops);
@@ -22,8 +30,14 @@ class ShopProvider extends ChangeNotifier {
       FirebaseFirestore.instance.collection(Constants.collectionProducts);
   FirebaseStorage firebaseStorage = FirebaseStorage.instance;
 
-  Future createShop(String shopName, String location, List<String> tags,
-      List<CroppedFile> croppedFiles, String userId) async {
+  Future createShop(
+      String shopName,
+      String location,
+      List<String> tags,
+      List<CroppedFile> croppedFiles,
+      String userId,
+      List<String> category,
+      BuildContext context1) async {
     try {
       _load = Load.processing;
       notifyListeners();
@@ -50,6 +64,7 @@ class ShopProvider extends ChangeNotifier {
         Constants.shopName: shopName,
         Constants.shopAddress: location,
         Constants.shopTags: tags,
+        Constants.prodCategory: category,
         Constants.imgUrls: newUrls,
         Constants.sales: [],
         Constants.userId: userId,
@@ -60,17 +75,26 @@ class ShopProvider extends ChangeNotifier {
       await userDocumentRef.update({Constants.shopId: documentReference.id});
 
       await documentReference
-          .update({Constants.uid: documentReference.id}).then((_) {
+          .update({Constants.uid: documentReference.id}).then((_) async {
         _load = Load.processComplete;
         notifyListeners();
 
-        return true;
+        await Provider.of<UserProvider>(context1, listen: false).updateUserData(
+            {Constants.userIsSeller: true}, userId).then((value) {
+          Constants(context).snackBar(
+              'Your shop has been registered successfully! ✅',
+              Constants.tetiary);
+        });
       });
+
+      return true;
     } on FirebaseException catch (e) {
       _load = Load.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -83,14 +107,19 @@ class ShopProvider extends ChangeNotifier {
       await documentReference.update(data).then((_) {
         _load = Load.processComplete;
         notifyListeners();
+
+        Constants(context).snackBar(
+            'Shop details updated successfully! ✅', Constants.tetiary);
       });
 
-      return 'Shop details updated successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _load = Load.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -121,9 +150,9 @@ class ShopProvider extends ChangeNotifier {
     await documentReference.update({Constants.sales: data}).then((_) {
       _load = Load.processComplete;
       notifyListeners();
-
-      return 'Shop details updated successfully! ✅';
     });
+
+    return true;
   }
 
   Future addImage(CroppedFile croppedFile, String userId, String shopId) async {
@@ -147,14 +176,19 @@ class ShopProvider extends ChangeNotifier {
       }).then((_) {
         _load = Load.processComplete;
         notifyListeners();
+
+        Constants(context)
+            .snackBar('Shop image added successfully! ✅', Constants.tetiary);
       });
 
-      return 'Shop image added successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _load = Load.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -172,15 +206,20 @@ class ShopProvider extends ChangeNotifier {
         await imageReference.delete().then((_) {
           _load = Load.processComplete;
           notifyListeners();
+
+          Constants(context).snackBar(
+              'Shop image has been deleted successfully! ✅', Constants.tetiary);
         });
       });
 
-      return 'Shop image deleted successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _load = Load.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -204,37 +243,62 @@ class ShopProvider extends ChangeNotifier {
         _load = Load.processComplete;
         notifyListeners();
 
-        return 'Your shop has been successfully deleted ✅';
+        Constants(context).snackBar(
+            'Your shop has been closed down successfully! ✅',
+            Constants.tetiary);
       });
+
+      return true;
     } on FirebaseException catch (e) {
       _load = Load.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
   Future getShopData(String shopId) async {
-    _load = Load.processing;
-    notifyListeners();
-    DocumentSnapshot documentSnapshot =
-        await collectionReference.doc(shopId).get();
+    try {
+      _load = Load.processing;
+      notifyListeners();
+      DocumentSnapshot documentSnapshot =
+          await collectionReference.doc(shopId).get();
 
-    _load = Load.processComplete;
-    notifyListeners();
+      _load = Load.processComplete;
+      notifyListeners();
 
-    return documentSnapshot;
+      return documentSnapshot.data();
+    } on FirebaseException catch (e) {
+      _load = Load.processError;
+      notifyListeners();
+
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return {};
+    }
   }
 
   Future fetchAllShops() async {
-    _load = Load.processing;
-    notifyListeners();
-    QuerySnapshot querySnapshot = await collectionReference.get();
+    try {
+      _load = Load.processing;
+      notifyListeners();
+      QuerySnapshot querySnapshot = await collectionReference.get();
 
-    _load = Load.processComplete;
-    notifyListeners();
+      _load = Load.processComplete;
+      _shops = [];
+      for (var element in querySnapshot.docs) {
+        _shops.add(element.data());
+      }
+      notifyListeners();
+    } on FirebaseException catch (e) {
+      _load = Load.processError;
+      _shops = [];
+      notifyListeners();
 
-    return querySnapshot;
+      Constants(context).snackBar(e.message!, Colors.red);
+    }
   }
 
   Future searchShops(String query) async {
@@ -308,7 +372,28 @@ class ShopProvider extends ChangeNotifier {
       _load = Load.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
+    }
+  }
+
+  Future getAllShopProducts(String userId) async {
+    try {
+      _load = Load.processing;
+      notifyListeners();
+      QuerySnapshot querySnapshot = await productCollectionRef
+          .where(Constants.userId, isEqualTo: userId)
+          .get();
+
+      return querySnapshot.docs;
+    } on FirebaseException catch (e) {
+      _load = Load.processError;
+      notifyListeners();
+
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return [];
     }
   }
 }

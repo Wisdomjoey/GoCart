@@ -1,6 +1,5 @@
-import 'package:GOCart/PROVIDERS/settings_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 
 import '../UI/utils/dimensions.dart';
 import '../UI/widgets/elevated_button_widget.dart';
@@ -9,7 +8,7 @@ class Constants {
   final BuildContext context;
 
   Constants(this.context);
-  
+
   static const backgroundColor = Color.fromARGB(255, 243, 243, 243);
   static const primary = Colors.green;
   static const secondary = Color(0XFF00923F);
@@ -21,6 +20,7 @@ class Constants {
 
   static const List<String> categories = [
     'Snacks',
+    'Cooked Foods',
     'Groceries',
     'Health & Beauty',
     'Home & Office',
@@ -47,6 +47,20 @@ class Constants {
     'Sporting Goods',
     'Automobile'
   ];
+  static const List<String> shopCategory = [
+    'Provision Store',
+    'Stationary Store',
+    'Snacks Shops',
+    'Medical Store',
+    'Canteens',
+  ];
+  static const List<String> shopCategoryV = [
+    'Provisions',
+    'Stationaries',
+    'Snacks',
+    'Pharmacy',
+    'Canteens',
+  ];
 
   static const String err = 'Field cannot be empty';
 
@@ -60,8 +74,14 @@ class Constants {
   static const String collectionProducts = "products";
 
   static const String prefsUserFullName = "user-fullName";
+  static const String prefsUserFirstName = "firstName";
+  static const String prefsUserLastName = "lastName";
+  static const String prefsUserSigned = "isSigned";
+  static const String prefsUserPhoneVerified = "phoneVerified";
   static const String prefsUserEmail = "user-email";
+  static const String prefsUserIsSeller = "userIsSeller";
   static const String prefsCartData = "cart-data";
+  static const String prefsSearchHistory = "search-history";
 
   static const String uid = "uid";
   static const String shopId = "shopId";
@@ -74,6 +94,7 @@ class Constants {
   static const String imgUrls = "imgUrls";
   static const String imgUrl = "imgUrl";
   static const String name = "name";
+  static const String subtotal = "subtotal";
   static const String quantity = "quantity";
   static const String deliveryPrice = "deliveryPrice";
 
@@ -225,5 +246,19 @@ class Constants {
         ),
       ),
     );
+  }
+
+  snackBar(String message, Color color) {
+    Get.showSnackbar(GetSnackBar(
+      message: message,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: color,
+      duration: Duration(seconds: 7),
+      borderRadius: Dimensions.sizedBoxWidth4,
+      margin: EdgeInsets.only(
+          bottom: Dimensions.sizedBoxHeight15,
+          right: Dimensions.sizedBoxWidth10,
+          left: Dimensions.sizedBoxWidth10),
+    ));
   }
 }

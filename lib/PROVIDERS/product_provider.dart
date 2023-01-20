@@ -9,8 +9,11 @@ import 'package:image_cropper/image_cropper.dart';
 enum Process { processing, processComplete, processError, uninitialized }
 
 class ProductProvider extends ChangeNotifier {
-  Process _process = Process.uninitialized;
+  final BuildContext context;
 
+  ProductProvider(this.context);
+
+  Process _process = Process.uninitialized;
   Process get process => _process;
 
   CollectionReference productCollectionRef =
@@ -82,33 +85,45 @@ class ProductProvider extends ChangeNotifier {
           .update({Constants.uid: documentReference.id}).then((_) {
         _process = Process.processComplete;
         notifyListeners();
+
+        Constants(context).snackBar(
+            'Product has been created successfully! ✅', Constants.tetiary);
       });
 
-      return 'Product created successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
   Future updateProduct(Map<String, dynamic> data, String productId) async {
-    _process = Process.processing;
-    notifyListeners();
-    DocumentReference documentReference = productCollectionRef.doc(productId);
-
-    await documentReference.update(data).then((_) {
-      _process = Process.processComplete;
+    try {
+      _process = Process.processing;
       notifyListeners();
+      DocumentReference documentReference = productCollectionRef.doc(productId);
 
-      return 'Product updated successfully! ✅';
-    }).catchError((e) {
+      await documentReference.update(data).then((_) {
+        _process = Process.processComplete;
+        notifyListeners();
+
+        Constants(context).snackBar(
+            'Product has been updated successfully! ✅', Constants.tetiary);
+      });
+
+      return true;
+    } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e;
-    });
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
+    }
   }
 
   Future addImage(
@@ -134,13 +149,18 @@ class ProductProvider extends ChangeNotifier {
         _process = Process.processComplete;
         notifyListeners();
 
-        return 'Product image added successfully! ✅';
+        Constants(context)
+            .snackBar('Image added successfully! ✅', Constants.tetiary);
       });
+
+      return true;
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -158,59 +178,71 @@ class ProductProvider extends ChangeNotifier {
         await imageReference.delete().then((_) {
           _process = Process.processComplete;
           notifyListeners();
+
+          Constants(context)
+              .snackBar('Image deleted successfully! ✅', Constants.tetiary);
         });
       });
 
-      return 'Product image deleted successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
   Future deleteProduct(String productId, List<String> urls) async {
-    _process = Process.processing;
-    notifyListeners();
-    DocumentReference documentReference = productCollectionRef.doc(productId);
+    try {
+      _process = Process.processing;
+      notifyListeners();
+      DocumentReference documentReference = productCollectionRef.doc(productId);
 
-    await documentReference.delete().then((_) async {
-      for (var url in urls) {
-        Reference imageReference = firebaseStorage.refFromURL(url);
+      await documentReference.delete().then((_) async {
+        for (var url in urls) {
+          Reference imageReference = firebaseStorage.refFromURL(url);
 
-        await imageReference.delete().then((_) {
-          _process = Process.processComplete;
-          notifyListeners();
-        }).catchError((err) {
-          _process = Process.processError;
-          notifyListeners();
+          await imageReference.delete().then((_) {
+            _process = Process.processComplete;
+            notifyListeners();
 
-          return err;
-        });
-      }
+            Constants(context).snackBar(
+                'Product has been deleted successfully! ✅', Constants.tetiary);
+          });
+        }
+      });
 
-      return 'Product deleted successfully! ✅';
-    }).catchError((err) {
+      return true;
+    } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return err;
-    });
-  }
+      Constants(context).snackBar(e.message!, Colors.red);
 
-  Future getAllShopProducts(String userId) async {
-    QuerySnapshot querySnapshot = await productCollectionRef
-        .where(Constants.userId, isEqualTo: userId)
-        .get();
-
-    return querySnapshot;
+      return false;
+    }
   }
 
   Future getAllProducts() async {
-    QuerySnapshot querySnapshot = await productCollectionRef.get();
+    try {
+      _process = Process.processing;
+      // notifyListeners();
+      QuerySnapshot querySnapshot = await productCollectionRef.get();
 
-    return querySnapshot;
+      _process = Process.processComplete;
+      notifyListeners();
+      return querySnapshot.docs;
+    } on FirebaseException catch (e) {
+      _process = Process.processError;
+      notifyListeners();
+
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return [];
+    }
   }
 
   Future searchProducts(String query) async {
@@ -318,7 +350,9 @@ class ProductProvider extends ChangeNotifier {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return [];
     }
   }
 
@@ -360,12 +394,14 @@ class ProductProvider extends ChangeNotifier {
       _process = Process.processComplete;
       notifyListeners();
 
-      return documentSnapshot;
+      return documentSnapshot.data();
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return {};
     }
   }
 
@@ -391,14 +427,19 @@ class ProductProvider extends ChangeNotifier {
           .update({Constants.uid: documentReference.id}).then((_) {
         _process = Process.processComplete;
         notifyListeners();
+
+        Constants(context)
+            .snackBar('Rating uploaded successfully! ✅', Constants.tetiary);
       });
 
-      return 'Rating uploaded successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -420,23 +461,39 @@ class ProductProvider extends ChangeNotifier {
       }).then((value) {
         _process = Process.processComplete;
         notifyListeners();
+
+        Constants(context)
+            .snackBar('Review uploaded successfully! ✅', Constants.tetiary);
       });
 
-      return 'Review uploaded successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();
 
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
   Future fetchAllReviews(String productId) async {
-    QuerySnapshot querySnapshot = await productCollectionRef
-        .doc(productId)
-        .collection(Constants.collectionReviews)
-        .get();
+    try {
+      _process = Process.processing;
+      notifyListeners();
+      QuerySnapshot querySnapshot = await productCollectionRef
+          .doc(productId)
+          .collection(Constants.collectionReviews)
+          .get();
 
-    return querySnapshot;
+      return querySnapshot.docs;
+    } on FirebaseException catch (e) {
+      _process = Process.processError;
+      notifyListeners();
+
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return [];
+    }
   }
 }

@@ -12,7 +12,14 @@ class ProductBox extends StatelessWidget {
   final double? left;
   final double? right;
   final double? bottom;
-  const ProductBox({super.key, this.left, this.right, this.bottom});
+  final List snapshotDocs;
+
+  const ProductBox(
+      {super.key,
+      this.left,
+      this.right,
+      this.bottom,
+      required this.snapshotDocs});
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +36,15 @@ class ProductBox extends StatelessWidget {
             mainAxisSpacing: Dimensions.sizedBoxHeight10 * 2,
             crossAxisSpacing: Dimensions.sizedBoxWidth10,
             childAspectRatio: 0.7),
-        itemCount: 20,
+        itemCount: snapshotDocs.length,
         itemBuilder: (context, index) {
-          return _productsList(index);
+          return _productsList(index, snapshotDocs[index]);
         },
       ),
     );
   }
 
-  Widget _productsList(int index) {
+  Widget _productsList(int index, Map<String, dynamic> product) {
     return Material(
       animationDuration: const Duration(milliseconds: 100),
       shape: RoundedRectangleBorder(
@@ -61,9 +68,7 @@ class ProductBox extends StatelessWidget {
                     height: double.maxFinite,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: index.isEven
-                                ? const AssetImage('assets/images/1.jpg')
-                                : const AssetImage('assets/images/build.jpg'),
+                            image: NetworkImage(product[Constants.imgUrls][0]),
                             fit: BoxFit.contain)),
                   ),
                 ),
@@ -84,7 +89,7 @@ class ProductBox extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Tractor with wide rollers and high maintainence',
+                      product[Constants.name],
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                           fontSize: Dimensions.font13,
@@ -94,7 +99,7 @@ class ProductBox extends StatelessWidget {
                       height: Dimensions.sizedBoxHeight4,
                     ),
                     Text(
-                      '\$ 8000',
+                      '\$ ${product[Constants.prodNewPrice]}',
                       style: TextStyle(
                           fontSize: Dimensions.font16,
                           fontWeight: FontWeight.w500),

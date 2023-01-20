@@ -15,7 +15,6 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _switch = true;
-  int? _gValue = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -44,9 +43,7 @@ class _SettingsPageState extends State<SettingsPage> {
                     ListTileBtn(
                         textSize: Dimensions.font14,
                         showTrailing: false,
-                        onTap: () => showDialog(
-                            context: context,
-                            builder: ((context) => _showDialog(context))),
+                        onTap: () {},
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -58,7 +55,7 @@ class _SettingsPageState extends State<SettingsPage> {
                               height: Dimensions.sizedBoxHeight3,
                             ),
                             Text(
-                              'System',
+                              'Light',
                               style: TextStyle(
                                   color: Constants.grey,
                                   fontSize: Dimensions.font12),
@@ -146,119 +143,6 @@ class _SettingsPageState extends State<SettingsPage> {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _showDialog(BuildContext context) {
-    return Dialog(
-      insetPadding:
-          EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth15 * 2),
-      child: Container(
-        padding: EdgeInsets.symmetric(
-            horizontal: Dimensions.sizedBoxWidth10 * 2,
-            vertical: Dimensions.sizedBoxHeight15),
-        height: Dimensions.sizedBoxHeight100 * 2,
-        decoration: BoxDecoration(
-            color: Constants.white,
-            borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Radio(
-                        // toggleable: true,
-                        visualDensity:
-                            const VisualDensity(vertical: -1, horizontal: -3),
-                        value: 0,
-                        groupValue: _gValue,
-                        onChanged: ((dynamic value) {
-                          setState(() {
-                            _gValue = value;
-                          });
-                          Navigator.pop(context);
-                        })),
-                    Text(
-                      'System',
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 121, 121, 121),
-                          fontSize: Dimensions.font16),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                        // toggleable: true,
-                        visualDensity:
-                            const VisualDensity(vertical: -1, horizontal: -3),
-                        value: 1,
-                        groupValue: _gValue,
-                        onChanged: ((dynamic value) {
-                          setState(() {
-                            _gValue = value;
-                          });
-                          Navigator.pop(context);
-                        })),
-                    Text(
-                      'Light',
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 121, 121, 121),
-                          fontSize: Dimensions.font16),
-                    )
-                  ],
-                ),
-                Row(
-                  children: [
-                    Radio(
-                        // toggleable: true,
-                        visualDensity:
-                            const VisualDensity(vertical: -1, horizontal: -3),
-                        value: 2,
-                        groupValue: _gValue,
-                        onChanged: ((dynamic value) {
-                          setState(() {
-                            _gValue = value;
-                          });
-                          Navigator.pop(context);
-                        })),
-                    Text(
-                      'Dark',
-                      style: TextStyle(
-                          color: const Color.fromARGB(255, 121, 121, 121),
-                          fontSize: Dimensions.font16),
-                    )
-                  ],
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  '',
-                ),
-                GestureDetector(
-                  child: Text(
-                    'CLOSE',
-                    style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: Dimensions.font16,
-                        color: const Color.fromARGB(255, 74, 74, 74)),
-                  ),
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                )
-              ],
-            ),
-          ],
         ),
       ),
     );

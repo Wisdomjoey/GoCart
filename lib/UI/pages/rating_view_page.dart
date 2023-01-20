@@ -9,9 +9,16 @@ import 'package:GOCart/UI/widgets/txt_button_widget.dart';
 
 import '../../CONSTANTS/constants.dart';
 
-class RatingViewPage extends StatelessWidget {
-  const RatingViewPage({super.key});
+class RatingViewPage extends StatefulWidget {
+  final List reviews;
+  
+  const RatingViewPage({super.key, required this.reviews});
 
+  @override
+  State<RatingViewPage> createState() => _RatingViewPageState();
+}
+
+class _RatingViewPageState extends State<RatingViewPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,7 +33,7 @@ class RatingViewPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const HeadSedction(text: 'VERIFIED PRODUCT RATINGS (13)'),
+            HeadSedction(text: 'VERIFIED PRODUCT RATINGS (${widget.reviews.length})'),
             Container(
               width: double.maxFinite,
               color: Constants.white,
@@ -73,8 +80,8 @@ class RatingViewPage extends StatelessWidget {
                           SizedBox(
                             height: Dimensions.sizedBoxHeight4 * 2,
                           ),
-                          const Text(
-                            '13 ratings',
+                          Text(
+                            '${widget.reviews.length} ratings',
                             style: TextStyle(fontSize: 12),
                           )
                         ],
@@ -85,31 +92,66 @@ class RatingViewPage extends StatelessWidget {
                     width: Dimensions.sizedBoxWidth15,
                   ),
                   Column(
-                    children: const [
+                    children: [
                       RateNumber(
                         rateNo: '5',
-                        rateCount: '5',
-                        value: 0.4,
+                        rateCount: widget.reviews.where((element) => element[Constants.reviewStarNo] == 5).length.toString(),
+                        value: widget.reviews
+                            .where((element) =>
+                                element[Constants.reviewStarNo] == 5)
+                            .length / widget.reviews.length,
                       ),
                       RateNumber(
-                        rateNo: '5',
-                        rateCount: '5',
-                        value: 0.8,
+                        rateNo: '4',
+                        rateCount: widget.reviews
+                            .where((element) =>
+                                element[Constants.reviewStarNo] == 4)
+                            .length
+                            .toString(),
+                        value: widget.reviews
+                                .where((element) =>
+                                    element[Constants.reviewStarNo] == 4)
+                                .length /
+                            widget.reviews.length,
                       ),
                       RateNumber(
-                        rateNo: '5',
-                        rateCount: '5',
-                        value: 0.5,
+                        rateNo: '3',
+                        rateCount: widget.reviews
+                            .where((element) =>
+                                element[Constants.reviewStarNo] == 3)
+                            .length
+                            .toString(),
+                        value: widget.reviews
+                                .where((element) =>
+                                    element[Constants.reviewStarNo] == 3)
+                                .length /
+                            widget.reviews.length,
                       ),
                       RateNumber(
-                        rateNo: '5',
-                        rateCount: '5',
-                        value: 0.3,
+                        rateNo: '2',
+                        rateCount: widget.reviews
+                            .where((element) =>
+                                element[Constants.reviewStarNo] == 2)
+                            .length
+                            .toString(),
+                        value: widget.reviews
+                                .where((element) =>
+                                    element[Constants.reviewStarNo] == 2)
+                                .length /
+                            widget.reviews.length,
                       ),
                       RateNumber(
-                        rateNo: '5',
-                        rateCount: '5',
-                        value: 0.2,
+                        rateNo: '1',
+                        rateCount: widget.reviews
+                            .where((element) =>
+                                element[Constants.reviewStarNo] == 1)
+                            .length
+                            .toString(),
+                        value: widget.reviews
+                                .where((element) =>
+                                    element[Constants.reviewStarNo] == 1)
+                                .length /
+                            widget.reviews.length,
                       ),
                     ],
                   ),
@@ -122,47 +164,29 @@ class RatingViewPage extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const HeadSedction(
-                      text: 'COMMENTS FROM VERIFIED PURCHASES (26)'),
+                  HeadSedction(
+                      text: 'COMMENTS FROM VERIFIED PURCHASES (${widget.reviews.where((element) => element[Constants.name] != '').length})'),
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: Dimensions.sizedBoxWidth4),
                     child: Column(
-                      children: [
-                        ReviewBoxCon(
-                          date: '21-11-2022',
-                          topic: 'Status',
-                          review:
-                              'A very good product for public use, I recommend to all.',
-                          name: 'Jay Z',
-                          addHPad: true,
-                          rad: Dimensions.sizedBoxWidth3,
-                        ),
-                        SizedBox(
-                          height: Dimensions.sizedBoxHeight15 / 2,
-                        ),
-                        ReviewBoxCon(
-                          date: '21-11-2022',
-                          topic: 'Status',
-                          review:
-                              'A very good product for public use, I recommend to all.',
-                          name: 'Jay Z',
-                          addHPad: true,
-                          rad: Dimensions.sizedBoxWidth3,
-                        ),
-                        SizedBox(
-                          height: Dimensions.sizedBoxHeight15 / 2,
-                        ),
-                        ReviewBoxCon(
-                          date: '21-11-2022',
-                          topic: 'Status',
-                          review:
-                              'A very good product for public use, I recommend to all.',
-                          name: 'Jay Z',
-                          addHPad: true,
-                          rad: Dimensions.sizedBoxWidth3,
-                        ),
-                      ],
+                      children: widget.reviews.map((e) {
+                        return Column(
+                          children: [
+                            ReviewBoxCon(
+                                date: widget.reviews[widget.reviews.indexOf(e)],
+                                topic: e[Constants.reviewTitle],
+                                review: e[Constants.reviewBody],
+                                name: e[Constants.name],
+                              addHPad: true,
+                              rad: Dimensions.sizedBoxWidth3,
+                            ),
+                            SizedBox(
+                              height: Dimensions.sizedBoxHeight15 / 2,
+                            ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
                   const TxtButton(

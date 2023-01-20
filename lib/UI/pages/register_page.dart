@@ -1,12 +1,15 @@
 import 'dart:async';
 
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:GOCart/UI/utils/validator.dart';
 import 'package:GOCart/UI/widgets/text_form_field_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/custom_painter.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
@@ -22,6 +25,7 @@ class _RegisterPageState extends State<RegisterPage> {
   bool _obscurePwd = true;
   bool _checkBox = false;
   GlobalKey<FormState> key = GlobalKey<FormState>();
+  late AuthProvider authProvider;
 
   late TextEditingController controller1;
   late TextEditingController controller2;
@@ -37,6 +41,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   void initState() {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     controller1 = TextEditingController();
     controller2 = TextEditingController();
     controller3 = TextEditingController();
@@ -148,7 +154,8 @@ class _RegisterPageState extends State<RegisterPage> {
                           error: 'Invalid password',
                           helpMax: 2,
                           val: () => isValidPass(controller4.text),
-                          val2: () => isPassEqual(controller4.text, controller5.text),
+                          val2: () =>
+                              isPassEqual(controller4.text, controller5.text),
                           suffix: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -217,22 +224,66 @@ class _RegisterPageState extends State<RegisterPage> {
                                     Color.fromARGB(255, 1, 191, 84)
                                   ])),
                               child: Center(
-                                child: Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                      color: Constants.white,
-                                      fontSize: Dimensions.font20),
-                                ),
+                                child: Provider.of<AuthProvider>(context,
+                                                listen: true)
+                                            .status ==
+                                        Status.authenticating
+                                    ? SizedBox(
+                                        width: Dimensions.sizedBoxWidth10 * 2,
+                                        height: Dimensions.sizedBoxWidth10 * 2,
+                                        child: const CircularProgressIndicator(
+                                          color: Constants.white,
+                                          strokeWidth: 3,
+                                        ))
+                                    : Text(
+                                        'Sign Up',
+                                        style: TextStyle(
+                                            color: Constants.white,
+                                            fontSize: Dimensions.font20),
+                                      ),
                               ),
                             ),
-                            onPressed: () {
-                              // if (key.currentState!.validate()) {
-                                Timer(
-                                    const Duration(milliseconds: 200),
-                                    () => Get.toNamed(_checkBox
-                                        ? RouteHelper.getShopRegisterPage()
-                                        : RouteHelper.getRoutePage(0)));
-                              // }
+                            onPressed: () async {
+                              if (FirebaseAuth.instance.currentUser != null) {
+                                Constants(context).snackBar(
+                                    'You are logged in already',
+                                    Constants.tetiary);
+                                Get.offNamed(RouteHelper.getRoutePage(), arguments: 0);
+                              } else {
+                                if (key.currentState!.validate()) {
+                                  // Timer(
+                                  //     const Duration(milliseconds: 200),
+                                  //     () => Get.toNamed(_checkBox
+                                  //         ? RouteHelper.getShopRegisterPage()
+                                  //         : RouteHelper.getRoutePage(0)));
+                                  await authProvider
+                                      .registerWithEmailAndPass(
+                                          controller1.text.trim().toLowerCase(),
+                                          controller2.text.trim().toLowerCase(),
+                                          controller3.text.trim(),
+                                          controller4.text,
+                                          context)
+                                      .then((value) async {
+                                    if (value == true &&
+                                        authProvider.status ==
+                                            Status.authenticated) {
+                                      await Future.delayed(
+                                          const Duration(seconds: 1), (() {
+                                        if (_checkBox) {
+                                          Get.offNamed(RouteHelper
+                                              .getShopRegisterPage());
+                                        } else {
+                                          Get.offNamed(
+                                              RouteHelper.getPhoneRegisterPage());
+                                        }
+                                      }));
+                                    } else {
+                                      Constants(context).snackBar(
+                                          value.toString(), Colors.red);
+                                    }
+                                  });
+                                }
+                              }
                             },
                           ),
                         ),

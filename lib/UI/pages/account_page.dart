@@ -1,14 +1,19 @@
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/list_tile_btn_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 
 class AccountPage extends StatelessWidget {
-  const AccountPage({super.key});
+  final bool isSeller;
+
+  const AccountPage({super.key, required this.isSeller});
 
   @override
   Widget build(BuildContext context) {
@@ -29,15 +34,25 @@ class AccountPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
                 children: [
-                  ListTileBtn(
-                    title: 'Dashboard',
-                    leading: Icon(
-                      Icons.dashboard_outlined,
-                      size: Dimensions.font20 + 2,
-                    ),
-                    textSize: Dimensions.font14,
-                    page: RouteHelper.getDashboardPage(),
-                  ),
+                  isSeller
+                      ? ListTileBtn(
+                          title: 'Dashboard',
+                          leading: Icon(
+                            Icons.dashboard_outlined,
+                            size: Dimensions.font20 + 2,
+                          ),
+                          textSize: Dimensions.font14,
+                          page: RouteHelper.getDashboardPage(),
+                        )
+                      : ListTileBtn(
+                          title: 'Become a Seller',
+                          leading: Icon(Icons.handshake_outlined,
+                            size: Dimensions.font20 + 2,
+                          ),
+                          showTrailing: false,
+                          textSize: Dimensions.font14,
+                          page: RouteHelper.getShopRegisterPage(),
+                        ),
                   ListTileBtn(
                     title: 'Orders',
                     leading: Icon(
@@ -111,7 +126,19 @@ class AccountPage extends StatelessWidget {
                 ],
               ),
             ),
-            const TxtButton(text: 'LOGOUT')
+            TxtButton(
+              text: 'LOGOUT',
+              pressed: () async {
+                await Provider.of<AuthProvider>(context, listen: false)
+                    .signOut()
+                    .then((value) {
+                  if (value != null) {
+                    Constants(context).snackBar(value, Colors.red);
+                  }
+                  Get.offNamed(RouteHelper.getLoginPage());
+                });
+              },
+            )
           ],
         ),
       ),

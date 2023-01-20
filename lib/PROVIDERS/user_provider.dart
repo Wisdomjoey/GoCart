@@ -4,6 +4,10 @@ import 'package:flutter/material.dart';
 import '../CONSTANTS/constants.dart';
 
 class UserProvider extends ChangeNotifier {
+  final BuildContext context;
+
+  UserProvider(this.context);
+
   CollectionReference userCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionUsers);
 
@@ -35,24 +39,33 @@ class UserProvider extends ChangeNotifier {
     return snapshot;
   }
 
+  // Future getUserDataById(String uid) async {
+  //   DocumentSnapshot snapshot = await userCollectionRef.doc(uid).get();
+
+  //   return snapshot;
+  // }
+
   Future updateUserData(Map<String, dynamic> data, String userId) async {
     try {
       DocumentReference userDocumentRef = userCollectionRef.doc(userId);
 
       return await userDocumentRef.update(data);
     } on FirebaseException catch (e) {
-      return e.message;
+      Constants(context).snackBar(e.message!, Colors.red);
     }
   }
 
   Future deleteUser(String userId) async {
-    DocumentReference documentReference = userCollectionRef.doc(userId);
+    try {
+      DocumentReference documentReference = userCollectionRef.doc(userId);
 
-    await documentReference.delete().then((value) {
-      return 'Your account has been closed!';
-    }).catchError((e) {
-      return e;
-    });
+      await documentReference.delete().then((value) {
+        return Constants(context).snackBar(
+            'Your account has been closed successfully!', Constants.tetiary);
+      });
+    } on FirebaseException catch (e) {
+      Constants(context).snackBar(e.message!, Colors.red);
+    }
   }
 
   Future addToInbox(

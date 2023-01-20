@@ -14,7 +14,7 @@ class ElevatedBtn extends StatelessWidget {
   final double? radius;
   final double? visualVD;
   final double? visualHD;
-  final void Function()? pressed;
+  final VoidCallback? pressed;
 
   const ElevatedBtn(
       {super.key,

@@ -7,6 +7,7 @@ import 'package:GOCart/UI/pages/intro_page.dart';
 import 'package:GOCart/UI/pages/shop_register_page.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/pages/login_page.dart';
 import 'package:GOCart/UI/pages/register_page.dart';
@@ -20,6 +21,7 @@ import 'CONSTANTS/constants.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp();
 
   runApp(const MyApp());
@@ -37,16 +39,16 @@ class MyApp extends StatelessWidget {
           create: (_) => AuthProvider(),
         ),
         ChangeNotifierProvider(
-          create: (_) => CartProvider(),
+          create: (_) => CartProvider(context),
         ),
         ChangeNotifierProvider(
-          create: (_) => ProductProvider(),
+          create: (_) => ProductProvider(context),
         ),
         ChangeNotifierProvider(
-          create: (_) => ShopProvider(),
+          create: (_) => ShopProvider(context),
         ),
         ChangeNotifierProvider(
-          create: (_) => UserProvider(),
+          create: (_) => UserProvider(context),
         ),
       ],
       child: GetMaterialApp(

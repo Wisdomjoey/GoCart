@@ -20,3 +20,7 @@ bool isPassEqual(String password, String cPassword) {
 bool isTagsValid(String tag) {
   return RegExp(r'^[A-Za-z\s]*$').hasMatch(tag);
 }
+
+bool isNumberValid(String number) {
+  return RegExp(r'^[0-9\s]*$').hasMatch(number);
+}

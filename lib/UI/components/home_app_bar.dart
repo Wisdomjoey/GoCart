@@ -1,10 +1,12 @@
 import 'dart:ui';
 
+import 'package:GOCart/PROVIDERS/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../routes/route_helper.dart';
@@ -70,32 +72,38 @@ class _HomeAppBarState extends State<HomeAppBar> {
                         const Icon(Icons.shopping_cart_outlined),
                         Align(
                           alignment: Alignment.topRight,
-                          child: Container(
-                            width: Dimensions.font16,
-                            height: Dimensions.font16,
-                            margin: EdgeInsets.only(
-                                // top: Dimensions.sizedBoxHeight10,
-                                left: Dimensions.sizedBoxWidth15),
-                            decoration: BoxDecoration(
-                                color: Constants.tetiary,
-                                border: Border.all(color: Constants.secondary),
-                                borderRadius: BorderRadius.circular(
-                                    Dimensions.sizedBoxWidth4 * 2)),
-                            child: Center(
-                              child: Text(
-                                '3',
-                                style: TextStyle(
-                                    color: Constants.white,
-                                    fontSize: Dimensions.font11,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
-                          ),
+                          child:
+                              Provider.of<CartProvider>(context).cartListNo < 1
+                                  ? Container()
+                                  : Container(
+                                      width: Dimensions.font16,
+                                      height: Dimensions.font16,
+                                      margin: EdgeInsets.only(
+                                          // top: Dimensions.sizedBoxHeight10,
+                                          left: Dimensions.sizedBoxWidth15),
+                                      decoration: BoxDecoration(
+                                          color: Constants.tetiary,
+                                          border: Border.all(
+                                              color: Constants.secondary),
+                                          borderRadius: BorderRadius.circular(
+                                              Dimensions.sizedBoxWidth4 * 2)),
+                                      child: Center(
+                                        child: Text(
+                                          Provider.of<CartProvider>(context)
+                                              .cartListNo
+                                              .toString(),
+                                          style: TextStyle(
+                                              color: Constants.white,
+                                              fontSize: Dimensions.font11,
+                                              fontWeight: FontWeight.w500),
+                                        ),
+                                      ),
+                                    ),
                         )
                       ],
                     ),
                     onPressed: () {
-                      Get.toNamed(RouteHelper.getRoutePage(2));
+                      Get.toNamed(RouteHelper.getRoutePage(), arguments: 2);
                     },
                   ),
                 ],
@@ -128,7 +136,8 @@ class _HomeAppBarState extends State<HomeAppBar> {
                           title: const Text('Home'),
                           onTap: (() {
                             // Get.toNamed(RouteHelper.getRoutePage(0));
-                            Get.offAllNamed(RouteHelper.getRoutePage(0));
+                            Get.offAllNamed(RouteHelper.getRoutePage(),
+                                arguments: 0);
                           }),
                         ),
                       ),
@@ -152,8 +161,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             horizontalTitleGap: Dimensions.sizedBoxWidth3,
                             leading: const Icon(Icons.category_outlined),
                             title: const Text('Category'),
-                            onTap: (() =>
-                                Get.offAllNamed(RouteHelper.getRoutePage(1))),
+                            onTap: (() => Get.offAllNamed(
+                                RouteHelper.getRoutePage(),
+                                arguments: 1)),
                           ),
                         )),
                     PopupMenuItem(
@@ -175,8 +185,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             horizontalTitleGap: Dimensions.sizedBoxWidth3,
                             leading: const Icon(Icons.shop_2_outlined),
                             title: const Text('Shops'),
-                            onTap: (() =>
-                                Get.offAllNamed(RouteHelper.getRoutePage(3))),
+                            onTap: (() => Get.offAllNamed(
+                                RouteHelper.getRoutePage(),
+                                arguments: 3)),
                           ),
                         )),
                     PopupMenuItem(
@@ -193,8 +204,9 @@ class _HomeAppBarState extends State<HomeAppBar> {
                             horizontalTitleGap: Dimensions.sizedBoxWidth3,
                             leading: const Icon(Icons.person_outline),
                             title: const Text('Account'),
-                            onTap: (() =>
-                                Get.offAllNamed(RouteHelper.getRoutePage(4))),
+                            onTap: (() => Get.offAllNamed(
+                                RouteHelper.getRoutePage(),
+                                arguments: 4)),
                           ),
                         )),
                   ];

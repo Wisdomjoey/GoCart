@@ -1,9 +1,12 @@
+import 'package:async/async.dart';
+import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:dots_indicator/dots_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/product_box.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
@@ -19,16 +22,16 @@ class _HomePageState extends State<HomePage> {
   // final CarouselController _carouselController = CarouselController();
   final double _height = Dimensions.pageViewContainer;
   var _currentPageValue = 0.0;
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
+  final AsyncMemoizer _memoizer = AsyncMemoizer();
 
   @override
   Widget build(BuildContext context) {
     // print('height ${Get.context!.height}');
     // print('height ${Get.context!.width}');
+    // Future.delayed(Duration.zero, (() {
+    //   List products = getProducts();
+    // }));
+    // getProducts();
 
     return Column(
       children: [
@@ -124,13 +127,14 @@ class _HomePageState extends State<HomePage> {
                     padding: EdgeInsets.symmetric(
                         horizontal: Dimensions.sizedBoxWidth10 / 2),
                     child: ListView(
+                      scrollDirection: Axis.horizontal,
                       children: [0, 1, 2, 3, 4]
                           .map((e) => GestureDetector(
-                              child: _categoryList(Constants.categories[e]),
-                              onTap: () => Get.toNamed(
-                                  RouteHelper.getProductListPage(),
-                                  arguments: Constants.categories[e]),
-                            ))
+                                child: _categoryList(Constants.categories[e]),
+                                onTap: () => Get.toNamed(
+                                    RouteHelper.getProductListPage(),
+                                    arguments: Constants.categories[e]),
+                              ))
                           .toList(),
                     ),
                   ),
@@ -158,7 +162,33 @@ class _HomePageState extends State<HomePage> {
                     SizedBox(
                       height: Dimensions.sizedBoxHeight10 * 2,
                     ),
-                    const ProductBox()
+                    // products.isNotEmpty ? ProductBox(
+                    //   snapshotDocs: products,
+                    // ) : const CircularProgressIndicator(color: Constants.tetiary,)
+                    FutureBuilder(
+                      initialData: const [],
+                      future: _memoizer.runOnce(() {
+                        return Provider.of<ProductProvider>(context, listen: false)
+                            .getAllProducts();
+                      }),
+                      builder: (context, AsyncSnapshot snapshot) {
+                        return snapshot.data!.isEmpty &&
+                                Provider.of<ProductProvider>(context).process !=
+                                    Process.processComplete
+                            ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: Constants.tetiary,
+                                ),
+                              )
+                            : (snapshot.data!.isNotEmpty
+                                ? ProductBox(
+                                    snapshotDocs: snapshot.data!,
+                                  )
+                                : const Center(
+                                    child: Text('No Product'),
+                                  ));
+                      },
+                    )
                   ],
                 )
               ],

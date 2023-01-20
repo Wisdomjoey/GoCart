@@ -1,11 +1,12 @@
-import 'dart:async';
-
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/custom_painter.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../widgets/text_form_field_widget.dart';
@@ -20,6 +21,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   bool _obscurePwd = true;
   GlobalKey<FormState> key = GlobalKey<FormState>();
+  late AuthProvider authProvider;
 
   late TextEditingController controller1;
   late TextEditingController controller2;
@@ -29,6 +31,8 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    authProvider = Provider.of<AuthProvider>(context, listen: false);
+
     controller1 = TextEditingController();
     controller2 = TextEditingController();
 
@@ -38,7 +42,7 @@ class _LoginPageState extends State<LoginPage> {
     super.initState();
   }
 
-    @override
+  @override
   void dispose() {
     controller1.dispose();
     controller2.dispose();
@@ -75,11 +79,99 @@ class _LoginPageState extends State<LoginPage> {
                     key: key,
                     child: Column(
                       children: [
+                        SizedBox(
+                          width: double.maxFinite,
+                          height: Dimensions.sizedBoxHeight10 * 4,
+                          child: Material(
+                            color: Colors.transparent,
+                            elevation: 3,
+                            borderRadius: BorderRadius.circular(
+                                Dimensions.sizedBoxHeight10 * 4),
+                            child: InkWell(
+                              onTap: () async {
+                                if (Provider.of<AuthProvider>(context, listen: false).isSigned == null || Provider.of<AuthProvider>(context,
+                                            listen: false)
+                                        .isSigned == false) {
+                                  await authProvider
+                                      .googleSignin()
+                                      .then((value) {
+                                    if (value == true) {
+                                      Constants(context).snackBar(
+                                          'Sign In Succesful!',
+                                          Constants.tetiary);
+
+                                      Get.offNamed(RouteHelper.getRoutePage(),
+                                          arguments: 0);
+                                    } else if (value == false) {
+                                      Constants(context).snackBar(
+                                          'Sign In Failed!', Colors.red);
+                                    } else {
+                                      if (authProvider.status ==
+                                          Status.authenticateError) {
+                                        Constants(context)
+                                            .snackBar(value, Colors.red);
+                                      }
+                                    }
+                                  });
+                                } else {
+                                  await authProvider
+                                      .googleSignin1()
+                                      .then((value) {
+                                    if (value == true) {
+                                      Constants(context).snackBar(
+                                          'Sign In Succesful!',
+                                          Constants.tetiary);
+
+                                      Get.offNamed(RouteHelper.getRoutePage(),
+                                          arguments: 0);
+                                    } else if (value == false) {
+                                      Constants(context).snackBar(
+                                          'Sign In Failed!', Colors.red);
+                                    } else {
+                                      if (authProvider.status ==
+                                          Status.authenticateError) {
+                                        Constants(context)
+                                            .snackBar(value, Colors.red);
+                                      }
+                                    }
+                                  });
+                                }
+                              },
+                              borderRadius: BorderRadius.circular(
+                                  Dimensions.sizedBoxHeight10 * 4),
+                              child: Ink(
+                                width: double.maxFinite,
+                                height: Dimensions.sizedBoxHeight10 * 4,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: Dimensions.sizedBoxWidth10),
+                                decoration: BoxDecoration(
+                                    color: Constants.white,
+                                    borderRadius: BorderRadius.circular(
+                                        Dimensions.sizedBoxHeight10 * 4)),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/google.png',
+                                      width: Dimensions.sizedBoxWidth15 * 2,
+                                    ),
+                                    const Text('Sign In With Google'),
+                                    const Icon(Icons.arrow_forward)
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: Dimensions.sizedBoxHeight15 * 2,
+                        ),
                         TextFormFieldWidget(
                           controller: controller1,
                           node: node1,
                           label: 'Email',
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.mail_outline_rounded,
                             color: Constants.grey,
                           ),
@@ -92,7 +184,10 @@ class _LoginPageState extends State<LoginPage> {
                           controller: controller2,
                           node: node2,
                           label: 'Password *',
-                          icon: const Icon(Icons.key, color: Constants.grey,),
+                          icon: const Icon(
+                            Icons.key,
+                            color: Constants.grey,
+                          ),
                           suffix: GestureDetector(
                             onTap: () {
                               setState(() {
@@ -105,9 +200,9 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                           obscureTxt: _obscurePwd,
                         ),
-                        // SizedBox(
-                        //   height: Dimensions.sizedBoxHeight100 / 2,
-                        // ),
+                        SizedBox(
+                          height: Dimensions.sizedBoxHeight15 * 2,
+                        ),
                         SizedBox(
                           width: double.maxFinite,
                           child: ElevatedButton(
@@ -131,19 +226,63 @@ class _LoginPageState extends State<LoginPage> {
                                     Color.fromARGB(255, 1, 191, 84)
                                   ])),
                               child: Center(
-                                child: Text(
-                                  'Sign In',
-                                  style: TextStyle(
-                                      color: Constants.white,
-                                      fontSize: Dimensions.font20),
-                                ),
+                                child: Provider.of<AuthProvider>(context,
+                                                listen: true)
+                                            .status ==
+                                        Status.authenticating
+                                    ? SizedBox(
+                                        width: Dimensions.sizedBoxWidth10 * 2,
+                                        height: Dimensions.sizedBoxWidth10 * 2,
+                                        child: const CircularProgressIndicator(
+                                          color: Constants.white,
+                                          strokeWidth: 3,
+                                        ))
+                                    : Text(
+                                        'Sign In',
+                                        style: TextStyle(
+                                            color: Constants.white,
+                                            fontSize: Dimensions.font20),
+                                      ),
                               ),
                             ),
-                            onPressed: () {
-                              if (key.currentState!.validate()) {
-                                // Timer(
-                                //     const Duration(milliseconds: 200),
-                                //     () => Get.toNamed(RouteHelper.getRoutePage(0)));
+                            onPressed: () async {
+                              if (FirebaseAuth.instance.currentUser != null) {
+                                Constants(context).snackBar(
+                                    'You are logged in already',
+                                    Constants.tetiary);
+
+                                Get.offNamed(RouteHelper.getRoutePage(),
+                                    arguments: 0);
+                              } else {
+                                if (key.currentState!.validate()) {
+                                  // Timer(
+                                  //     const Duration(milliseconds: 200),
+                                  //     () => Get.toNamed(RouteHelper.getRoutePage(0)));
+                                  await Provider.of<AuthProvider>(context,
+                                          listen: false)
+                                      .loginWithEmailAndPass(
+                                          controller1.text.trim(),
+                                          controller2.text,
+                                          context)
+                                      .then((value) {
+                                    if (value == true &&
+                                        authProvider.status ==
+                                            Status.authenticated) {
+                                      Constants(context).snackBar(
+                                          'Sign In Succesful!',
+                                          Constants.tetiary);
+                                          
+                                      Get.offNamed(RouteHelper.getRoutePage(),
+                                          arguments: 0);
+                                    } else if (value == false) {
+                                      Constants(context).snackBar(
+                                          'An error occurred', Colors.red);
+                                    } else {
+                                      Constants(context)
+                                          .snackBar('$value', Colors.red);
+                                    }
+                                  });
+                                }
                               }
                             },
                           ),
@@ -157,8 +296,8 @@ class _LoginPageState extends State<LoginPage> {
                               child: Text(
                                 'Forgot Password?',
                                 style: TextStyle(
-                                    color:
-                                        const Color.fromARGB(255, 124, 124, 124),
+                                    color: const Color.fromARGB(
+                                        255, 124, 124, 124),
                                     fontSize: Dimensions.font15,
                                     decoration: TextDecoration.underline),
                               ),

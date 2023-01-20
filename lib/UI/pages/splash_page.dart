@@ -1,9 +1,16 @@
 import 'dart:async';
 
+import 'package:GOCart/PREFS/preferences.dart';
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/PROVIDERS/cart_provider.dart';
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
+import 'package:GOCart/UI/pages/local_authPage.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 
@@ -20,9 +27,18 @@ class _SplashPageState extends State<SplashPage> {
   double _h = Dimensions.sizedBoxWidth10 * 2;
   double _opacity = 0.0;
 
+  late bool _isLoggedIn;
+
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(Duration.zero, (() {
+      Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
+
+      _isLoggedIn =
+          Provider.of<AuthProvider>(context, listen: false).loginStatus;
+    }));
 
     Timer(const Duration(milliseconds: 500), ((() {
       setState(() {
@@ -46,9 +62,29 @@ class _SplashPageState extends State<SplashPage> {
         _opacity = 1.0;
       });
     })));
-    Timer(const Duration(milliseconds: 4300), ((() {
+    Timer(const Duration(milliseconds: 4300), ((() async {
       // Get.offNamed(RouteHelper.getRegisterPage());
-      Get.offNamedUntil(RouteHelper.getIntroPage(), (route) => false);
+      if (_isLoggedIn) {
+        await Provider.of<CartProvider>(context, listen: false)
+            .getCart(FirebaseAuth.instance.currentUser!.uid)
+            .then((value) async {
+          await Provider.of<CartProvider>(context, listen: false)
+              .getFoodCart(FirebaseAuth.instance.currentUser!.uid)
+              .then((value) async {
+            await Provider.of<ShopProvider>(context, listen: false)
+                .fetchAllShops()
+                .then((value) {
+              Get.offNamed(RouteHelper.getRoutePage(), arguments: 0);
+            });
+          });
+        });
+        // Get.offNamedUntil(RouteHelper.getPhoneRegisterPage(), (route) => false);
+      } else {
+        await Provider.of<AuthProvider>(context, listen: false)
+            .initialize(Status.uninitialized);
+        Get.offNamed(RouteHelper.getIntroPage());
+      }
+      // Get.offUntil(MaterialPageRoute(builder: ((context) => const LocalAuthPage())), (route) => false);
     })));
   }
 

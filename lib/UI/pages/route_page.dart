@@ -1,10 +1,14 @@
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/account_app_bar.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/navigation_icon_widget.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
+import '../../PREFS/preferences.dart';
 import '../components/home_app_bar.dart';
 import '../../CONSTANTS/constants.dart';
 
@@ -20,17 +24,87 @@ class RoutePage extends StatefulWidget {
 class _RoutePageState extends State<RoutePage> {
   int _activePage = 0;
   bool _allowPageId = true;
-  PreferredSizeWidget page = HomeAppBar(
-    logo: Container(
-      width: Dimensions.sizedBoxWidth10 * 9,
-      height: Dimensions.sizedBoxHeight100 / 2,
-      decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/GoCart  sample4.png'))),
-    ),
-  );
-  List<PreferredSizeWidget> page1 = [
-    HomeAppBar(
+  String firstname = '';
+  String lastname = '';
+  String email = '';
+  bool isSeller = false;
+
+  final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
+
+  late List _pages;
+
+  getUserData() async {
+    // await Preferences().getListData(Constants.prefsUserFullName).then((value) {
+    //   firstname = value![0];
+    //   lastname = value[1];
+    //   print(value);
+    // });
+
+    await Preferences()
+        .getStringData(Constants.prefsUserEmail)
+        .then((value) async {
+      email = value!;
+
+      await Preferences().getStringData(Constants.prefsUserEmail).then((value1) {
+        email = value1!;
+      });
+      // print(value);
+    });
+    await Preferences()
+        .getStringData(Constants.prefsUserFirstName)
+        .then((value) async {
+      firstname = value!;
+
+      await Preferences()
+          .getStringData(Constants.prefsUserFirstName)
+          .then((value1) {
+        firstname = value1!;
+      });
+      // print(value);
+    });
+    await Preferences()
+        .getStringData(Constants.prefsUserLastName)
+        .then((value) async {
+      lastname = value!;
+
+      await Preferences()
+          .getStringData(Constants.prefsUserLastName)
+          .then((value1) {
+        lastname = value1!;
+      });
+      // print(value);
+    });
+    await Preferences()
+        .getBoolData(Constants.prefsUserIsSeller)
+        .then((value) async {
+      isSeller = value!;
+
+      await Preferences()
+          .getBoolData(Constants.prefsUserIsSeller)
+          .then((value1) async {
+        isSeller = value1!;
+      });
+      // print(value);
+    });
+  }
+
+  late PreferredSizeWidget page;
+  late List<PreferredSizeWidget> page1;
+
+  @override
+  void initState() {
+    Future.delayed(Duration.zero, (() {
+      Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
+
+      if (!Provider.of<AuthProvider>(context, listen: false).loginStatus) {
+        Constants(context).snackBar('You are not logged in', Colors.red);
+        Get.offAllNamed(RouteHelper.getLoginPage());
+      }
+    }));
+
+    getUserData();
+
+    page = HomeAppBar(
       logo: Container(
         width: Dimensions.sizedBoxWidth10 * 9,
         height: Dimensions.sizedBoxHeight100 / 2,
@@ -38,39 +112,63 @@ class _RoutePageState extends State<RoutePage> {
             image: DecorationImage(
                 image: AssetImage('assets/images/GoCart  sample4.png'))),
       ),
-    ),
-    HomeAppBar(
-      title: 'Category',
-      textSize: Dimensions.font24,
-      icon: const Icon(Icons.list_alt_outlined),
-    ),
-    HomeAppBar(
-      title: 'Cart',
-      textSize: Dimensions.font24,
-      icon: const Icon(Icons.shopping_cart_outlined),
-    ),
-    HomeAppBar(
-      title: 'Shops',
-      textSize: Dimensions.font24,
-      icon: const Icon(Icons.store_outlined),
-    ),
-    AccountAppBar()
-  ];
-  final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
+    );
 
-  final List<dynamic> _pages = [
-    RouteHelper.getHomePage(),
-    RouteHelper.getCategoriesPage(),
-    RouteHelper.getCartPage(),
-    RouteHelper.getShopPage(),
-    RouteHelper.getAccountPage(),
-  ];
+    _pages = [
+      RouteHelper.getHomePage(),
+      RouteHelper.getCategoriesPage(),
+      RouteHelper.getCartPage(),
+      RouteHelper.getShopPage(),
+      RouteHelper.getAccountPage(isSeller),
+    ];
+
+    page1 = [
+      HomeAppBar(
+        logo: Container(
+          width: Dimensions.sizedBoxWidth10 * 9,
+          height: Dimensions.sizedBoxHeight100 / 2,
+          decoration: const BoxDecoration(
+              image: DecorationImage(
+                  image: AssetImage('assets/images/GoCart  sample4.png'))),
+        ),
+      ),
+      HomeAppBar(
+        title: 'Category',
+        textSize: Dimensions.font24,
+        icon: const Icon(Icons.list_alt_outlined),
+      ),
+      HomeAppBar(
+        title: 'Cart',
+        textSize: Dimensions.font24,
+        icon: const Icon(Icons.shopping_cart_outlined),
+      ),
+      HomeAppBar(
+        title: 'Shops',
+        textSize: Dimensions.font24,
+        icon: const Icon(Icons.store_outlined),
+      ),
+      AccountAppBar(
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+      )
+    ];
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar:
-          _allowPageId ? (widget.pageId == 4 ? AccountAppBar() : page1[widget.pageId]) : page,
+      appBar: _allowPageId
+          ? (widget.pageId == 4
+              ? AccountAppBar(
+                  firstname: firstname,
+                  lastname: lastname,
+                  email: email,
+                )
+              : page1[widget.pageId])
+          : page,
       body: _pages[_allowPageId ? widget.pageId : _activePage],
       // extendBody: true,
       bottomNavigationBar: CurvedNavigationBar(
@@ -153,7 +251,11 @@ class _RoutePageState extends State<RoutePage> {
                 );
                 break;
               case 4:
-                page = AccountAppBar();
+                page = AccountAppBar(
+                  firstname: firstname,
+                  lastname: lastname,
+                  email: email,
+                );
                 break;
               default:
                 page = HomeAppBar(

@@ -1,15 +1,20 @@
 import 'dart:async';
 
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/utils/validator.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:GOCart/UI/widgets/text_form_field_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PROVIDERS/cart_provider.dart';
 import '../routes/route_helper.dart';
 
 class ShopRegisterPage extends StatefulWidget {
@@ -23,7 +28,10 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
   final ImagePicker _picker = ImagePicker();
   // late List<XFile> images;
   // late XFile photo;
-  CroppedFile? image;
+  List<CroppedFile> images = [];
+  List<String> shopCategories = [];
+  List<String> tags = [];
+
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
   final GlobalKey<FormState> key = GlobalKey<FormState>();
 
@@ -35,6 +43,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
   late FocusNode node2;
   late FocusNode node3;
 
+  Map<String, dynamic> checked = {};
+
   @override
   void initState() {
     controller1 = TextEditingController();
@@ -44,6 +54,10 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
     node1 = FocusNode();
     node2 = FocusNode();
     node3 = FocusNode();
+
+    for (var element in Constants.shopCategory) {
+      checked.addAll({element: false});
+    }
 
     super.initState();
   }
@@ -139,6 +153,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                       height: Dimensions.sizedBoxHeight15 * 2,
                     ),
                     Container(
+                      margin:
+                          EdgeInsets.only(bottom: Dimensions.sizedBoxHeight15),
                       padding: EdgeInsets.symmetric(
                           horizontal: Dimensions.sizedBoxWidth10 * 2),
                       width: double.maxFinite,
@@ -177,7 +193,39 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                   'Add tags so as to make it easier for buyers to find your products. Seperate your tags with a space.',
                               helpMax: 2,
                               val: () => isTagsValid(controller3.text),
-                              icon: const Icon(Icons.label_outlined, color: Constants.grey,),
+                              icon: const Icon(
+                                Icons.label_outlined,
+                                color: Constants.grey,
+                              ),
+                            ),
+                            SizedBox(
+                              height: Dimensions.sizedBoxHeight10 / 2,
+                            ),
+                            Column(
+                              children: [
+                                const Text(
+                                    'Select your shop\'s category, you can select more than one'),
+                                Column(
+                                  children: Constants.shopCategory.map((e) {
+                                    return CheckboxListTile(
+                                      value: checked[e],
+                                      onChanged: ((value) {
+                                        setState(() {
+                                          checked[e] = value;
+                                          shopCategories.add(
+                                              Constants.shopCategoryV[Constants
+                                                  .shopCategory
+                                                  .indexOf(e)]);
+                                        });
+                                      }),
+                                      title: Text(e),
+                                    );
+                                  }).toList(),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: Dimensions.sizedBoxHeight10 / 2,
                             ),
                             SizedBox(
                               // height: Dimensions.sizedBoxHeight10 * 4,
@@ -202,7 +250,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                             Text(
                               'Upload images to represent your shop e.g. pictures of your shop or products.',
                               style: TextStyle(
-                                  color: const Color.fromARGB(255, 107, 107, 107),
+                                  color:
+                                      const Color.fromARGB(255, 107, 107, 107),
                                   fontSize: Dimensions.font12),
                             ),
                             SizedBox(
@@ -212,8 +261,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                               width: double.maxFinite,
                               child: ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                    padding:
-                                        const EdgeInsets.symmetric(horizontal: 0),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 0),
                                     disabledForegroundColor: Colors.transparent,
                                     shape: RoundedRectangleBorder(
                                         borderRadius: BorderRadius.circular(
@@ -231,21 +280,94 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                         Color.fromARGB(255, 1, 191, 84)
                                       ])),
                                   child: Center(
-                                    child: Text(
-                                      'Complete Sign Up',
-                                      style: TextStyle(
-                                          color: Constants.white,
-                                          fontSize: Dimensions.font20),
-                                    ),
+                                    child: Provider.of<ShopProvider>(context)
+                                                .load ==
+                                            Load.processing
+                                        ? SizedBox(
+                                            width:
+                                                Dimensions.sizedBoxWidth10 * 2,
+                                            height:
+                                                Dimensions.sizedBoxWidth10 * 2,
+                                            child:
+                                                const CircularProgressIndicator(
+                                              color: Constants.white,
+                                              strokeWidth: 3,
+                                            ))
+                                        : Text(
+                                            'Complete Sign Up',
+                                            style: TextStyle(
+                                                color: Constants.white,
+                                                fontSize: Dimensions.font20),
+                                          ),
                                   ),
                                 ),
-                                onPressed: () {
-                                  // if (key.currentState!.validate()) {
-                                    Timer(
-                                        const Duration(milliseconds: 200),
-                                        () => Get.toNamed(RouteHelper
-                                            .getPhoneRegisterPage()));
-                                  // }
+                                onPressed: () async {
+                                  if (shopCategories.isEmpty) {
+                                    Constants(context).snackBar(
+                                        'Please add at least one category',
+                                        Colors.red);
+                                  } else {
+                                    if (images.isEmpty) {
+                                      Constants(context).snackBar(
+                                          'Please add at least one image',
+                                          Colors.red);
+                                    } else {
+                                      if (key.currentState!.validate()) {
+                                        tags =
+                                            controller3.text.trim().split(' ');
+
+                                        await Provider.of<ShopProvider>(context,
+                                                listen: false)
+                                            .createShop(
+                                                controller1.text
+                                                    .trim(),
+                                                controller2.text.trim(),
+                                                tags,
+                                                images,
+                                                FirebaseAuth
+                                                    .instance.currentUser!.uid,
+                                                shopCategories,
+                                                context)
+                                            .then((value) async {
+                                          if (value) {
+                                            await Provider.of<CartProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .getCart(FirebaseAuth
+                                                    .instance.currentUser!.uid)
+                                                .then((value) async {
+                                              await Provider.of<CartProvider>(
+                                                      context,
+                                                      listen: false)
+                                                  .getFoodCart(FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid)
+                                                  .then((value) async {
+                                                await Provider.of<ShopProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .fetchAllShops()
+                                                    .then((value) {
+                                                  if (Provider.of<AuthProvider>(
+                                                          context)
+                                                      .isPhoneVerified) {
+                                                    Get.offNamed(
+                                                        RouteHelper
+                                                            .getRoutePage(),
+                                                        arguments: 0);
+                                                  } else {
+                                                    Get.offNamed(RouteHelper
+                                                        .getPhoneRegisterPage());
+                                                  }
+                                                });
+                                              });
+                                            });
+                                          }
+                                        });
+                                      }
+                                    }
+                                  }
                                 },
                               ),
                             ),
@@ -292,7 +414,7 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                           if (value == null) return;
 
                           setState(() {
-                            image = value;
+                            images.add(value);
                           });
                         });
                       });
@@ -332,7 +454,7 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                           if (value == null) return;
 
                           setState(() {
-                            image = value;
+                            images.add(value);
                           });
                         });
                       });
