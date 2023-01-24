@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:GOCart/PROVIDERS/cart_provider.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -15,33 +16,13 @@ import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PROVIDERS/user_provider.dart';
 import '../utils/dimensions.dart';
 
-class CartPage extends StatefulWidget {
+class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
-  @override
-  State<CartPage> createState() => _CartPageState();
-}
-
-class _CartPageState extends State<CartPage> {
-  bool processing = true;
-
-  // getFoodData(List cart) async {
-  //   List data = [];
-
-  //   for (var element in cart) {
-  //     var snapshot =
-  //         await Provider.of<ProductProvider>(context)
-  //             .getProductData(element.data()[Constants.productId]);
-
-  //     data.add(snapshot);
-  //   }
-
-  //   return data;
-  // }
-
-  getProductsData(List cart) async {
+  getProductsData(List cart, BuildContext context) async {
     List data = [];
 
     for (var element in cart) {
@@ -51,19 +32,18 @@ class _CartPageState extends State<CartPage> {
       data.add(snapshot);
     }
 
-    setState(() {
-      processing = false;
-    });
-
     return data;
   }
 
   @override
   Widget build(BuildContext context) {
+    String currency = Constants(context).currency().currencySymbol;
+
     return FutureBuilder(
-      future: getProductsData(Provider.of<CartProvider>(context).carts),
+      future: getProductsData(
+          Provider.of<CartProvider>(context, listen: false).carts, context),
       builder: (context, AsyncSnapshot snapshot) {
-        return processing
+        return snapshot.connectionState == ConnectionState.waiting
             ? const Center(
                 child: CircularProgressIndicator(
                   color: Constants.tetiary,
@@ -144,7 +124,7 @@ class _CartPageState extends State<CartPage> {
                                 ],
                               ),
                               Text(
-                                '\$ ${Provider.of<CartProvider>(context).cartSubtotal}',
+                                '$currency ${Provider.of<CartProvider>(context).cartSubtotal}',
                                 style: TextStyle(
                                     fontWeight: FontWeight.w600,
                                     fontSize: Dimensions.font16),
@@ -195,7 +175,7 @@ class _CartPageState extends State<CartPage> {
                                                   Dimensions.sizedBoxHeight100,
                                               decoration: BoxDecoration(
                                                   image: DecorationImage(
-                                                      image: NetworkImage(
+                                                      image: CachedNetworkImageProvider(
                                                           snapshot.data[index][
                                                               Constants
                                                                   .imgUrls][0]),
@@ -226,7 +206,7 @@ class _CartPageState extends State<CartPage> {
                                                       2,
                                                 ),
                                                 Text(
-                                                  '\$${snapshot.data[index][Constants.prodNewPrice]}',
+                                                  '$currency${snapshot.data[index][Constants.prodNewPrice]}',
                                                   style: TextStyle(
                                                       fontSize:
                                                           Dimensions.font16,
@@ -241,7 +221,7 @@ class _CartPageState extends State<CartPage> {
                                                     ? Row(
                                                         children: [
                                                           Text(
-                                                            '\$${snapshot.data[index][Constants.prodOldPrice]}',
+                                                            '$currency${snapshot.data[index][Constants.prodOldPrice]}',
                                                             style: TextStyle(
                                                                 fontSize:
                                                                     Dimensions
@@ -266,7 +246,7 @@ class _CartPageState extends State<CartPage> {
                                                           ),
                                                           BoxChip(
                                                             text:
-                                                                '-${((snapshot.data[index][Constants.prodOldPrice] - snapshot.data[index][Constants.prodNewPrice]) / snapshot.data[index][Constants.prodOldPrice]) * 100}%',
+                                                                '-${(((snapshot.data[index][Constants.prodOldPrice] - snapshot.data[index][Constants.prodNewPrice]) / snapshot.data[index][Constants.prodOldPrice]) * 100).toStringAsFixed(2)}%',
                                                             pad: EdgeInsets
                                                                 .symmetric(
                                                               horizontal: Dimensions
@@ -378,7 +358,7 @@ class _CartPageState extends State<CartPage> {
                                                             context,
                                                             listen: false)
                                                         .decreaseCartProduct(
-                                                            Provider.of<CartProvider>(context)
+                                                            Provider.of<CartProvider>(context, listen: false)
                                                                     .carts[index]
                                                                 [Constants
                                                                     .productId],
@@ -386,12 +366,12 @@ class _CartPageState extends State<CartPage> {
                                                                 .instance
                                                                 .currentUser!
                                                                 .uid,
-                                                            Provider.of<CartProvider>(context)
-                                                                    .carts[index]
-                                                                [Constants.uid],
                                                             snapshot.data[index]
-                                                                [Constants.prodCategory],
-                                                            snapshot.data[index][Constants.amount]);
+                                                                [Constants
+                                                                    .prodCategory],
+                                                            snapshot.data[index]
+                                                                [Constants.prodNewPrice],
+                                                            snapshot.data[index][Constants.shopName]);
                                                   },
                                                   icon: Icons.remove,
                                                   width: Dimensions
@@ -405,18 +385,19 @@ class _CartPageState extends State<CartPage> {
                                                       Colors.transparent,
                                                   iconSize: Dimensions.font24,
                                                   iconColor: Constants.white,
-                                                  isDisabled: Provider.of<
-                                                                      CartProvider>(
-                                                                  context)
-                                                              .cart[Provider.of<
-                                                                          CartProvider>(
-                                                                      context,
-                                                                      listen: false)
+                                                  isDisabled: Provider.of<CartProvider>(context)
+                                                              .cart[Provider.of<CartProvider>(context, listen: false)
                                                                   .carts[index][
                                                               Constants
-                                                                  .productId]] <
-                                                          2
-                                                      ? true
+                                                                  .productId]] !=
+                                                          null
+                                                      ? (Provider.of<CartProvider>(context)
+                                                                  .cart[Provider.of<CartProvider>(context, listen: false)
+                                                                      .carts[index]
+                                                                  [Constants.productId]] <
+                                                              2
+                                                          ? true
+                                                          : false)
                                                       : false,
                                                   right: 0,
                                                 ),
@@ -450,7 +431,7 @@ class _CartPageState extends State<CartPage> {
                                                             context,
                                                             listen: false)
                                                         .increaseCartProduct(
-                                                            Provider.of<CartProvider>(context)
+                                                            Provider.of<CartProvider>(context, listen: false)
                                                                     .carts[index]
                                                                 [Constants
                                                                     .productId],
@@ -458,13 +439,12 @@ class _CartPageState extends State<CartPage> {
                                                                 .instance
                                                                 .currentUser!
                                                                 .uid,
-                                                            Provider.of<CartProvider>(context)
-                                                                    .carts[index]
-                                                                [Constants.uid],
                                                             snapshot.data[index]
-                                                                [Constants.prodCategory],
-                                                            snapshot.data[index][Constants.shopName],
-                                                            snapshot.data[index][Constants.amount]);
+                                                                [Constants
+                                                                    .prodCategory],
+                                                            snapshot.data[index]
+                                                                [Constants.shopName],
+                                                            snapshot.data[index][Constants.prodNewPrice]);
                                                   },
                                                   icon: Icons.add,
                                                   width: Dimensions
@@ -492,13 +472,14 @@ class _CartPageState extends State<CartPage> {
                                 onTap: () => Timer(
                                     const Duration(milliseconds: 100),
                                     () => Get.toNamed(
-                                          RouteHelper.getProductDetailsPage(),
-                                        )),
+                                        RouteHelper.getProductDetailsPage(),
+                                        arguments: snapshot.data[index])),
                               );
                             },
                           ),
                         ),
                         DetailsBottomNav(
+                          isAdded: false,
                           leading: IconBox(
                             icon: Icons.phone,
                             height: Dimensions.sizedBoxHeight65,
@@ -521,6 +502,9 @@ class _CartPageState extends State<CartPage> {
 
   Widget _showDialog(context, String prodId, String cartId, double amount) {
     // SnackBar(content: Text('content'));
+    List favs =
+        Provider.of<UserProvider>(context).userData[Constants.userFavourites];
+
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10 * 2),
@@ -566,12 +550,39 @@ class _CartPageState extends State<CartPage> {
             SizedBox(
               height: Dimensions.sizedBoxHeight100 / 2,
               width: double.maxFinite,
-              child: const ElevatedBtn(
+              child: ElevatedBtn(
+                pressed: () async {
+                  String uid = FirebaseAuth.instance.currentUser!.uid;
+
+                  if (!favs.contains(prodId)) {
+                    await Provider.of<UserProvider>(context, listen: false)
+                        .updateUserData({
+                      Constants.userFavourites: [...favs, prodId]
+                    }, uid).then((value) async {
+                      if (value) {
+                        Constants(context).snackBar(
+                            'Product added to Saved Items', Constants.tetiary);
+
+                        await Provider.of<CartProvider>(context, listen: false)
+                            .removeFromCart(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                prodId,
+                                cartId,
+                                amount);
+                      }
+                    });
+                  } else {
+                    Constants(context).snackBar(
+                        'Product is already in your saved list', Colors.red);
+                  }
+
+                  Navigator.pop(context);
+                },
                 text: 'SAVE FOR LATER',
                 textColor: Constants.tetiary,
                 isElevated: false,
                 addBorder: true,
-                icon: Icon(
+                icon: const Icon(
                   Icons.favorite_border,
                   color: Constants.tetiary,
                 ),

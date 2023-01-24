@@ -350,7 +350,7 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                                     .fetchAllShops()
                                                     .then((value) {
                                                   if (Provider.of<AuthProvider>(
-                                                          context)
+                                                          context, listen: false)
                                                       .isPhoneVerified) {
                                                     Get.offNamed(
                                                         RouteHelper
@@ -448,15 +448,15 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                   GestureDetector(
                     onTap: (() async {
                       await _getImage().then((value) async {
-                        if (value == null) return;
+                        for (var element in value) {
+                          await _cropImage(element!.path).then((value) {
+                            if (value == null) return;
 
-                        await _cropImage(value.path).then((value) {
-                          if (value == null) return;
-
-                          setState(() {
-                            images.add(value);
+                            setState(() {
+                              images.add(value);
+                            });
                           });
-                        });
+                        }
                       });
                     }),
                     child: SizedBox(
@@ -503,8 +503,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
     );
   }
 
-  Future<XFile?> _getImage() async {
-    return await _picker.pickImage(source: ImageSource.gallery);
+  Future<List<XFile?>> _getImage() async {
+    return await _picker.pickMultiImage();
   }
 
   Future<XFile?> _getCamImage() async {

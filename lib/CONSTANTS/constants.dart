@@ -1,5 +1,12 @@
+import 'dart:io';
+
+import 'package:GOCart/PROVIDERS/product_provider.dart';
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 import '../UI/utils/dimensions.dart';
 import '../UI/widgets/elevated_button_widget.dart';
@@ -94,8 +101,14 @@ class Constants {
   static const String imgUrls = "imgUrls";
   static const String imgUrl = "imgUrl";
   static const String name = "name";
+  static const String likes = "likes";
+  static const String month = "month";
   static const String subtotal = "subtotal";
   static const String quantity = "quantity";
+  static const String newOrder = "new";
+  static const String processing = "processing";
+  static const String closed = "closed";
+  static const String cancelled = "cancelled";
   static const String deliveryPrice = "deliveryPrice";
 
   static const String shopAddress = "shopAddress";
@@ -136,7 +149,17 @@ class Constants {
 
   static const String amount = "amount";
 
-  Widget buildPageItem(int position) {
+  NumberFormat currency() {
+    // Locale locale = Localizations.localeOf(context);
+
+    var format =
+        NumberFormat.simpleCurrency(locale: Platform.localeName, name: 'NGN');
+
+    return format;
+  }
+
+  Widget buildPageItem(int position, String imgUrl1, String prodId,
+      String shopId, int imgLength) {
     return Stack(alignment: Alignment.topRight, children: [
       Container(
         height: Dimensions.pageViewContainer,
@@ -154,7 +177,7 @@ class Constants {
               splashColor: const Color.fromARGB(35, 55, 55, 55),
               child: Ink.image(
                   fit: BoxFit.cover,
-                  image: const AssetImage('assets/images/med.gif')),
+                  image: CachedNetworkImageProvider(imgUrl1)),
               onTap: () {},
             ),
           ),
@@ -173,7 +196,9 @@ class Constants {
         child: IconButton(
             onPressed: (() {
               showDialog(
-                  context: context, builder: (context) => showDialogC(context));
+                  context: context,
+                  builder: (context) =>
+                      showDialogC(context, imgUrl1, prodId, shopId, imgLength));
             }),
             icon: const Icon(
               Icons.delete,
@@ -183,7 +208,8 @@ class Constants {
     ]);
   }
 
-  Widget showDialogC(BuildContext context) {
+  Widget showDialogC(BuildContext context, String url, String prodId,
+      String shopId, int imgLength) {
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10 * 2),
@@ -211,13 +237,55 @@ class Constants {
                   child: SizedBox(
                     height: Dimensions.sizedBoxHeight10 * 4,
                     width: double.maxFinite,
-                    child: const ElevatedBtn(
-                      text: 'YES',
+                    child: ElevatedBtn(
+                      pressed: () async {
+                        if (imgLength - 1 < 1) {
+                          snackBar('Product should have at least one image!',
+                              Colors.red);
+                        } else {
+                          if (shopId == '') {
+                            await Provider.of<ProductProvider>(context,
+                                    listen: false)
+                                .deleteImg(prodId, url)
+                                .then((value) {
+                              if (value) {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                            });
+                          } else {
+                            await Provider.of<ShopProvider>(context,
+                                    listen: false)
+                                .deleteImg(shopId, url)
+                                .then((value) {
+                              if (value) {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              }
+                            });
+                          }
+                        }
+                      },
                       bgColor: Colors.green,
-                      icon: Icon(
+                      icon: const Icon(
                         Icons.task_alt,
                         color: white,
                       ),
+                      child: Provider.of<ProductProvider>(context).process ==
+                              Process.processing
+                          ? SizedBox(
+                              width: Dimensions.sizedBoxWidth10 * 2,
+                              height: Dimensions.sizedBoxWidth10 * 2,
+                              child: const CircularProgressIndicator(
+                                color: Constants.white,
+                                strokeWidth: 3,
+                              ))
+                          : Text(
+                              'YES',
+                              style: TextStyle(
+                                  color: Constants.white,
+                                  fontSize: Dimensions.font14),
+                            ),
                     ),
                   ),
                 ),
@@ -253,7 +321,7 @@ class Constants {
       message: message,
       snackPosition: SnackPosition.TOP,
       backgroundColor: color,
-      duration: Duration(seconds: 7),
+      duration: const Duration(seconds: 5),
       borderRadius: Dimensions.sizedBoxWidth4,
       margin: EdgeInsets.only(
           bottom: Dimensions.sizedBoxHeight15,

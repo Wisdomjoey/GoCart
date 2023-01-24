@@ -1,19 +1,19 @@
+import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:GOCart/UI/components/search.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 
 class AccountAppBar extends StatelessWidget with PreferredSizeWidget {
-  final String firstname;
-  final String lastname;
-  final String email;
-  
-  AccountAppBar({super.key, required this.firstname, required this.lastname, required this.email});
+  AccountAppBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> data = Provider.of<UserProvider>(context).userData;
+
     return AppBar(
       automaticallyImplyLeading: false,
       title: Text(
@@ -39,15 +39,16 @@ class AccountAppBar extends StatelessWidget with PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${lastname[0].toUpperCase() + lastname.substring(1)} ${firstname[0].toUpperCase() + firstname.substring(1)}',
+                '${data[Constants.userLastName][0].toUpperCase() + data[Constants.userLastName].substring(1)} ${data[Constants.userFirstName][0].toUpperCase() + data[Constants.userFirstName].substring(1)}',
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: Dimensions.font23,
                     color: Constants.tetiary),
               ),
               SizedBox(height: Dimensions.sizedBoxHeight10 / 2),
-              Text(email,
-                  style: const TextStyle(color: Color.fromARGB(255, 233, 233, 233))),
+              Text(data[Constants.userEmail],
+                  style: const TextStyle(
+                      color: Color.fromARGB(255, 233, 233, 233))),
             ],
           ),
         ),

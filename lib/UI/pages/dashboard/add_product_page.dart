@@ -1,17 +1,23 @@
+import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:dotted_border/dotted_border.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../../CONSTANTS/constants.dart';
 
 class AddProductPage extends StatefulWidget {
-  const AddProductPage({super.key});
+  final String shopName;
+  final String shopId;
+
+  const AddProductPage(
+      {super.key, required this.shopName, required this.shopId});
 
   @override
   State<AddProductPage> createState() => _AddProductPageState();
@@ -24,6 +30,8 @@ class _AddProductPageState extends State<AddProductPage> {
   // late XFile photo;
   List<CroppedFile> images = [];
   List<String> tags = [];
+  List<String> specifications = [];
+  List<String> keyFeatures = [];
   GlobalKey<FormState> key = GlobalKey<FormState>();
 
   String dropdownValue = '';
@@ -38,6 +46,7 @@ class _AddProductPageState extends State<AddProductPage> {
   late TextEditingController textEditingController6;
   late TextEditingController textEditingController7;
   late TextEditingController textEditingController8;
+  late TextEditingController textEditingController9;
   late TextEditingController tagController;
 
   late FocusNode focusNode1;
@@ -57,6 +66,7 @@ class _AddProductPageState extends State<AddProductPage> {
     textEditingController6 = TextEditingController();
     textEditingController7 = TextEditingController();
     textEditingController8 = TextEditingController();
+    textEditingController9 = TextEditingController();
     tagController = TextEditingController();
 
     focusNode1 = FocusNode();
@@ -79,6 +89,7 @@ class _AddProductPageState extends State<AddProductPage> {
     textEditingController6.dispose();
     textEditingController7.dispose();
     textEditingController8.dispose();
+    textEditingController9.dispose();
     tagController.dispose();
 
     focusNode1.dispose();
@@ -93,6 +104,8 @@ class _AddProductPageState extends State<AddProductPage> {
 
   @override
   Widget build(BuildContext context) {
+    String currency = Constants(context).currency().currencySymbol;
+
     return Scaffold(
       backgroundColor: Constants.white,
       appBar: AppBar(
@@ -161,15 +174,15 @@ class _AddProductPageState extends State<AddProductPage> {
                         child: GestureDetector(
                           onTap: (() async {
                             await _getImage().then((value) async {
-                              if (value == null) return;
+                              for (var element in value) {
+                                await _cropImage(element!.path).then((value) {
+                                  if (value == null) return;
 
-                              await _cropImage(value.path).then((value) {
-                                if (value == null) return;
-
-                                setState(() {
-                                  images.add(value);
+                                  setState(() {
+                                    images.add(value);
+                                  });
                                 });
-                              });
+                              }
                             });
                           }),
                           child: Icon(
@@ -224,12 +237,16 @@ class _AddProductPageState extends State<AddProductPage> {
                     value: Constants.categories[0],
                     items: Constants.categories
                         .map((e) => DropdownMenuItem(
-                              child: Text(e),
                               value: e,
+                              child: Text(e),
                             ))
                         .toList(),
                     menuMaxHeight: Dimensions.sizedBoxHeight320,
-                    onChanged: ((dynamic value) {})),
+                    onChanged: ((dynamic value) {
+                      setState(() {
+                        dropdownValue = value.toString();
+                      });
+                    })),
                 HeadSedction(
                   text: 'Add Product Description *',
                   tMargin: Dimensions.sizedBoxHeight15 * 2,
@@ -273,97 +290,110 @@ class _AddProductPageState extends State<AddProductPage> {
                     const Text(
                         'Do you want to add a discount to this product?'),
                     Switch(
-                        value: _switch,
+                        value: dropdownValue == 'Cooked Foods' ? false : _switch,
                         activeColor: Constants.tetiary,
-                        onChanged: ((value) {
+                        onChanged: dropdownValue ==
+                            'Cooked Foods' ? null : ((value) {
                           setState(() {
                             _switch = !_switch;
                           });
                         })),
                   ],
                 ),
-                SizedBox(
-                  height: Dimensions.sizedBoxHeight10,
-                ),
-                TextFormField(
-                  controller: textEditingController3,
-                  focusNode: focusNode3,
-                  validator: (value) {
-                    if (value == '') {
-                      return errMsg;
-                    } else {
-                      return null;
-                    }
-                  },
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      labelText: 'Min-price',
-                      helperText: 'Minimum price for selling food.',
-                      hintText: '100',
-                      prefix: SizedBox(
-                          width: Dimensions.sizedBoxWidth15,
-                          child: const Text('\$')),
-                      suffixText: 'NGN',
-                      border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Constants.grey),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(Dimensions.sizedBoxWidth4)))),
-                ),
-                SizedBox(
-                  height: Dimensions.sizedBoxHeight10,
-                ),
-                _switch
-                    ? (TextFormField(
-                        controller: textEditingController4,
-                        focusNode: focusNode4,
-                        validator: (value) {
-                          if (value == '') {
-                            return errMsg;
-                          } else {
-                            return null;
-                          }
-                        },
-                        keyboardType: TextInputType.number,
-                        decoration: InputDecoration(
-                            labelText: 'Old-price',
-                            hintText: '100',
-                            prefix: SizedBox(
-                                width: Dimensions.sizedBoxWidth15,
-                                child: const Text('\$')),
-                            suffixText: 'NGN',
-                            border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Constants.grey),
-                                borderRadius: BorderRadius.all(Radius.circular(
-                                    Dimensions.sizedBoxWidth4)))),
-                      ))
-                    : Container(),
-                SizedBox(
-                  height: Dimensions.sizedBoxHeight10,
-                ),
-                TextFormField(
-                  controller: textEditingController5,
-                  focusNode: focusNode5,
-                  validator: (value) {
-                    if (value == '') {
-                      return errMsg;
-                    } else {
-                      return null;
-                    }
-                  },
-                  keyboardType: TextInputType.number,
-                  decoration: InputDecoration(
-                      labelText: _switch ? 'New-price' : 'Price',
-                      hintText: '100',
-                      prefix: SizedBox(
-                          width: Dimensions.sizedBoxWidth15,
-                          child: const Text('\$')),
-                      suffixText: 'NGN',
-                      border: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Constants.grey),
-                          borderRadius: BorderRadius.all(
-                              Radius.circular(Dimensions.sizedBoxWidth4)))),
-                ),
+                dropdownValue == 'Cooked Foods'
+                    ? Column(
+                        children: [
+                          SizedBox(
+                            height: Dimensions.sizedBoxHeight10,
+                          ),
+                          TextFormField(
+                            controller: textEditingController3,
+                            focusNode: focusNode3,
+                            validator: (value) {
+                              if (value == '') {
+                                return errMsg;
+                              } else {
+                                return null;
+                              }
+                            },
+                            keyboardType: TextInputType.number,
+                            decoration: InputDecoration(
+                                labelText: 'Min-price',
+                                helperText: 'Minimum price for selling food.',
+                                hintText: '100',
+                                prefix: SizedBox(
+                                    width: Dimensions.sizedBoxWidth15,
+                                    child: Text(currency)),
+                                suffixText: 'NGN',
+                                border: OutlineInputBorder(
+                                    borderSide:
+                                        const BorderSide(color: Constants.grey),
+                                    borderRadius: BorderRadius.all(
+                                        Radius.circular(
+                                            Dimensions.sizedBoxWidth4)))),
+                          )
+                        ],
+                      )
+                    : Column(children: [
+                        SizedBox(
+                          height: Dimensions.sizedBoxHeight10,
+                        ),
+                        _switch
+                            ? (TextFormField(
+                                controller: textEditingController4,
+                                focusNode: focusNode4,
+                                validator: (value) {
+                                  if (value == '') {
+                                    return errMsg;
+                                  } else {
+                                    return null;
+                                  }
+                                },
+                                keyboardType: TextInputType.number,
+                                decoration: InputDecoration(
+                                    labelText: 'Old-price',
+                                    hintText: '100',
+                                    prefix: SizedBox(
+                                        width: Dimensions.sizedBoxWidth15,
+                                        child: Text(currency)),
+                                    suffixText: 'NGN',
+                                    border: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Constants.grey),
+                                        borderRadius: BorderRadius.all(
+                                            Radius.circular(
+                                                Dimensions.sizedBoxWidth4)))),
+                              ))
+                            : Container(),
+                        SizedBox(
+                          height: Dimensions.sizedBoxHeight10,
+                        ),
+                        TextFormField(
+                          controller: textEditingController5,
+                          focusNode: focusNode5,
+                          validator: (value) {
+                            if (value == '') {
+                              return errMsg;
+                            } else {
+                              return null;
+                            }
+                          },
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              labelText: _switch ? 'New-price' : 'Price',
+                              hintText: '100',
+                              prefix: SizedBox(
+                                  width: Dimensions.sizedBoxWidth15,
+                                  child: Text(currency)),
+                              suffixText: 'NGN',
+                              border: OutlineInputBorder(
+                                  borderSide:
+                                      const BorderSide(color: Constants.grey),
+                                  borderRadius: BorderRadius.all(
+                                      Radius.circular(
+                                          Dimensions.sizedBoxWidth4)))),
+                        ),
+                      ]),
                 HeadSedction(
                   text: 'Add Product Tags (optional)',
                   tMargin: Dimensions.sizedBoxHeight15 * 2,
@@ -449,7 +479,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       child: TextFormField(
                         controller: textEditingController6,
                         focusNode: focusNode6,
-                        validator: (value) {
+                        validator: dropdownValue == 'Cooked Foods' ? null : (value) {
                           if (value == '') {
                             return errMsg;
                           } else {
@@ -468,13 +498,14 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                     Expanded(
                       child: TextFormField(
+                        controller: textEditingController9,
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           labelText: 'Delivery Price',
                           hintText: '100',
                           prefix: SizedBox(
                               width: Dimensions.sizedBoxWidth15,
-                              child: const Text('\$')),
+                              child: Text(currency)),
                           suffixText: 'NGN',
                         ),
                       ),
@@ -530,22 +561,97 @@ class _AddProductPageState extends State<AddProductPage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
-                    text: 'SUBMIT',
-                    pressed: () {
+                    child: Provider.of<ProductProvider>(context, listen: true)
+                                .process ==
+                            Process.processing
+                        ? SizedBox(
+                            width: Dimensions.sizedBoxWidth10 * 2,
+                            height: Dimensions.sizedBoxWidth10 * 2,
+                            child: const CircularProgressIndicator(
+                              color: Constants.white,
+                              strokeWidth: 3,
+                            ))
+                        : Text(
+                            'CREATE',
+                            style: TextStyle(
+                                color: Constants.white,
+                                fontSize: Dimensions.font14),
+                          ),
+                    pressed: () async {
                       if (key.currentState!.validate()) {
                         if (images.isEmpty) {
-                          Get.showSnackbar(GetSnackBar(
-                            message: 'Please add at least one image!',
-                            snackPosition: SnackPosition.TOP,
-                            backgroundColor: Colors.red,
-                            duration: Duration(seconds: 7),
-                            borderRadius: Dimensions.sizedBoxWidth4,
-                            margin: EdgeInsets.only(
-                                bottom: Dimensions.sizedBoxHeight15,
-                                right: Dimensions.sizedBoxWidth10,
-                                left: Dimensions.sizedBoxWidth10),
-                          ));
-                        } else {}
+                          Constants(context).snackBar(
+                              'Please add at least one image!', Colors.red);
+                        } else {
+                          if (textEditingController7.text != '') {
+                            List<String> specs =
+                                textEditingController7.text.trim().split(',');
+
+                            for (var element in specs) {
+                              specifications.add(element.trim());
+                            }
+                          }
+
+                          if (textEditingController8.text != '') {
+                            List<String> keyF =
+                                textEditingController8.text.trim().split(',');
+
+                            for (var element in keyF) {
+                              keyFeatures.add(element.trim());
+                            }
+                          }
+
+                          await Provider.of<ProductProvider>(context,
+                                  listen: false)
+                              .createProduct(
+                                  widget.shopName,
+                                  textEditingController1.text.trim(),
+                                  textEditingController2.text.trim(),
+                                  _switch
+                                      ? double.parse(
+                                          textEditingController4.text.trim())
+                                      : 0,
+                                  dropdownValue == 'Cooked Foods'
+                                      ? 0
+                                      : double.parse(
+                                          textEditingController5.text.trim()),
+                                  dropdownValue == 'Cooked Foods'
+                                      ? double.parse(
+                                          textEditingController3.text.trim())
+                                      : 0,
+                                  textEditingController9.text == ''
+                                      ? 0
+                                      : double.parse(
+                                          textEditingController9.text.trim()),
+                                  dropdownValue,
+                                  images,
+                                  int.parse(textEditingController6.text.trim()),
+                                  tags,
+                                  widget.shopId,
+                                  FirebaseAuth.instance.currentUser!.uid,
+                                  specifications,
+                                  keyFeatures)
+                              .then((value) {
+                            if (value) {
+                              tagController.clear();
+                              textEditingController1.clear();
+                              textEditingController2.clear();
+                              textEditingController3.clear();
+                              textEditingController4.clear();
+                              textEditingController5.clear();
+                              textEditingController6.clear();
+                              textEditingController7.clear();
+                              textEditingController8.clear();
+                              textEditingController9.clear();
+                              tags.clear();
+                              specifications.clear();
+                              keyFeatures.clear();
+                              images.clear();
+
+                              Navigator.pop(context);
+                            }
+                          });
+                        }
                       }
                     },
                   ),
@@ -558,8 +664,8 @@ class _AddProductPageState extends State<AddProductPage> {
     );
   }
 
-  Future<XFile?> _getImage() async {
-    return await _picker.pickImage(source: ImageSource.gallery);
+  Future<List<XFile?>> _getImage() async {
+    return await _picker.pickMultiImage();
   }
 
   Future<XFile?> _getCamImage() async {

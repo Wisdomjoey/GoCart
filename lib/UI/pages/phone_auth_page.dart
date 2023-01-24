@@ -2,14 +2,10 @@ import 'dart:async';
 
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
-import '../../PROVIDERS/user_provider.dart';
-import '../routes/route_helper.dart';
 
 class PhoneAuthPage extends StatefulWidget {
   final String phoneNumber;

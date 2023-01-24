@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:GOCart/PROVIDERS/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

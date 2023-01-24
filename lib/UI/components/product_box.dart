@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,6 +24,8 @@ class ProductBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String currency = Constants(context).currency().currencySymbol;
+
     return Container(
       padding: EdgeInsets.only(
           left: left ?? Dimensions.sizedBoxWidth10,
@@ -38,13 +41,13 @@ class ProductBox extends StatelessWidget {
             childAspectRatio: 0.7),
         itemCount: snapshotDocs.length,
         itemBuilder: (context, index) {
-          return _productsList(index, snapshotDocs[index]);
+          return _productsList(index, snapshotDocs[index], currency);
         },
       ),
     );
   }
 
-  Widget _productsList(int index, Map<String, dynamic> product) {
+  Widget _productsList(int index, Map<String, dynamic> product, String currency) {
     return Material(
       animationDuration: const Duration(milliseconds: 100),
       shape: RoundedRectangleBorder(
@@ -68,7 +71,8 @@ class ProductBox extends StatelessWidget {
                     height: double.maxFinite,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: NetworkImage(product[Constants.imgUrls][0]),
+                            image: CachedNetworkImageProvider(
+                                product[Constants.imgUrls][0]),
                             fit: BoxFit.contain)),
                   ),
                 ),
@@ -99,7 +103,7 @@ class ProductBox extends StatelessWidget {
                       height: Dimensions.sizedBoxHeight4,
                     ),
                     Text(
-                      '\$ ${product[Constants.prodNewPrice]}',
+                      '$currency ${product[Constants.prodNewPrice]}',
                       style: TextStyle(
                           fontSize: Dimensions.font16,
                           fontWeight: FontWeight.w500),
@@ -107,7 +111,9 @@ class ProductBox extends StatelessWidget {
                     SizedBox(
                       height: Dimensions.sizedBoxHeight4,
                     ),
-                    const StarRating(),
+                    StarRating(
+                      rating: product[Constants.prodRating],
+                    ),
                   ],
                 ),
               ),
@@ -115,8 +121,10 @@ class ProductBox extends StatelessWidget {
           ),
         ),
         onTap: () {
-          Timer(const Duration(milliseconds: 200),
-              () => Get.toNamed(RouteHelper.getProductDetailsPage()));
+          Timer(
+              const Duration(milliseconds: 200),
+              () => Get.toNamed(RouteHelper.getProductDetailsPage(),
+                  arguments: product));
         },
       ),
     );

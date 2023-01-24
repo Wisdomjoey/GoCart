@@ -29,24 +29,23 @@ class IconBox extends StatelessWidget {
       this.borderRadius,
       this.width,
       this.height,
-      this.color, this.pressed});
+      this.color,
+      this.pressed});
 
   @override
   Widget build(BuildContext context) {
-    void run() {}
-    var disabled = isDisabled ? null : run;
-
     return Container(
       margin: EdgeInsets.only(right: right ?? Dimensions.sizedBoxWidth4 * 2),
       width: width ?? Dimensions.sizedBoxWidth32,
       height: height ?? Dimensions.sizedBoxWidth32,
       child: isClickable
           ? TextButton(
-              onPressed: pressed ?? disabled,
+              onPressed: isDisabled ? null : (pressed ?? () {}),
               style: TextButton.styleFrom(
                   padding: const EdgeInsets.all(0),
                   backgroundColor: color ?? Colors.transparent,
-                  disabledBackgroundColor: Color.fromARGB(255, 243, 225, 158),
+                  disabledBackgroundColor:
+                      const Color.fromARGB(255, 243, 225, 158),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                           borderRadius ?? Dimensions.font12 / 3),

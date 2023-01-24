@@ -1,4 +1,5 @@
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/account_app_bar.dart';
@@ -24,9 +25,6 @@ class RoutePage extends StatefulWidget {
 class _RoutePageState extends State<RoutePage> {
   int _activePage = 0;
   bool _allowPageId = true;
-  String firstname = '';
-  String lastname = '';
-  String email = '';
   bool isSeller = false;
 
   final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
@@ -34,55 +32,14 @@ class _RoutePageState extends State<RoutePage> {
   late List _pages;
 
   getUserData() async {
-    // await Preferences().getListData(Constants.prefsUserFullName).then((value) {
-    //   firstname = value![0];
-    //   lastname = value[1];
-    //   print(value);
-    // });
-
-    await Preferences()
-        .getStringData(Constants.prefsUserEmail)
-        .then((value) async {
-      email = value!;
-
-      await Preferences().getStringData(Constants.prefsUserEmail).then((value1) {
-        email = value1!;
-      });
-      // print(value);
-    });
-    await Preferences()
-        .getStringData(Constants.prefsUserFirstName)
-        .then((value) async {
-      firstname = value!;
-
-      await Preferences()
-          .getStringData(Constants.prefsUserFirstName)
-          .then((value1) {
-        firstname = value1!;
-      });
-      // print(value);
-    });
-    await Preferences()
-        .getStringData(Constants.prefsUserLastName)
-        .then((value) async {
-      lastname = value!;
-
-      await Preferences()
-          .getStringData(Constants.prefsUserLastName)
-          .then((value1) {
-        lastname = value1!;
-      });
-      // print(value);
-    });
-    await Preferences()
-        .getBoolData(Constants.prefsUserIsSeller)
-        .then((value) async {
+    await Preferences().getBoolData(Constants.userIsSeller).then((value) async {
       isSeller = value!;
 
       await Preferences()
-          .getBoolData(Constants.prefsUserIsSeller)
+          .getBoolData(Constants.userIsSeller)
           .then((value1) async {
         isSeller = value1!;
+        _pages[4] = RouteHelper.getAccountPage(isSeller);
       });
       // print(value);
     });
@@ -102,8 +59,6 @@ class _RoutePageState extends State<RoutePage> {
       }
     }));
 
-    getUserData();
-
     page = HomeAppBar(
       logo: Container(
         width: Dimensions.sizedBoxWidth10 * 9,
@@ -121,6 +76,8 @@ class _RoutePageState extends State<RoutePage> {
       RouteHelper.getShopPage(),
       RouteHelper.getAccountPage(isSeller),
     ];
+
+    getUserData();
 
     page1 = [
       HomeAppBar(
@@ -147,11 +104,7 @@ class _RoutePageState extends State<RoutePage> {
         textSize: Dimensions.font24,
         icon: const Icon(Icons.store_outlined),
       ),
-      AccountAppBar(
-        firstname: firstname,
-        lastname: lastname,
-        email: email,
-      )
+      AccountAppBar()
     ];
 
     super.initState();
@@ -161,13 +114,7 @@ class _RoutePageState extends State<RoutePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _allowPageId
-          ? (widget.pageId == 4
-              ? AccountAppBar(
-                  firstname: firstname,
-                  lastname: lastname,
-                  email: email,
-                )
-              : page1[widget.pageId])
+          ? (widget.pageId == 4 ? AccountAppBar() : page1[widget.pageId])
           : page,
       body: _pages[_allowPageId ? widget.pageId : _activePage],
       // extendBody: true,
@@ -251,11 +198,7 @@ class _RoutePageState extends State<RoutePage> {
                 );
                 break;
               case 4:
-                page = AccountAppBar(
-                  firstname: firstname,
-                  lastname: lastname,
-                  email: email,
-                );
+                page = AccountAppBar();
                 break;
               default:
                 page = HomeAppBar(

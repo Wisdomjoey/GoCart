@@ -76,7 +76,7 @@ class _RatingViewPageState extends State<RatingViewPage> {
                           SizedBox(
                             height: Dimensions.sizedBoxHeight3,
                           ),
-                          const StarRating(),
+                          StarRating(rating: 0,),
                           SizedBox(
                             height: Dimensions.sizedBoxHeight4 * 2,
                           ),

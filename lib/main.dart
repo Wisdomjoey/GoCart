@@ -1,5 +1,6 @@
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:GOCart/PROVIDERS/cart_provider.dart';
+import 'package:GOCart/PROVIDERS/order_provider.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
@@ -43,6 +44,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (_) => ProductProvider(context),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => OrderProvider(context),
         ),
         ChangeNotifierProvider(
           create: (_) => ShopProvider(context),

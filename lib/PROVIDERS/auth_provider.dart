@@ -49,10 +49,6 @@ class AuthProvider extends ChangeNotifier {
       _status = Status.authenticating;
       notifyListeners();
 
-      QuerySnapshot snapshot =
-          await Provider.of<UserProvider>(context, listen: false)
-              .getUserData(email);
-
       User? user = (await firebaseAuth.signInWithEmailAndPassword(
               email: email, password: password))
           .user;
@@ -60,18 +56,6 @@ class AuthProvider extends ChangeNotifier {
       if (user != null) {
         _status = Status.authenticated;
         notifyListeners();
-
-        // Preferences().saveListData(Constants.prefsUserFullName, [
-        //   snapshot.docs[0][Constants.userFirstName],
-        //   snapshot.docs[0][Constants.userLastName]
-        // ]);
-        Preferences().saveStringData(Constants.prefsUserEmail, email);
-        Preferences().saveStringData(Constants.prefsUserFirstName,
-            snapshot.docs[0][Constants.userFirstName]);
-        Preferences().saveStringData(Constants.prefsUserLastName,
-            snapshot.docs[0][Constants.userLastName]);
-        Preferences().saveBoolData(Constants.prefsUserIsSeller,
-            snapshot.docs[0][Constants.userIsSeller]);
 
         // print('true');
         return true;
@@ -102,15 +86,7 @@ class AuthProvider extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) async {
         await Provider.of<UserProvider>(context, listen: false)
-            .saveUserData(firstName, lastName, email, value.user!.uid)
-            .then((_) {
-          // Preferences()
-          //     .saveListData(Constants.prefsUserFullName, [firstName, lastName]);
-          Preferences().saveStringData(Constants.prefsUserEmail, email);
-          Preferences().saveStringData(Constants.prefsUserFirstName, firstName);
-          Preferences().saveStringData(Constants.prefsUserLastName, lastName);
-          Preferences().saveBoolData(Constants.prefsUserIsSeller, false);
-        });
+            .saveUserData(firstName, lastName, email, value.user!.uid);
       });
 
       _status = Status.authenticated;
@@ -331,14 +307,18 @@ class AuthProvider extends ChangeNotifier {
               .updateUserData({
             Constants.userIsPhoneVerified: true,
             Constants.userPhone: '+234$phone'
-          }, FirebaseAuth.instance.currentUser!.uid).then((value) {
+          }, FirebaseAuth.instance.currentUser!.uid).then((value) async {
             Constants(context).snackBar(
                 'Phone Number Verified Successfully!', Constants.tetiary);
 
             _isPhoneVerified = true;
             Preferences().saveBoolData(Constants.prefsUserPhoneVerified, true);
 
-            Get.offAllNamed(RouteHelper.getRoutePage(), arguments: 0);
+            await Provider.of<UserProvider>(context, listen: false)
+                .initializeUserData(firebaseAuth.currentUser!.uid)
+                .then((value) {
+              Get.offAllNamed(RouteHelper.getRoutePage(), arguments: 0);
+            });
           });
         } else {
           Constants(context).snackBar('Code is wrong', Colors.red);

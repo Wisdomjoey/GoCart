@@ -36,7 +36,7 @@ class ReviewBoxCon extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const StarRating(),
+              StarRating(rating: 0,),
               Text(
                 date,
                 style: TextStyle(

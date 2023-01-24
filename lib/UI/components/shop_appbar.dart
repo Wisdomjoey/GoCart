@@ -44,13 +44,13 @@ class _ShopAppbarState extends State<ShopAppbar> {
                   size: 24,
                 ),
                 splashRadius: 24,
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
                 tooltip: 'Search',
                 onPressed: () {},
               ),
               Expanded(child: Center(
                 child: TextFormField(
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     hintText: 'Search...',
                     border: OutlineInputBorder(
                       borderSide: BorderSide.none
@@ -65,7 +65,7 @@ class _ShopAppbarState extends State<ShopAppbar> {
                   size: 24,
                 ),
                 splashRadius: 24,
-                padding: EdgeInsets.all(0),
+                padding: const EdgeInsets.all(0),
                 tooltip: 'Search',
                 onPressed: () {},
               ),

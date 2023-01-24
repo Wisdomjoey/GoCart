@@ -6,7 +6,11 @@ import '../CONSTANTS/constants.dart';
 enum OrderStats { processing, complete, error, init }
 
 class OrderProvider extends ChangeNotifier {
+  final BuildContext context;
+
   OrderStats _order = OrderStats.init;
+
+  OrderProvider(this.context);
 
   OrderStats get orderStats => _order;
 
@@ -15,12 +19,13 @@ class OrderProvider extends ChangeNotifier {
 
   Future createOrder(
       String userId,
-      int? quantity,
-      String? productId,
+      int quantity,
+      String productId,
+      String productName,
       String deliveryDate,
-      String? imgUrl,
+      String imgUrl,
       double amount,
-      String? shopName) async {
+      String shopName) async {
     try {
       _order = OrderStats.processing;
       notifyListeners();
@@ -33,8 +38,9 @@ class OrderProvider extends ChangeNotifier {
         Constants.orderdeliveryDate: deliveryDate,
         Constants.productId: [productId],
         Constants.amount: [amount],
+        Constants.name: productName,
         Constants.imgUrl: imgUrl,
-        Constants.orderStatus: 'New Order',
+        Constants.orderStatus: Constants.newOrder,
         Constants.shopName: shopName,
         Constants.createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -75,56 +81,45 @@ class OrderProvider extends ChangeNotifier {
   }
 
   Future fetchUserOrders(String userId, String status) async {
-    _order = OrderStats.processing;
-    notifyListeners();
-
-    if (status == 'Cancelled') {
-      QuerySnapshot querySnapshot = await orderCollectionRef
-          .where(Constants.userId, isEqualTo: userId)
-          .where(Constants.orderStatus, isEqualTo: status)
-          .get();
-
-      _order = OrderStats.complete;
+    try {
+      _order = OrderStats.processing;
       notifyListeners();
 
-      return querySnapshot;
-    } else {
-      QuerySnapshot querySnapshot = await orderCollectionRef
-          .where(Constants.userId, isEqualTo: userId)
-          .where(Constants.orderStatus, isNotEqualTo: 'Cancelled')
-          .get();
+      if (status == 'Cancelled') {
+        QuerySnapshot querySnapshot = await orderCollectionRef
+            .where(Constants.userId, isEqualTo: userId)
+            .where(Constants.orderStatus, isEqualTo: status)
+            .get();
 
-      _order = OrderStats.complete;
+        _order = OrderStats.complete;
+        notifyListeners();
+
+        return querySnapshot.docs;
+      } else {
+        QuerySnapshot querySnapshot = await orderCollectionRef
+            .where(Constants.userId, isEqualTo: userId)
+            .where(Constants.orderStatus, isNotEqualTo: 'Cancelled')
+            .get();
+
+        _order = OrderStats.complete;
+        notifyListeners();
+
+        return querySnapshot.docs;
+      }
+    } on FirebaseException catch (e) {
+      _order = OrderStats.error;
       notifyListeners();
 
-      return querySnapshot;
+      Constants(context).snackBar(e.message!, Constants.tetiary);
+
+      return [];
     }
   }
 
-  Future fetchSellerOrders(String shopName, String status) async {
-    _order = OrderStats.processing;
-    notifyListeners();
-
-    if (status == 'Cancelled') {
-      QuerySnapshot querySnapshot = await orderCollectionRef
-          .where(Constants.shopName, isEqualTo: shopName)
-          .where(Constants.orderStatus, isEqualTo: status)
-          .get();
-
-      _order = OrderStats.complete;
-      notifyListeners();
-
-      return querySnapshot;
-    } else {
-      QuerySnapshot querySnapshot = await orderCollectionRef
-          .where(Constants.shopName, isEqualTo: shopName)
-          .where(Constants.orderStatus, isNotEqualTo: 'Cancelled')
-          .get();
-
-      _order = OrderStats.complete;
-      notifyListeners();
-
-      return querySnapshot;
-    }
+  Stream<QuerySnapshot> fetchSellerOrders(String shopName, String status) {
+    return orderCollectionRef
+        .where(Constants.shopName, isEqualTo: shopName)
+        .where(Constants.orderStatus, isEqualTo: status)
+        .snapshots();
   }
 }

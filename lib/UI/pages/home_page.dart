@@ -1,8 +1,8 @@
+import 'package:GOCart/UI/components/home_slider.dart';
 import 'package:async/async.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
-import 'package:carousel_slider/carousel_slider.dart';
-import 'package:dots_indicator/dots_indicator.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/components/product_box.dart';
@@ -20,8 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // final CarouselController _carouselController = CarouselController();
-  final double _height = Dimensions.pageViewContainer;
-  var _currentPageValue = 0.0;
   final AsyncMemoizer _memoizer = AsyncMemoizer();
 
   @override
@@ -46,54 +44,7 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.symmetric(
                       vertical: Dimensions.sizedBoxHeight15),
                   decoration: const BoxDecoration(color: Constants.white),
-                  child: Column(
-                    children: [
-                      SizedBox(
-                        height: Dimensions.pageViewContainer,
-                        child: CarouselSlider.builder(
-                          options: CarouselOptions(
-                            height: _height,
-                            autoPlay: true,
-                            autoPlayInterval: const Duration(seconds: 7),
-                            autoPlayAnimationDuration:
-                                const Duration(milliseconds: 800),
-                            viewportFraction: 0.9,
-                            enlargeStrategy: CenterPageEnlargeStrategy.height,
-                            enableInfiniteScroll: true,
-                            scrollDirection: Axis.horizontal,
-                            initialPage: 0,
-                            enlargeCenterPage: true,
-                            onPageChanged: (index, reason) {
-                              setState(() {
-                                _currentPageValue =
-                                    double.parse(index.toString());
-                              });
-                            },
-                          ),
-                          itemCount: 5,
-                          itemBuilder: (context, index, realIndex) {
-                            return _buildPageItem(index);
-                          },
-                        ),
-                      ),
-                      SizedBox(
-                        height: Dimensions.sizedBoxHeight10,
-                      ),
-                      DotsIndicator(
-                        dotsCount: 5,
-                        position: _currentPageValue,
-                        decorator: DotsDecorator(
-                          activeColor: Constants.primary,
-                          size: Size.square(Dimensions.font18 / 2),
-                          activeSize:
-                              Size(Dimensions.font18, Dimensions.font18 / 2),
-                          activeShape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  Dimensions.sizedBoxWidth10 / 2)),
-                        ),
-                      )
-                    ],
-                  ),
+                  child: const HomeSlider(),
                 ),
                 SizedBox(
                   height: Dimensions.sizedBoxHeight15 * 2,
@@ -165,24 +116,36 @@ class _HomePageState extends State<HomePage> {
                     // products.isNotEmpty ? ProductBox(
                     //   snapshotDocs: products,
                     // ) : const CircularProgressIndicator(color: Constants.tetiary,)
-                    FutureBuilder(
-                      initialData: const [],
-                      future: _memoizer.runOnce(() {
-                        return Provider.of<ProductProvider>(context, listen: false)
-                            .getAllProducts();
-                      }),
-                      builder: (context, AsyncSnapshot snapshot) {
-                        return snapshot.data!.isEmpty &&
-                                Provider.of<ProductProvider>(context).process !=
-                                    Process.processComplete
+                    StreamBuilder(
+                      // initialData: QuerySnapshot<Object>,
+                      stream:
+                          Provider.of<ProductProvider>(context, listen: false)
+                              .getAllProducts(),
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        List data = [];
+
+                        if (snapshot.hasData) {
+                          for (var element in snapshot.data!.docs) {
+                            data.add(element.data());
+                          }
+                        }
+
+                        if (snapshot.hasError) {
+                          Constants(context)
+                              .snackBar('An error occured', Colors.red);
+                        }
+
+                        return snapshot.connectionState ==
+                                ConnectionState.waiting
                             ? const Center(
                                 child: CircularProgressIndicator(
                                   color: Constants.tetiary,
                                 ),
                               )
-                            : (snapshot.data!.isNotEmpty
+                            : (data.isNotEmpty && !snapshot.hasError
                                 ? ProductBox(
-                                    snapshotDocs: snapshot.data!,
+                                    snapshotDocs: data,
                                   )
                                 : const Center(
                                     child: Text('No Product'),
@@ -196,31 +159,6 @@ class _HomePageState extends State<HomePage> {
           ),
         )
       ],
-    );
-  }
-
-  Widget _buildPageItem(int position) {
-    return Container(
-      height: Dimensions.pageViewContainer,
-      margin: EdgeInsets.only(
-          left: Dimensions.sizedBoxWidth10, right: Dimensions.sizedBoxWidth10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(Dimensions.font25 / 5),
-        color:
-            position.isEven ? const Color(0xFF69c5df) : const Color(0xFF9294cc),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(Dimensions.font25 / 5),
-        child: Material(
-          child: InkWell(
-            splashColor: const Color.fromARGB(35, 55, 55, 55),
-            child: Ink.image(
-                fit: BoxFit.cover,
-                image: const AssetImage('assets/images/med.gif')),
-            onTap: () {},
-          ),
-        ),
-      ),
     );
   }
 

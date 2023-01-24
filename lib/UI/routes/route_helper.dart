@@ -1,3 +1,4 @@
+import 'package:GOCart/CONSTANTS/constants.dart';
 import 'package:GOCart/UI/pages/account_management_page.dart';
 import 'package:GOCart/UI/pages/dashboard/add_product_page.dart';
 import 'package:GOCart/UI/pages/dashboard/edit_product_page.dart';
@@ -65,7 +66,7 @@ class RouteHelper {
 
   static getCartPage() => const CartPage();
   static String getInitial() => initial;
-  static getShopPage() => const ShopPage();
+  static getShopPage() => ShopPage();
   static getShopDetailsPage() => shopDetailsPage;
   static getHomePage() => const HomePage();
   static getIntroPage() => introPage;
@@ -125,7 +126,15 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: addProductPage,
-        page: () => const AddProductPage()),
+        page: () {
+          String shopName = Get.arguments[Constants.shopName];
+          String shopId = Get.arguments[Constants.shopId];
+
+          return AddProductPage(
+            shopName: shopName,
+            shopId: shopId,
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -137,13 +146,21 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: manageShopPage,
-        page: () => const ManageShopPage()),
+        page: () {
+          Map<String, dynamic> shopData = Get.arguments;
+
+          return ManageShopPage(shopData: shopData);
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: editProductPage,
-        page: () => const EditProductPage()),
+        page: () {
+          Map<String, dynamic> data = Get.arguments;
+
+          return EditProductPage(data: data);
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -303,10 +320,10 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 300),
         name: productDetailsPage,
         page: () {
-          String prodId = Get.arguments;
+          Map<String, dynamic> data = Get.arguments;
 
           return ProductDetailsPage(
-            prodId: prodId,
+            data: data,
           );
         }),
     GetPage(

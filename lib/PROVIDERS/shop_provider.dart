@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/PREFS/preferences.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,23 +13,25 @@ import 'package:provider/provider.dart';
 enum Load { processing, processComplete, processError, uninitialized }
 
 class ShopProvider extends ChangeNotifier {
-  final BuildContext context;
-
   ShopProvider(this.context);
-
-  Load _load = Load.uninitialized;
-  Load get load => _load;
-
-  List _shops = [];
-  List get shops => _shops;
 
   CollectionReference collectionReference =
       FirebaseFirestore.instance.collection(Constants.collectionShops);
-  CollectionReference userCollectionRef =
-      FirebaseFirestore.instance.collection(Constants.collectionUsers);
+
+  final BuildContext context;
+  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
   CollectionReference productCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionProducts);
-  FirebaseStorage firebaseStorage = FirebaseStorage.instance;
+
+  CollectionReference userCollectionRef =
+      FirebaseFirestore.instance.collection(Constants.collectionUsers);
+
+  Load _load = Load.uninitialized;
+  List _shops = [];
+
+  Load get load => _load;
+
+  List get shops => _shops;
 
   Future createShop(
       String shopName,
@@ -67,6 +70,7 @@ class ShopProvider extends ChangeNotifier {
         Constants.prodCategory: category,
         Constants.imgUrls: newUrls,
         Constants.sales: [],
+        Constants.likes: [],
         Constants.userId: userId,
         Constants.createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
@@ -80,10 +84,14 @@ class ShopProvider extends ChangeNotifier {
         notifyListeners();
 
         await Provider.of<UserProvider>(context1, listen: false).updateUserData(
-            {Constants.userIsSeller: true}, userId).then((value) {
-          Constants(context).snackBar(
-              'Your shop has been registered successfully! ✅',
-              Constants.tetiary);
+            {Constants.userIsSeller: true}, userId).then((value) async {
+          Preferences().saveBoolData(Constants.userIsSeller, true);
+
+          await fetchAllShops().then((value) {
+            Constants(context).snackBar(
+                'Your shop has been registered successfully! ✅',
+                Constants.tetiary);
+          });
         });
       });
 
@@ -104,12 +112,38 @@ class ShopProvider extends ChangeNotifier {
       notifyListeners();
       DocumentReference documentReference = collectionReference.doc(shopId);
 
-      await documentReference.update(data).then((_) {
-        _load = Load.processComplete;
-        notifyListeners();
+      await documentReference.update(data).then((_) async {
+        await fetchAllShops().then((value) {
+          _load = Load.processComplete;
+          notifyListeners();
 
-        Constants(context).snackBar(
-            'Shop details updated successfully! ✅', Constants.tetiary);
+          Constants(context).snackBar(
+              'Shop details updated successfully! ✅', Constants.tetiary);
+        });
+      });
+
+      return true;
+    } on FirebaseException catch (e) {
+      _load = Load.processError;
+      notifyListeners();
+
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
+    }
+  }
+
+  Future likeShop(Map<String, dynamic> data, String shopId) async {
+    try {
+      _load = Load.processing;
+      notifyListeners();
+      DocumentReference documentReference = collectionReference.doc(shopId);
+
+      await documentReference.update(data).then((_) async {
+        await fetchAllShops().then((value) {
+          _load = Load.processComplete;
+          notifyListeners();
+        });
       });
 
       return true;
@@ -124,61 +158,88 @@ class ShopProvider extends ChangeNotifier {
   }
 
   Future updateShopSales(String shopId, double amount) async {
-    _load = Load.processing;
-    notifyListeners();
-    DocumentReference documentReference = collectionReference.doc(shopId);
-    DocumentSnapshot documentSnapshot = await documentReference.get();
-
-    List data = documentSnapshot[Constants.sales];
-    String month = DateFormat('MMM').format(DateTime.now());
-
-    if (data.isNotEmpty) {
-      Map<String, dynamic> map = data[data.length - 1];
-
-      if (map['month'] == month) {
-        data[data.length - 1] = {
-          'month': map['month'],
-          'sales': map['sales'] + amount
-        };
-      } else {
-        data.add({'month': map['month'], 'sales': map['sales'] + amount});
-      }
-    } else {
-      data.add({'month': month, 'sales': amount});
-    }
-
-    await documentReference.update({Constants.sales: data}).then((_) {
-      _load = Load.processComplete;
-      notifyListeners();
-    });
-
-    return true;
-  }
-
-  Future addImage(CroppedFile croppedFile, String userId, String shopId) async {
     try {
       _load = Load.processing;
       notifyListeners();
-      Reference imageReference = firebaseStorage.ref().child(
-          "$userId/shops/image${DateTime.now().millisecondsSinceEpoch.toString()}");
+      DocumentReference documentReference = collectionReference.doc(shopId);
+      DocumentSnapshot documentSnapshot = await documentReference.get();
 
-      File? newImage = File(croppedFile.path);
+      List data = documentSnapshot[Constants.sales];
+      String month = DateFormat('MMM').format(DateTime.now());
 
-      UploadTask? uploadTask = imageReference.putFile(newImage);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      final url = await taskSnapshot.ref.getDownloadURL();
+      if (data.isNotEmpty) {
+        Map<String, dynamic> map = data[data.length - 1];
+
+        if (map[Constants.month] == month) {
+          data[data.length - 1] = {
+            Constants.month: map[Constants.month],
+            Constants.sales: map[Constants.sales] + amount,
+            Constants.prodTotalSales: map[Constants.prodTotalSales] + 1
+          };
+        } else {
+          data.add({
+            Constants.month: map[Constants.month],
+            Constants.sales: map[Constants.sales] + amount,
+            Constants.prodTotalSales: map[Constants.prodTotalSales] + 1
+          });
+        }
+      } else {
+        data.add({
+          Constants.month: month,
+          Constants.sales: amount,
+          Constants.prodTotalSales: 1
+        });
+      }
+
+      await documentReference.update({Constants.sales: data}).then((_) async {
+        _load = Load.processComplete;
+        notifyListeners();
+
+        await fetchAllShops();
+      });
+
+      return true;
+    } on FirebaseException catch (e) {
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
+    }
+  }
+
+  Future addImage(List<CroppedFile> croppedFiles, String userId, String shopId) async {
+    try {
+      List<String> newUrls = [];
+      int counter = 1;
+      _load = Load.processing;
+      notifyListeners();
+
+      for (var element in croppedFiles) {
+        Reference imageReference = firebaseStorage.ref().child(
+            "$userId/shops/image$counter${DateTime.now().millisecondsSinceEpoch.toString()}");
+
+        File? newImage = File(element.path);
+
+        UploadTask? uploadTask = imageReference.putFile(newImage);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        final url = await taskSnapshot.ref.getDownloadURL();
+
+        newUrls.add(url);
+        counter++;
+      }
 
       DocumentReference documentReference = collectionReference.doc(shopId);
 
       await documentReference.update({
-        Constants.imgUrls: FieldValue.arrayUnion([url]),
+        Constants.imgUrls: FieldValue.arrayUnion(newUrls),
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
-      }).then((_) {
-        _load = Load.processComplete;
-        notifyListeners();
+      }).then((_) async {
+        await fetchAllShops().then((value) {
+          _load = Load.processComplete;
+          notifyListeners();
 
-        Constants(context)
-            .snackBar('Shop image added successfully! ✅', Constants.tetiary);
+          Constants(context)
+              .snackBar('Shop image added successfully! ✅', Constants.tetiary);
+        });
       });
 
       return true;
@@ -203,12 +264,15 @@ class ShopProvider extends ChangeNotifier {
       }).then((_) async {
         Reference imageReference = firebaseStorage.refFromURL(url);
 
-        await imageReference.delete().then((_) {
+        await imageReference.delete().then((_) async {
           _load = Load.processComplete;
           notifyListeners();
 
-          Constants(context).snackBar(
-              'Shop image has been deleted successfully! ✅', Constants.tetiary);
+          await fetchAllShops().then((value) {
+            Constants(context).snackBar(
+                'Shop image has been deleted successfully! ✅',
+                Constants.tetiary);
+          });
         });
       });
 
@@ -239,13 +303,15 @@ class ShopProvider extends ChangeNotifier {
         await doc.reference.delete();
       }
 
-      await documentReference.delete().then((_) {
+      await documentReference.delete().then((_) async {
         _load = Load.processComplete;
         notifyListeners();
 
-        Constants(context).snackBar(
-            'Your shop has been closed down successfully! ✅',
-            Constants.tetiary);
+        await fetchAllShops().then((value) {
+          Constants(context).snackBar(
+              'Your shop has been closed down successfully! ✅',
+              Constants.tetiary);
+        });
       });
 
       return true;
@@ -262,7 +328,7 @@ class ShopProvider extends ChangeNotifier {
   Future getShopData(String shopId) async {
     try {
       _load = Load.processing;
-      notifyListeners();
+      // notifyListeners();
       DocumentSnapshot documentSnapshot =
           await collectionReference.doc(shopId).get();
 
@@ -378,22 +444,9 @@ class ShopProvider extends ChangeNotifier {
     }
   }
 
-  Future getAllShopProducts(String userId) async {
-    try {
-      _load = Load.processing;
-      notifyListeners();
-      QuerySnapshot querySnapshot = await productCollectionRef
-          .where(Constants.userId, isEqualTo: userId)
-          .get();
-
-      return querySnapshot.docs;
-    } on FirebaseException catch (e) {
-      _load = Load.processError;
-      notifyListeners();
-
-      Constants(context).snackBar(e.message!, Colors.red);
-
-      return [];
-    }
+  Stream<QuerySnapshot> getAllShopProducts(String shopId) {
+      return productCollectionRef
+          .where(Constants.shopId, isEqualTo: shopId)
+          .snapshots(includeMetadataChanges: true);
   }
 }

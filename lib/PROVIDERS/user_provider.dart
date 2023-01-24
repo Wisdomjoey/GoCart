@@ -8,8 +8,18 @@ class UserProvider extends ChangeNotifier {
 
   UserProvider(this.context);
 
+  Map<String, dynamic> _userData = {};
+  Map<String, dynamic> get userData => _userData;
+
   CollectionReference userCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionUsers);
+
+  Future initializeUserData(String userId) async {
+    DocumentSnapshot snapshot = await userCollectionRef.doc(userId).get();
+
+    _userData = snapshot.data() as Map<String, dynamic>;
+    notifyListeners();
+  }
 
   Future saveUserData(
       String firstName, String lastName, String email, String uid) async {
@@ -49,9 +59,15 @@ class UserProvider extends ChangeNotifier {
     try {
       DocumentReference userDocumentRef = userCollectionRef.doc(userId);
 
-      return await userDocumentRef.update(data);
+      await userDocumentRef.update(data);
+
+      initializeUserData(userId);
+
+      return true;
     } on FirebaseException catch (e) {
       Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 

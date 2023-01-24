@@ -1,4 +1,5 @@
 import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/pages/dashboard/check_orders_page.dart';
 import 'package:GOCart/UI/pages/dashboard/check_products_page.dart';
@@ -6,9 +7,11 @@ import 'package:GOCart/UI/pages/dashboard/dashboard_page.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/list_tile_btn_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 class SellerDashboard extends StatefulWidget {
   const SellerDashboard({super.key});
@@ -19,14 +22,34 @@ class SellerDashboard extends StatefulWidget {
 
 class _SellerDashboardState extends State<SellerDashboard> {
   int index = 0;
+  Map<String, dynamic> shopData = {};
 
-  List<Widget> pages = const [
-    DashboardPage(),
-    CheckOrdersPage(),
-    CheckProductsPage()
-  ];
+  late List<Widget> pages;
 
   List<bool> anchors = [true, false, false];
+
+  @override
+  void initState() {
+    super.initState();
+
+    shopData = (Provider.of<ShopProvider>(context, listen: false).shops.where(
+        (element) =>
+            element[Constants.userId] ==
+            FirebaseAuth.instance.currentUser!.uid)).elementAt(0) as Map<String, dynamic>;
+
+    pages = [
+      DashboardPage(
+        shopId: shopData[Constants.uid],
+      ),
+      CheckOrdersPage(
+        shopName: shopData[Constants.shopName],
+      ),
+      CheckProductsPage(
+        shopId: shopData[Constants.uid],
+        shopName: shopData[Constants.shopName],
+      )
+    ];
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +62,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
         actions: [
           IconButton(
               onPressed: (() {
-                Get.toNamed(RouteHelper.getManageShopPage());
+                Get.toNamed(RouteHelper.getManageShopPage(), arguments: shopData);
               }),
               tooltip: 'Manage Shop',
               icon: Stack(alignment: Alignment.center, children: [

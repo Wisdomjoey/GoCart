@@ -1,15 +1,36 @@
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 import '../../../CONSTANTS/constants.dart';
+import '../../../PROVIDERS/shop_provider.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final String shopId;
+
+  const DashboardPage({super.key, required this.shopId});
+
+  calcTotSales(Map<String, dynamic> data) {
+    int totSales = 0;
+
+    for (var element in data[Constants.sales]) {
+      totSales += element[Constants.prodTotalSales] as int;
+    }
+
+    return totSales.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
+    Map<String, dynamic> data =
+        (Provider.of<ShopProvider>(context)
+                .shops
+                .where((element) => element[Constants.uid] == shopId))
+            .elementAt(0) as Map<String, dynamic>;
+
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(Dimensions.sizedBoxWidth15),
@@ -37,14 +58,14 @@ class DashboardPage extends StatelessWidget {
                 tooltipBehavior: TooltipBehavior(enable: true),
                 series: [
                   LineSeries<_SalesData, String>(
-                      dataSource: [
-                        _SalesData('Jan', 30),
-                        _SalesData('Feb', 50),
-                        _SalesData('Mar', 23),
-                        _SalesData('Apr', 38),
-                        _SalesData('May', 41),
-                      ],
-                      xValueMapper: (_SalesData sales, _) => sales.year,
+                      dataSource: data[Constants.sales].isNotEmpty
+                          ? data[Constants.sales].map((e) => _SalesData(
+                              e[Constants.month], e[Constants.prodTotalSales]))
+                          : [
+                              _SalesData(
+                                  DateFormat('MMM').format(DateTime.now()), 0)
+                            ],
+                      xValueMapper: (_SalesData sales, _) => sales.month,
                       yValueMapper: (_SalesData sales, _) => sales.sales,
                       name: 'Sales',
                       xAxisName: 'Values',
@@ -73,14 +94,14 @@ class DashboardPage extends StatelessWidget {
                 tooltipBehavior: TooltipBehavior(enable: true),
                 series: [
                   LineSeries<_SalesData, String>(
-                      dataSource: [
-                        _SalesData('Jan', 30),
-                        _SalesData('Feb', 50),
-                        _SalesData('Mar', 23),
-                        _SalesData('Apr', 38),
-                        _SalesData('May', 41),
-                      ],
-                      xValueMapper: (_SalesData sales, _) => sales.year,
+                      dataSource: data[Constants.sales].isNotEmpty
+                          ? data[Constants.sales].map((e) => _SalesData(
+                              e[Constants.month], e[Constants.sales]))
+                          : [
+                              _SalesData(
+                                  DateFormat('MMM').format(DateTime.now()), 0)
+                            ],
+                      xValueMapper: (_SalesData sales, _) => sales.month,
                       yValueMapper: (_SalesData sales, _) => sales.sales,
                       name: 'Profits',
                       xAxisName: 'Values',
@@ -115,7 +136,9 @@ class DashboardPage extends StatelessWidget {
                           height: Dimensions.sizedBoxHeight3,
                         ),
                         Text(
-                          '50',
+                          data[Constants.sales].isNotEmpty
+                              ? calcTotSales(data)
+                              : '0',
                           style: TextStyle(fontSize: Dimensions.font15),
                         )
                       ],
@@ -146,7 +169,7 @@ class DashboardPage extends StatelessWidget {
                           height: Dimensions.sizedBoxHeight3,
                         ),
                         Text(
-                          '50',
+                          data[Constants.likes].length.toString(),
                           style: TextStyle(fontSize: Dimensions.font15),
                         )
                       ],
@@ -230,8 +253,8 @@ class DashboardPage extends StatelessWidget {
 }
 
 class _SalesData {
-  final String year;
+  final String month;
   final double sales;
 
-  _SalesData(this.year, this.sales);
+  _SalesData(this.month, this.sales);
 }

@@ -24,14 +24,14 @@ class ProductProvider extends ChangeNotifier {
   Future createProduct(
       String shopName,
       String name,
-      String? description,
-      double? oldPrice,
-      double? newPrice,
-      double? minPrice,
+      String description,
+      double oldPrice,
+      double newPrice,
+      double minPrice,
       double deliveryPrice,
       String category,
       List<CroppedFile> croppedFiles,
-      int? totalStock,
+      int totalStock,
       List<String> tags,
       String shopId,
       String userId,
@@ -127,23 +127,31 @@ class ProductProvider extends ChangeNotifier {
   }
 
   Future addImage(
-      CroppedFile croppedFile, String userId, String productId) async {
+      List<CroppedFile> croppedFiles, String userId, String productId) async {
     try {
+      List<String> newUrls = [];
+      int counter = 1;
       _process = Process.processing;
       notifyListeners();
-      Reference imageReference = firebaseStorage.ref().child(
-          "$userId/products/image${DateTime.now().millisecondsSinceEpoch.toString()}");
 
-      File? newImage = File(croppedFile.path);
+      for (var element in croppedFiles) {
+        Reference imageReference = firebaseStorage.ref().child(
+            "$userId/products/image$counter${DateTime.now().millisecondsSinceEpoch.toString()}");
 
-      UploadTask? uploadTask = imageReference.putFile(newImage);
-      TaskSnapshot taskSnapshot = await uploadTask;
-      final url = await taskSnapshot.ref.getDownloadURL();
+        File? newImage = File(element.path);
+
+        UploadTask? uploadTask = imageReference.putFile(newImage);
+        TaskSnapshot taskSnapshot = await uploadTask;
+        final url = await taskSnapshot.ref.getDownloadURL();
+
+        newUrls.add(url);
+        counter++;
+      }
 
       DocumentReference documentReference = productCollectionRef.doc(productId);
 
       await documentReference.update({
-        Constants.imgUrls: FieldValue.arrayUnion([url]),
+        Constants.imgUrls: FieldValue.arrayUnion(newUrls),
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
       }).then((_) {
         _process = Process.processComplete;
@@ -170,12 +178,12 @@ class ProductProvider extends ChangeNotifier {
       notifyListeners();
       DocumentReference documentReference = productCollectionRef.doc(productId);
 
-      documentReference.update({
-        Constants.imgUrls: FieldValue.arrayRemove([url])
-      }).then((_) async {
-        Reference imageReference = firebaseStorage.refFromURL(url);
+      Reference imageReference = firebaseStorage.refFromURL(url);
 
-        await imageReference.delete().then((_) {
+      await imageReference.delete().then((_) async {
+        await documentReference.update({
+          Constants.imgUrls: FieldValue.arrayRemove([url])
+        }).then((_) async {
           _process = Process.processComplete;
           notifyListeners();
 
@@ -195,25 +203,26 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future deleteProduct(String productId, List<String> urls) async {
+  Future deleteProduct(String productId) async {
     try {
       _process = Process.processing;
       notifyListeners();
       DocumentReference documentReference = productCollectionRef.doc(productId);
 
+      DocumentSnapshot documentSnapshot = await documentReference.get();
+
+      List urls = documentSnapshot.get(Constants.imgUrls);
+
       await documentReference.delete().then((_) async {
         for (var url in urls) {
           Reference imageReference = firebaseStorage.refFromURL(url);
 
-          await imageReference.delete().then((_) {
-            _process = Process.processComplete;
-            notifyListeners();
-
-            Constants(context).snackBar(
-                'Product has been deleted successfully! ✅', Constants.tetiary);
-          });
+          await imageReference.delete();
         }
       });
+      
+      _process = Process.processComplete;
+      notifyListeners();
 
       return true;
     } on FirebaseException catch (e) {
@@ -226,23 +235,8 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future getAllProducts() async {
-    try {
-      _process = Process.processing;
-      // notifyListeners();
-      QuerySnapshot querySnapshot = await productCollectionRef.get();
-
-      _process = Process.processComplete;
-      notifyListeners();
-      return querySnapshot.docs;
-    } on FirebaseException catch (e) {
-      _process = Process.processError;
-      notifyListeners();
-
-      Constants(context).snackBar(e.message!, Colors.red);
-
-      return [];
-    }
+  Stream<QuerySnapshot> getAllProducts() {
+    return productCollectionRef.snapshots();
   }
 
   Future searchProducts(String query) async {
@@ -387,7 +381,7 @@ class ProductProvider extends ChangeNotifier {
   Future getProductData(String productId) async {
     try {
       _process = Process.processing;
-      notifyListeners();
+      // notifyListeners();
       DocumentSnapshot documentSnapshot =
           await productCollectionRef.doc(productId).get();
 
@@ -480,7 +474,7 @@ class ProductProvider extends ChangeNotifier {
   Future fetchAllReviews(String productId) async {
     try {
       _process = Process.processing;
-      notifyListeners();
+      // notifyListeners();
       QuerySnapshot querySnapshot = await productCollectionRef
           .doc(productId)
           .collection(Constants.collectionReviews)

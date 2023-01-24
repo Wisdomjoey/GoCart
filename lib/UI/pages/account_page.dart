@@ -46,7 +46,8 @@ class AccountPage extends StatelessWidget {
                         )
                       : ListTileBtn(
                           title: 'Become a Seller',
-                          leading: Icon(Icons.handshake_outlined,
+                          leading: Icon(
+                            Icons.handshake_outlined,
                             size: Dimensions.font20 + 2,
                           ),
                           showTrailing: false,

@@ -4,7 +4,8 @@ import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
 
 class ElevatedBtn extends StatelessWidget {
-  final String text;
+  final String? text;
+  final Widget? child;
   final Color? textColor;
   final Color? bgColor;
   final bool isElevated;
@@ -18,7 +19,7 @@ class ElevatedBtn extends StatelessWidget {
 
   const ElevatedBtn(
       {super.key,
-      required this.text,
+      this.text,
       this.icon,
       this.textColor,
       this.isElevated = true,
@@ -27,14 +28,16 @@ class ElevatedBtn extends StatelessWidget {
       this.radius,
       this.pressed,
       this.visualVD,
-      this.visualHD, this.bgColor});
+      this.visualHD,
+      this.bgColor, this.child});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: disabled ? null : (pressed ?? () {}),
       style: ElevatedButton.styleFrom(
-          backgroundColor: addBorder ? Colors.transparent : (bgColor ?? Constants.tetiary),
+          backgroundColor:
+              addBorder ? Colors.transparent : (bgColor ?? Constants.tetiary),
           shadowColor: isElevated ? Colors.black : Colors.transparent,
           visualDensity: VisualDensity(
             vertical: visualVD ?? 0,
@@ -53,8 +56,8 @@ class ElevatedBtn extends StatelessWidget {
           ),
           Align(
             alignment: Alignment.center,
-            child: Text(
-              text,
+            child: child ?? Text(
+              text!,
               style: TextStyle(
                   fontSize: Dimensions.font14,
                   color: textColor ?? Constants.white),

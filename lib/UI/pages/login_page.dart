@@ -9,6 +9,7 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PROVIDERS/user_provider.dart';
 import '../widgets/text_form_field_widget.dart';
 
 class LoginPage extends StatefulWidget {
@@ -89,9 +90,14 @@ class _LoginPageState extends State<LoginPage> {
                                 Dimensions.sizedBoxHeight10 * 4),
                             child: InkWell(
                               onTap: () async {
-                                if (Provider.of<AuthProvider>(context, listen: false).isSigned == null || Provider.of<AuthProvider>(context,
-                                            listen: false)
-                                        .isSigned == false) {
+                                if (Provider.of<AuthProvider>(context,
+                                                listen: false)
+                                            .isSigned ==
+                                        null ||
+                                    Provider.of<AuthProvider>(context,
+                                                listen: false)
+                                            .isSigned ==
+                                        false) {
                                   await authProvider
                                       .googleSignin()
                                       .then((value) {
@@ -246,7 +252,9 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             onPressed: () async {
-                              if (FirebaseAuth.instance.currentUser != null) {
+                              User? user = FirebaseAuth.instance.currentUser;
+
+                              if (user != null) {
                                 Constants(context).snackBar(
                                     'You are logged in already',
                                     Constants.tetiary);
@@ -264,16 +272,20 @@ class _LoginPageState extends State<LoginPage> {
                                           controller1.text.trim(),
                                           controller2.text,
                                           context)
-                                      .then((value) {
+                                      .then((value) async {
                                     if (value == true &&
                                         authProvider.status ==
                                             Status.authenticated) {
                                       Constants(context).snackBar(
                                           'Sign In Succesful!',
                                           Constants.tetiary);
-                                          
-                                      Get.offNamed(RouteHelper.getRoutePage(),
-                                          arguments: 0);
+
+                                      await Provider.of<UserProvider>(context, listen: false)
+                                          .initializeUserData(user!.uid)
+                                          .then((value) {
+                                        Get.offNamed(RouteHelper.getRoutePage(),
+                                            arguments: 0);
+                                      });
                                     } else if (value == false) {
                                       Constants(context).snackBar(
                                           'An error occurred', Colors.red);

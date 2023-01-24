@@ -1,9 +1,11 @@
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 
 import '../../../CONSTANTS/constants.dart';
 import '../../utils/dimensions.dart';
@@ -11,7 +13,9 @@ import '../../widgets/elevated_button_widget.dart';
 import '../../widgets/head_section_widget.dart';
 
 class ManageShopPage extends StatefulWidget {
-  const ManageShopPage({super.key});
+  final Map<String, dynamic> shopData;
+
+  const ManageShopPage({super.key, required this.shopData});
 
   @override
   State<ManageShopPage> createState() => _ManageShopPageState();
@@ -22,11 +26,12 @@ class _ManageShopPageState extends State<ManageShopPage> {
   // late List<XFile> images;
   // late XFile photo;
   List<CroppedFile> images = [];
+  List imgUrls = [];
   final double _height = Dimensions.pageViewContainer;
   GlobalKey<FormState> key = GlobalKey<FormState>();
 
   List<bool> disability = [false, false, false];
-  List<String> tags = ['Tags', 'Product Price', 'Tags'];
+  List tags = [];
 
   late TextEditingController textEditingController1;
   late TextEditingController textEditingController2;
@@ -41,8 +46,10 @@ class _ManageShopPageState extends State<ManageShopPage> {
     textEditingController2 = TextEditingController();
     tagController = TextEditingController();
 
-    textEditingController1.text = 'Example';
-    textEditingController2.text = 'Example';
+    textEditingController1.text = widget.shopData[Constants.shopName];
+    textEditingController2.text = widget.shopData[Constants.shopAddress];
+    tags = widget.shopData[Constants.shopTags];
+    imgUrls = widget.shopData[Constants.imgUrls];
 
     focusNode1 = FocusNode();
     focusNode2 = FocusNode();
@@ -96,15 +103,17 @@ class _ManageShopPageState extends State<ManageShopPage> {
                   IconButton(
                       onPressed: (() async {
                         await _getImage().then((value) async {
-                          if (value == null) return;
+                          for (var element in value) {
+                            await _cropImage(element!.path).then((value) async {
+                              if (value == null) return;
 
-                          await _cropImage(value.path).then((value) {
-                            if (value == null) return;
-
-                            setState(() {
-                              images.add(value);
+                              setState(() {
+                                images.add(value);
+                              });
                             });
-                          });
+                          }
+
+                          await addImages();
                         });
                       }),
                       icon: const Icon(
@@ -133,9 +142,14 @@ class _ManageShopPageState extends State<ManageShopPage> {
                       // });
                     },
                   ),
-                  itemCount: 5,
+                  itemCount: imgUrls.length,
                   itemBuilder: (context, index, realIndex) {
-                    return Constants(context).buildPageItem(index);
+                    return Constants(context).buildPageItem(
+                        index,
+                        imgUrls[index],
+                        '',
+                        widget.shopData[Constants.uid],
+                        imgUrls.length);
                     // return _buildPageItem(index);
                   },
                 ),
@@ -316,22 +330,44 @@ class _ManageShopPageState extends State<ManageShopPage> {
                 width: double.maxFinite,
                 height: Dimensions.sizedBoxHeight100 / 2,
                 child: ElevatedBtn(
-                  text: 'UPDATE',
-                  pressed: () {
+                  child:
+                      Provider.of<ShopProvider>(context).load == Load.processing
+                          ? SizedBox(
+                              width: Dimensions.sizedBoxWidth10 * 2,
+                              height: Dimensions.sizedBoxWidth10 * 2,
+                              child: const CircularProgressIndicator(
+                                color: Constants.white,
+                                strokeWidth: 3,
+                              ))
+                          : Text(
+                              'UPDATE',
+                              style: TextStyle(
+                                  color: Constants.white,
+                                  fontSize: Dimensions.font14),
+                            ),
+                  pressed: () async {
                     if (key.currentState!.validate()) {
-                      if (images.isEmpty) {
-                        Get.showSnackbar(GetSnackBar(
-                          message: 'Please add at least one image!',
-                          snackPosition: SnackPosition.TOP,
-                          backgroundColor: Colors.red,
-                          duration: Duration(seconds: 7),
-                          borderRadius: Dimensions.sizedBoxWidth4,
-                          margin: EdgeInsets.only(
-                              bottom: Dimensions.sizedBoxHeight15,
-                              right: Dimensions.sizedBoxWidth10,
-                              left: Dimensions.sizedBoxWidth10),
-                        ));
-                      } else {}
+                      if (imgUrls.isEmpty && images.isEmpty) {
+                        Constants(context).snackBar(
+                            'Please add at least one image!', Colors.red);
+                      } else {
+                        await Provider.of<ShopProvider>(context, listen: false).updateShop({
+                          Constants.shopName:
+                              textEditingController1.text.trim(),
+                          Constants.shopAddress:
+                              textEditingController2.text.trim(),
+                          Constants.shopTags: tags
+                        }, widget.shopData[Constants.uid]).then((value) {
+                          if (value) {
+                            textEditingController1.clear();
+                            textEditingController2.clear();
+                            tags.clear();
+                            images.clear();
+
+                            Navigator.pop(context);
+                          }
+                        });
+                      }
                     }
                   },
                 ),
@@ -343,8 +379,8 @@ class _ManageShopPageState extends State<ManageShopPage> {
     );
   }
 
-  Future<XFile?> _getImage() async {
-    return await _picker.pickImage(source: ImageSource.gallery);
+  Future<List<XFile?>> _getImage() async {
+    return await _picker.pickMultiImage();
   }
 
   Future<CroppedFile?> _cropImage(String path) async {
@@ -354,5 +390,16 @@ class _ManageShopPageState extends State<ManageShopPage> {
           toolbarWidgetColor: Constants.white,
           lockAspectRatio: false),
     ]);
+  }
+
+  Future addImages() async {
+    await Provider.of<ShopProvider>(context, listen: false)
+        .addImage(images, FirebaseAuth.instance.currentUser!.uid,
+            widget.shopData[Constants.uid])
+        .then((value) {
+      if (value) {
+        Navigator.pop(context);
+      }
+    });
   }
 }

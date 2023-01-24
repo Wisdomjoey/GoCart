@@ -4,18 +4,40 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import '../../CONSTANTS/constants.dart';
 
 class StarRating extends StatelessWidget {
-  const StarRating({super.key});
+  final double rating;
+
+  const StarRating({super.key, required this.rating});
 
   @override
   Widget build(BuildContext context) {
+    int filled = rating.truncate();
+    int half = (rating - filled).ceil();
+    int empty = 5 - rating.ceil();
+
     return Row(
-      children: [1, 2, 3, 4, 5]
-          .map((e) => Icon(
-                Icons.star_rate_rounded,
-                color: Constants.tetiary,
-                size: Dimensions.font16,
-              ))
-          .toList(),
+      children: [
+        ...List.generate(
+            filled,
+            (index) => Icon(
+                  Icons.star_rounded,
+                  color: Constants.tetiary,
+                  size: Dimensions.font16,
+                )),
+        ...List.generate(
+            half,
+            (index) => Icon(
+                  Icons.star_half_rounded,
+                  color: Constants.tetiary,
+                  size: Dimensions.font16,
+                )),
+        ...List.generate(
+            empty,
+            (index) => Icon(
+                  Icons.star_outline_rounded,
+                  color: Constants.grey,
+                  size: Dimensions.font16,
+                ))
+      ],
     );
   }
 }

@@ -1,10 +1,9 @@
 import 'dart:async';
 
-import 'package:GOCart/PREFS/preferences.dart';
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:GOCart/PROVIDERS/cart_provider.dart';
 import 'package:GOCart/PROVIDERS/shop_provider.dart';
-import 'package:GOCart/UI/pages/local_authPage.dart';
+import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -31,7 +30,7 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
-    super.initState();
+    print('here');
 
     Future.delayed(Duration.zero, (() {
       Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
@@ -65,11 +64,13 @@ class _SplashPageState extends State<SplashPage> {
     Timer(const Duration(milliseconds: 4300), ((() async {
       // Get.offNamed(RouteHelper.getRegisterPage());
       if (_isLoggedIn) {
-        await Provider.of<CartProvider>(context, listen: false)
-            .getCart(FirebaseAuth.instance.currentUser!.uid)
+        String userId = FirebaseAuth.instance.currentUser!.uid;
+
+        await Provider.of<UserProvider>(context, listen: false)
+            .initializeUserData(userId)
             .then((value) async {
           await Provider.of<CartProvider>(context, listen: false)
-              .getFoodCart(FirebaseAuth.instance.currentUser!.uid)
+              .initializeCart(userId)
               .then((value) async {
             await Provider.of<ShopProvider>(context, listen: false)
                 .fetchAllShops()
@@ -86,6 +87,8 @@ class _SplashPageState extends State<SplashPage> {
       }
       // Get.offUntil(MaterialPageRoute(builder: ((context) => const LocalAuthPage())), (route) => false);
     })));
+    
+    super.initState();
   }
 
   @override
