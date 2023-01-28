@@ -242,99 +242,135 @@ class ProductProvider extends ChangeNotifier {
   Future searchProducts(String query) async {
     try {
       _process = Process.processing;
-      notifyListeners();
+      // notifyListeners();
       QuerySnapshot querySnapshot = await productCollectionRef.get();
       List<DocumentSnapshot> documentSnapshot = querySnapshot.docs;
       List products = [];
       List<String> queries = query.split(' ');
 
       for (var i = 0; i < documentSnapshot.length; i++) {
-        String name = documentSnapshot[i][Constants.name];
-
-        for (var a = 0; a < queries.length; a++) {
-          if (name.contains(queries[a])) {
-            products.add(documentSnapshot[i]);
-            break;
-          }
-        }
-      }
-
-      for (var i = 0; i < documentSnapshot.length; i++) {
+        String name = documentSnapshot[i].get(Constants.name);
         String description = documentSnapshot[i][Constants.prodDescription];
-
-        for (var a = 0; a < queries.length; a++) {
-          if (description.contains(queries[a])) {
-            products.add(documentSnapshot[i]);
-            break;
-          }
-        }
-      }
-
-      for (var i = 0; i < documentSnapshot.length; i++) {
         String category = documentSnapshot[i][Constants.prodCategory];
-
-        for (var a = 0; a < queries.length; a++) {
-          if (category.contains(queries[a])) {
-            products.add(documentSnapshot[i]);
-            break;
-          }
-        }
-      }
-
-      for (var i = 0; i < documentSnapshot.length; i++) {
-        List<String> specifications =
-            documentSnapshot[i][Constants.prodSpecifications];
+        List specifications =
+            documentSnapshot[i].get(Constants.prodSpecifications);
+        List keyFeatures = documentSnapshot[i].get(Constants.prodKeyFeatures);
+        List tags = documentSnapshot[i].get(Constants.prodTags);
+        String shopName = documentSnapshot[i].get(Constants.shopName);
 
         outer1:
         for (var a = 0; a < queries.length; a++) {
-          for (var b = 0; b < specifications.length; b++) {
-            if (specifications[b].contains(queries[a])) {
-              products.add(documentSnapshot[i]);
-              break outer1;
+
+          outer2:
+          for (var element in specifications) {
+
+            outer3:
+            for (var element1 in keyFeatures) {
+              for (var element2 in tags) {
+                if (name.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break outer1;
+                } else if (description.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break outer1;
+                } else if (category.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break outer1;
+                } else if (shopName.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break outer1;
+                } else if (element.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break outer2;
+                } else if (element1.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break outer3;
+                } else if (element2.contains(queries[a])) {
+                  products.add(documentSnapshot[i].data());
+                  break;
+                }
+              }
             }
           }
         }
       }
 
-      for (var i = 0; i < documentSnapshot.length; i++) {
-        List<String> keyFeatures =
-            documentSnapshot[i][Constants.prodKeyFeatures];
+      // for (var i = 0; i < documentSnapshot.length; i++) {
+      //   String description = documentSnapshot[i][Constants.prodDescription];
 
-        outer2:
-        for (var a = 0; a < queries.length; a++) {
-          for (var b = 0; b < keyFeatures.length; b++) {
-            if (keyFeatures[b].contains(queries[a])) {
-              products.add(documentSnapshot[i]);
-              break outer2;
-            }
-          }
-        }
-      }
+      //   for (var a = 0; a < queries.length; a++) {
+      //     if (description.contains(queries[a])) {
+      //       products.add(documentSnapshot[i].data());
+      //       break;
+      //     }
+      //   }
+      // }
 
-      for (var i = 0; i < documentSnapshot.length; i++) {
-        String shopName = documentSnapshot[i][Constants.shopName];
+      // for (var i = 0; i < documentSnapshot.length; i++) {
+      //   String category = documentSnapshot[i][Constants.prodCategory];
 
-        for (var a = 0; a < queries.length; a++) {
-          if (shopName.contains(queries[a])) {
-            products.add(documentSnapshot[i]);
-            break;
-          }
-        }
-      }
+      //   for (var a = 0; a < queries.length; a++) {
+      //     if (category.contains(queries[a])) {
+      //       products.add(documentSnapshot[i].data());
+      //       break;
+      //     }
+      //   }
+      // }
 
-      for (var i = 0; i < documentSnapshot.length; i++) {
-        List<String> tags = documentSnapshot[i][Constants.prodTags];
+      // for (var i = 0; i < documentSnapshot.length; i++) {
+      //   List specifications =
+      //       documentSnapshot[i].get(Constants.prodSpecifications);
 
-        outer3:
-        for (var a = 0; a < queries.length; a++) {
-          for (var b = 0; b < tags.length; b++) {
-            if (tags[b].contains(queries[a])) {
-              products.add(documentSnapshot[i]);
-              break outer3;
-            }
-          }
-        }
-      }
+      //   outer1:
+      //   for (var a = 0; a < queries.length; a++) {
+      //     for (var b = 0; b < specifications.length; b++) {
+      //       if (specifications[b].contains(queries[a])) {
+      //         products.add(documentSnapshot[i].data());
+      //         break outer1;
+      //       }
+      //     }
+      //   }
+      // }
+
+      // for (var i = 0; i < documentSnapshot.length; i++) {
+      //   List keyFeatures =
+      //       documentSnapshot[i].get(Constants.prodKeyFeatures);
+
+      //   outer2:
+      //   for (var a = 0; a < queries.length; a++) {
+      //     for (var b = 0; b < keyFeatures.length; b++) {
+      //       if (keyFeatures[b].contains(queries[a])) {
+      //         products.add(documentSnapshot[i].data());
+      //         break outer2;
+      //       }
+      //     }
+      //   }
+      // }
+
+      // for (var i = 0; i < documentSnapshot.length; i++) {
+      //   String shopName = documentSnapshot[i].get(Constants.shopName);
+
+      //   for (var a = 0; a < queries.length; a++) {
+      //     if (shopName.contains(queries[a])) {
+      //       products.add(documentSnapshot[i].data());
+      //       break;
+      //     }
+      //   }
+      // }
+
+      // for (var i = 0; i < documentSnapshot.length; i++) {
+      //   List tags = documentSnapshot[i].get(Constants.prodTags);
+
+      //   outer3:
+      //   for (var a = 0; a < queries.length; a++) {
+      //     for (var b = 0; b < tags.length; b++) {
+      //       if (tags[b].contains(queries[a])) {
+      //         products.add(documentSnapshot[i].data());
+      //         break outer3;
+      //       }
+      //     }
+      //   }
+      // }
 
       _process = Process.processComplete;
       notifyListeners();

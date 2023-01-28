@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:GOCart/PROVIDERS/cart_provider.dart';
+import 'package:GOCart/PROVIDERS/order_provider.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,6 +16,7 @@ import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PROVIDERS/global_provider.dart';
 import '../../PROVIDERS/user_provider.dart';
 import '../utils/dimensions.dart';
 
@@ -23,7 +24,7 @@ class CartPage extends StatelessWidget {
   const CartPage({super.key});
 
   getProductsData(List cart, BuildContext context) async {
-    List data = [];
+    List<Map<String, dynamic>> data = [];
 
     for (var element in cart) {
       var snapshot = await Provider.of<ProductProvider>(context, listen: false)
@@ -335,11 +336,6 @@ class CartPage extends StatelessWidget {
                                                                   context,
                                                                   listen: false)
                                                               .carts[index]
-                                                          [Constants.uid],
-                                                      Provider.of<CartProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .carts[index]
                                                           [Constants.amount]))),
                                             ),
                                           ),
@@ -479,7 +475,68 @@ class CartPage extends StatelessWidget {
                           ),
                         ),
                         DetailsBottomNav(
-                          isAdded: false,
+                          // isAdded: false,
+                          pressed: () async {
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .setProcess(Processes.waiting);
+
+                            List<int> quantity = [];
+                            List amount = [];
+
+                            for (var element in Provider.of<CartProvider>(
+                                    context,
+                                    listen: false)
+                                .carts) {
+                              if (element[Constants.prodCategory] ==
+                                  'Cooked Foods') {
+                                int q = Provider.of<CartProvider>(context)
+                                    .cart[element[Constants.shopName]];
+                                Map<String, dynamic> cart =
+                                    (Provider.of<CartProvider>(context,
+                                            listen: false)
+                                        .carts
+                                        .where((element1) =>
+                                            element1[Constants.shopName] ==
+                                            element[Constants.shopName])
+                                        .elementAt(0)) as Map<String, dynamic>;
+
+                                quantity.add(q);
+                                List temp = [];
+
+                                for (var element in cart[Constants.amount]) {
+                                  temp.add(element * q);
+                                }
+
+                                amount.add(temp);
+                              } else {
+                                int q = Provider.of<CartProvider>(context,
+                                        listen: false)
+                                    .cart[element[Constants.productId]];
+                                Map<String, dynamic> cart = (snapshot.data
+                                    .where((element1) =>
+                                        element1[Constants.uid] ==
+                                        element[Constants.productId])
+                                    .elementAt(0)) as Map<String, dynamic>;
+
+                                quantity.add(q);
+                                amount.add(cart[Constants.prodNewPrice] * q);
+                              }
+                            }
+
+                            await Provider.of<OrderProvider>(context,
+                                    listen: false)
+                                .createOrder(
+                                    FirebaseAuth.instance.currentUser!.uid,
+                                    amount,
+                                    quantity,
+                                    snapshot.data,
+                                    context)
+                                .then((value) {
+                              Provider.of<GlobalProvider>(context,
+                                      listen: false)
+                                  .setProcess(Processes.done);
+                            });
+                          },
                           leading: IconBox(
                             icon: Icons.phone,
                             height: Dimensions.sizedBoxHeight65,
@@ -488,7 +545,7 @@ class CartPage extends StatelessWidget {
                             iconSize: Dimensions.sizedBoxWidth15 * 2,
                           ),
                           text:
-                              'CHECKOUT (\$${Provider.of<CartProvider>(context).cartSubtotal})',
+                              'PLACE ORDER ($currency${Provider.of<CartProvider>(context).cartSubtotal})',
                         ),
                         SizedBox(
                           height: Dimensions.sizedBoxHeight10,
@@ -500,7 +557,7 @@ class CartPage extends StatelessWidget {
     );
   }
 
-  Widget _showDialog(context, String prodId, String cartId, double amount) {
+  Widget _showDialog(context, String prodId, double amount) {
     // SnackBar(content: Text('content'));
     List favs =
         Provider.of<UserProvider>(context).userData[Constants.userFavourites];
@@ -567,7 +624,6 @@ class CartPage extends StatelessWidget {
                             .removeFromCart(
                                 FirebaseAuth.instance.currentUser!.uid,
                                 prodId,
-                                cartId,
                                 amount);
                       }
                     });
@@ -599,7 +655,7 @@ class CartPage extends StatelessWidget {
                 pressed: () async {
                   await Provider.of<CartProvider>(context, listen: false)
                       .removeFromCart(FirebaseAuth.instance.currentUser!.uid,
-                          prodId, cartId, amount)
+                          prodId, amount)
                       .then((value) {
                     if (value) Navigator.pop(context);
                   });

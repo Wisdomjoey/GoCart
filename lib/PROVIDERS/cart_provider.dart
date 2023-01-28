@@ -44,14 +44,11 @@ class CartProvider extends ChangeNotifier {
 
     _cartListNo = foodSnapshot.docs.length + cartSnapshot.docs.length;
 
-    print(cartSnapshot.docs);
-
     for (var element in cartSnapshot.docs) {
       _cart.addAll(
           {element.get(Constants.productId): element.get(Constants.quantity)});
 
-      _cartSubtotal += element.get(Constants.amount);
-      print('object');
+      _cartSubtotal += element.get(Constants.amount) * element.get(Constants.quantity);
     }
 
     for (var element in foodSnapshot.docs) {
@@ -59,7 +56,7 @@ class CartProvider extends ChangeNotifier {
           {element.get(Constants.shopName): element.get(Constants.quantity)});
 
       for (var element1 in element.get(Constants.amount)) {
-        _cartSubtotal += element1;
+        _cartSubtotal += element1 * element.get(Constants.quantity);
       }
     }
 
@@ -187,8 +184,12 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future removeFromCart(
-      String userId, String productId, String cartId, double amount) async {
+      String userId, String productId, double amount) async {
     try {
+      String cartId = ((_carts
+          .where((element) => element[Constants.productId] == productId)
+          .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
+
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
           .collection(Constants.collectionCart)
@@ -216,8 +217,12 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future removeFromFoodCart(
-      String userId, String productId, String cartId, double amount) async {
+      String userId, String productId, double amount, String shopName) async {
     try {
+      String cartId = ((_carts
+          .where((element) => element[Constants.shopName] == shopName)
+          .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
+
       DocumentReference documentReference = userCollectionRef
           .doc(userId)
           .collection(Constants.collectionFoodCart)
@@ -355,10 +360,8 @@ class CartProvider extends ChangeNotifier {
       int quantity = cartDocSnapshot[Constants.quantity];
 
       await productCollectionRef.doc(productId).get().then((value) async {
-        int stock = value[Constants.prodTotalStock];
-
         if (quantity - 1 < 1) {
-          await removeFromCart(userId, productId, cartId, amount);
+          await removeFromCart(userId, productId, amount);
         } else {
           await documentReference.update({
             Constants.quantity: quantity - 1,
@@ -373,10 +376,10 @@ class CartProvider extends ChangeNotifier {
                 'Your cart has been updated successfully! ✅',
                 Constants.tetiary);
           });
-
-          return true;
         }
       });
+
+          return true;
     }
   }
 

@@ -3,6 +3,9 @@ import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+
+import '../../PROVIDERS/global_provider.dart';
 
 class Search extends StatefulWidget {
   const Search({super.key});
@@ -35,10 +38,13 @@ class _MySearchDelegateState extends State<_MySearchDelegate> {
   late TextEditingController textEditingController;
 
   List<String> suggestions = [];
+  List<String> history = [];
 
   @override
   void initState() {
     textEditingController = TextEditingController();
+
+    history = Provider.of<GlobalProvider>(context, listen: false).history;
 
     super.initState();
   }
@@ -105,7 +111,8 @@ class _MySearchDelegateState extends State<_MySearchDelegate> {
                             },
                             onEditingComplete: (() {
                               if (textEditingController.text != '') {
-                                Get.toNamed(RouteHelper.getProductListPage(), arguments: textEditingController.text);
+                                Get.offNamed(RouteHelper.getProductListPage(),
+                                    arguments: textEditingController.text);
                               }
                             }),
                             autofocus: true,
@@ -133,35 +140,58 @@ class _MySearchDelegateState extends State<_MySearchDelegate> {
               child: Padding(
                 padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: suggestions.map((e) {
-                    return GestureDetector(
-                      onTap: () {
-                        Get.offNamed(RouteHelper.getProductListPage(), arguments: e);
-                      },
-                      child: Container(
-                        color: Colors.transparent,
-                        width: double.maxFinite,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: Dimensions.sizedBoxHeight10 / 2,
-                              width: double.maxFinite,
-                            ),
-                            Text(e),
-                            SizedBox(
-                              height: Dimensions.sizedBoxHeight10 / 2,
-                              width: double.maxFinite,
-                            ),
-                            const Divider(
-                              color: Constants.grey,
-                            )
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
+                  children: [
+                    Column(
+                      children: history.map((e) {
+                        return Container(
+                          color: Colors.transparent,
+                          width: double.maxFinite,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  SizedBox(
+                                    width: Dimensions.sizedBoxWidth10,
+                                  ),
+                                  const Icon(
+                                    Icons.history,
+                                    color: Constants.grey,
+                                    size: 17,
+                                  ),
+                                  SizedBox(
+                                    width: Dimensions.sizedBoxWidth10,
+                                  ),
+                                  Text(e),
+                                ],
+                              ),
+                              const Divider(
+                                color: Constants.grey,
+                              )
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: suggestions.map((e) {
+                        return GestureDetector(
+                          onTap: () {
+                            Get.offNamed(RouteHelper.getProductListPage(),
+                                arguments: e);
+                          },
+                          child: Container(
+                            color: Colors.transparent,
+                            width: double.maxFinite,
+                            padding: EdgeInsets.symmetric(
+                                vertical: Dimensions.sizedBoxHeight10),
+                            child: Text(e),
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
                 ),
               ),
             )

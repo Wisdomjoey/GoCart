@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,8 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    requestPermission();
+    
     return Scaffold(
       body: Stack(children: [
         Container(

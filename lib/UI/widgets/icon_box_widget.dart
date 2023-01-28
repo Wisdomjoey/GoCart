@@ -49,7 +49,7 @@ class IconBox extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(
                           borderRadius ?? Dimensions.font12 / 3),
-                      side: BorderSide(color: borderColor))),
+                      side: isDisabled ? BorderSide.none : BorderSide(color: borderColor))),
               child: Icon(
                 icon,
                 color: iconColor,

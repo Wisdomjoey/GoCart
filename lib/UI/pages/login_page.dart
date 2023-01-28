@@ -1,4 +1,5 @@
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/UI/pages/local_auth_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -280,11 +281,20 @@ class _LoginPageState extends State<LoginPage> {
                                           'Sign In Succesful!',
                                           Constants.tetiary);
 
-                                      await Provider.of<UserProvider>(context, listen: false)
-                                          .initializeUserData(user!.uid)
+                                      await Provider.of<UserProvider>(context,
+                                              listen: false)
+                                          .initializeUserData(FirebaseAuth
+                                              .instance.currentUser!.uid)
                                           .then((value) {
-                                        Get.offNamed(RouteHelper.getRoutePage(),
-                                            arguments: 0);
+                                        if (Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .userData[Constants.userPinIsSet]) {
+                                          Get.off(() => const LocalAuthPage());
+                                        } else {
+                                          Get.offNamed(
+                                              RouteHelper.getRoutePage(),
+                                              arguments: 0);
+                                        }
                                       });
                                     } else if (value == false) {
                                       Constants(context).snackBar(

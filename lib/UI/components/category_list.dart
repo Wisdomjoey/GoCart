@@ -1,14 +1,15 @@
-import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PROVIDERS/user_provider.dart';
 
 class CategoryList extends StatelessWidget {
-  final int index;
+  final String cat;
 
-  const CategoryList({super.key, this.index = 0});
+  const CategoryList({super.key, required this.cat});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +39,16 @@ class CategoryList extends StatelessWidget {
                   minLeadingWidth: Dimensions.sizedBoxWidth4 / 2,
                   visualDensity: VisualDensity(
                       vertical: -(Dimensions.sizedBoxHeight4 / 2)),
-                  onTap: () {},
+                  onTap: () async {
+                    await sendPushMessage(
+                            Provider.of<UserProvider>(context, listen: false)
+                                .userData[Constants.userFCMToken],
+                            'Title test',
+                            'Test body, Hi this notification worked')
+                        .then((value) {
+                      print(value.toString());
+                    });
+                  },
                 ),
               )),
           Container(
@@ -58,10 +68,10 @@ class CategoryList extends StatelessWidget {
               physics: const NeverScrollableScrollPhysics(),
               shrinkWrap: true,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: Dimensions.sizedBoxWidth10,
-                  crossAxisSpacing: Dimensions.sizedBoxHeight10 * 2),
-              itemCount: 19,
+                  crossAxisCount: 3,
+                  mainAxisSpacing: Dimensions.sizedBoxWidth10 * 2,
+                  crossAxisSpacing: Dimensions.sizedBoxHeight10 / 2),
+              itemCount: Constants.cats[cat]!.length,
               itemBuilder: (context, idx) {
                 return Material(
                   child: InkWell(
@@ -76,14 +86,24 @@ class CategoryList extends StatelessWidget {
                           Expanded(
                             child: Ink(
                               height: double.maxFinite,
-                              decoration: const BoxDecoration(
+                              decoration: BoxDecoration(
                                   image: DecorationImage(
-                                      image:
-                                          AssetImage('assets/images/build.jpg'),
+                                      image: AssetImage(
+                                          Constants.cats[cat]![idx]['img']),
                                       fit: BoxFit.contain)),
                             ),
                           ),
-                          Text('data$index')
+                          SizedBox(
+                            height: Dimensions.sizedBoxHeight10,
+                          ),
+                          Text(
+                            Constants.cats[cat]![idx]['label'],
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: Dimensions.font11,
+                                color:
+                                    const Color.fromARGB(255, 129, 129, 129)),
+                          )
                         ],
                       ),
                     ),

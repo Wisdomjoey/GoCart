@@ -1,9 +1,8 @@
 import 'dart:async';
 
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
-import 'package:GOCart/PROVIDERS/cart_provider.dart';
-import 'package:GOCart/PROVIDERS/shop_provider.dart';
-import 'package:GOCart/PROVIDERS/user_provider.dart';
+import 'package:GOCart/PROVIDERS/global_provider.dart';
+import 'package:GOCart/UI/pages/local_auth_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,9 +11,14 @@ import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PREFS/preferences.dart';
+import '../../PROVIDERS/shop_provider.dart';
+import '../../PROVIDERS/user_provider.dart';
 
 class SplashPage extends StatefulWidget {
-  const SplashPage({super.key});
+  final String? prodId;
+
+  const SplashPage({super.key, this.prodId});
 
   @override
   State<SplashPage> createState() => _SplashPageState();
@@ -30,14 +34,8 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
-    print('here');
-
-    Future.delayed(Duration.zero, (() {
-      Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
-
-      _isLoggedIn =
-          Provider.of<AuthProvider>(context, listen: false).loginStatus;
-    }));
+    Provider.of<GlobalProvider>(context, listen: false)
+        .setLink(widget.prodId, context);
 
     Timer(const Duration(milliseconds: 500), ((() {
       setState(() {
@@ -63,19 +61,46 @@ class _SplashPageState extends State<SplashPage> {
     })));
     Timer(const Duration(milliseconds: 4300), ((() async {
       // Get.offNamed(RouteHelper.getRegisterPage());
-      if (_isLoggedIn) {
-        String userId = FirebaseAuth.instance.currentUser!.uid;
+      Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
 
-        await Provider.of<UserProvider>(context, listen: false)
-            .initializeUserData(userId)
+      _isLoggedIn =
+          Provider.of<AuthProvider>(context, listen: false).loginStatus;
+
+      if (_isLoggedIn) {
+        await Provider.of<ShopProvider>(context, listen: false)
+            .fetchAllShops()
             .then((value) async {
-          await Provider.of<CartProvider>(context, listen: false)
-              .initializeCart(userId)
-              .then((value) async {
-            await Provider.of<ShopProvider>(context, listen: false)
-                .fetchAllShops()
-                .then((value) {
-              Get.offNamed(RouteHelper.getRoutePage(), arguments: 0);
+          await Provider.of<UserProvider>(context, listen: false)
+              .initializeUserData(FirebaseAuth.instance.currentUser!.uid)
+              .then((value1) async {
+            await Preferences()
+                .getListData(Constants.prefsSearchHistory)
+                .then((value2) {
+              if (value2 != null) {
+                Provider.of<GlobalProvider>(context, listen: false)
+                    .setHistory(value2);
+              }
+
+              if (Provider.of<UserProvider>(context, listen: false)
+                  .userData[Constants.userPinIsSet]) {
+                Get.off(() => const LocalAuthPage());
+              } else {
+                Map<String, dynamic>? prodData =
+                    Provider.of<GlobalProvider>(context, listen: false)
+                        .prodData;
+
+                if (prodData != null) {
+                  Get.offNamedUntil(
+                      RouteHelper.getProductDetailsPage(),
+                      arguments: prodData,
+                      (route) => false);
+                } else {
+                  Get.offNamedUntil(
+                      RouteHelper.getRoutePage(),
+                      arguments: 0,
+                      (route) => false);
+                }
+              }
             });
           });
         });
@@ -83,11 +108,11 @@ class _SplashPageState extends State<SplashPage> {
       } else {
         await Provider.of<AuthProvider>(context, listen: false)
             .initialize(Status.uninitialized);
-        Get.offNamed(RouteHelper.getIntroPage());
+        Get.offNamedUntil(RouteHelper.getIntroPage(), (route) => false);
       }
       // Get.offUntil(MaterialPageRoute(builder: ((context) => const LocalAuthPage())), (route) => false);
     })));
-    
+
     super.initState();
   }
 

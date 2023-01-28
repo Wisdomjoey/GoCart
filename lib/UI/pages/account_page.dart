@@ -1,4 +1,5 @@
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
@@ -11,9 +12,7 @@ import 'package:provider/provider.dart';
 import '../../CONSTANTS/constants.dart';
 
 class AccountPage extends StatelessWidget {
-  final bool isSeller;
-
-  const AccountPage({super.key, required this.isSeller});
+  const AccountPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +33,8 @@ class AccountPage extends StatelessWidget {
               borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
               child: Column(
                 children: [
-                  isSeller
+                  Provider.of<UserProvider>(context)
+                          .userData[Constants.userIsSeller]
                       ? ListTileBtn(
                           title: 'Dashboard',
                           leading: Icon(

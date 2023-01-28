@@ -25,50 +25,6 @@ class Constants {
   static const grey = Colors.grey;
   static const formFillColor = Color.fromARGB(255, 242, 242, 242);
 
-  static const List<String> categories = [
-    'Snacks',
-    'Cooked Foods',
-    'Groceries',
-    'Health & Beauty',
-    'Home & Office',
-    'Phones & Tablets',
-    'Computing',
-    'Electronics',
-    'Fashion',
-    'Baby Products',
-    'Gaming',
-    'Sporting Goods',
-    'Automobile'
-  ];
-  static const List<String> suggestions = [
-    'Snacks',
-    'Groceries',
-    'Health & Beauty',
-    'Home & Office',
-    'Phones & Tablets',
-    'Computing',
-    'Electronics',
-    'Fashion',
-    'Baby Products',
-    'Gaming',
-    'Sporting Goods',
-    'Automobile'
-  ];
-  static const List<String> shopCategory = [
-    'Provision Store',
-    'Stationary Store',
-    'Snacks Shops',
-    'Medical Store',
-    'Canteens',
-  ];
-  static const List<String> shopCategoryV = [
-    'Provisions',
-    'Stationaries',
-    'Snacks',
-    'Pharmacy',
-    'Canteens',
-  ];
-
   static const String err = 'Field cannot be empty';
 
   static const String collectionUsers = "users";
@@ -142,12 +98,182 @@ class Constants {
   static const String userPhone = "phone";
   static const String userSavedItems = "savedItems";
   static const String userFavourites = "favourites";
+  static const String userFCMToken = "fcmToken";
+  static const String userPin = "authPin";
+  static const String userPinIsSet = "pinIsSet";
 
   static const String orderId = "orderId";
   static const String orderdeliveryDate = "deliveryDate";
   static const String orderStatus = "status";
 
   static const String amount = "amount";
+
+  static const List<String> categories = [
+    'Snacks',
+    'Cooked Foods',
+    'Groceries',
+    'Health & Beauty',
+    'Home & Office',
+    'Phones & Tablets',
+    'Computing',
+    'Electronics',
+    'Fashion',
+    'Baby Products',
+    'Gaming',
+    'Sporting Goods',
+    'Automobile'
+  ];
+  static const List<String> suggestions = [
+    'Snacks',
+    'Groceries',
+    'Health & Beauty',
+    'Home & Office',
+    'Phones & Tablets',
+    'Computing',
+    'Electronics',
+    'Fashion',
+    'Baby Products',
+    'Gaming',
+    'Sporting Goods',
+    'Automobile'
+  ];
+  static const List<String> shopCategory = [
+    'Provision Store',
+    'Stationary Store',
+    'Snacks Shops',
+    'Medical Store',
+    'Canteens',
+  ];
+  static const List<String> shopCategoryV = [
+    'Provisions',
+    'Stationaries',
+    'Snacks',
+    'Pharmacy',
+    'Canteens',
+  ];
+  static Map<String, List> cats = {
+    categories[0]: [
+      {'img': 'assets/images/c82.jpeg', 'label': 'Burgers'},
+      {'img': 'assets/images/c83.jpeg', 'label': 'Fries'},
+      {'img': 'assets/images/c84.jpeg', 'label': 'Cookies'},
+      {'img': 'assets/images/c85.jpeg', 'label': 'Biscuits'},
+      {'img': 'assets/images/c86.jpeg', 'label': 'Fast Foods'},
+      {'img': 'assets/images/c87.jpeg', 'label': 'Ice-Creams'},
+      {'img': 'assets/images/c88.jpeg', 'label': 'Sweets'},
+    ],
+    categories[1]: [
+      {'img': 'assets/images/c89.jpeg', 'label': ''},
+      {'img': 'assets/images/c90.jpeg', 'label': ''},
+      {'img': 'assets/images/c91.jpeg', 'label': ''},
+      {'img': 'assets/images/c92.jpeg', 'label': ''},
+    ],
+    categories[2]: [
+      {'img': 'assets/images/c1.jpeg', 'label': 'Rice & Grains'},
+      {'img': 'assets/images/c2.jpeg', 'label': 'Pasta'},
+      {'img': 'assets/images/c3.jpeg', 'label': 'Noodles'},
+      {'img': 'assets/images/c7.jpeg', 'label': 'Breakfast'},
+      {'img': 'assets/images/c8.jpeg', 'label': 'Water'},
+      {'img': 'assets/images/c5.jpeg', 'label': 'Drinks'},
+      {'img': 'assets/images/c4.jpeg', 'label': 'Soft Drinks'},
+      {'img': 'assets/images/c10.jpeg', 'label': 'Juices'},
+      {'img': 'assets/images/c6.jpeg', 'label': 'Cooking'},
+      {'img': 'assets/images/c9.jpeg', 'label': 'Canned Foods'},
+      {'img': 'assets/images/c11.jpeg', 'label': 'Beer'},
+      {'img': 'assets/images/c12.jpeg', 'label': 'Wine'},
+      {'img': 'assets/images/c15.jpeg', 'label': 'Cleaning'},
+      {'img': 'assets/images/c16.jpeg', 'label': 'Baby Products'},
+      {'img': 'assets/images/c13.jpeg', 'label': 'Air Freshener'},
+      {'img': 'assets/images/c14.jpeg', 'label': 'Toilet Paper'},
+    ],
+    categories[3]: [
+      {'img': 'assets/images/c17.jpeg', 'label': 'MakeUp'},
+      {'img': 'assets/images/c19.jpeg', 'label': 'Fragrances'},
+      {'img': 'assets/images/c18.jpeg', 'label': 'Hair Care'},
+      {'img': 'assets/images/c20.jpeg', 'label': 'Feminine Care'},
+      {'img': 'assets/images/c21.jpeg', 'label': 'Oral Care'},
+      {'img': 'assets/images/c22.jpeg', 'label': 'Health Care'},
+    ],
+    categories[4]: [
+      {'img': 'assets/images/c23.jpeg', 'label': 'Towels'},
+      {'img': 'assets/images/c24.jpeg', 'label': 'Bedding'},
+      {'img': 'assets/images/c25.jpeg', 'label': 'Furnitures'},
+      {'img': 'assets/images/c26.jpeg', 'label': 'Home Tools'},
+      {'img': 'assets/images/c28.jpeg', 'label': 'Cookware'},
+      {'img': 'assets/images/c29.jpeg', 'label': 'Cutleries'},
+      {'img': 'assets/images/c27.jpeg', 'label': 'Lighting'},
+      {'img': 'assets/images/c30.jpeg', 'label': 'Stationery'},
+      {'img': 'assets/images/c31.jpeg', 'label': 'Small Appliances'},
+      {'img': 'assets/images/c32.jpeg', 'label': 'Large Appliances'},
+    ],
+    categories[5]: [
+      {'img': 'assets/images/c33.jpeg', 'label': 'Smartphones'},
+      {'img': 'assets/images/c35.jpeg', 'label': 'Tablets'},
+      {'img': 'assets/images/c34.jpeg', 'label': 'iPads'},
+      {'img': 'assets/images/c36.jpeg', 'label': 'Phone Accessories'},
+      {'img': 'assets/images/c38.jpeg', 'label': 'Ear Phones'},
+      {'img': 'assets/images/c58.jpeg', 'label': 'Smart Watches'},
+    ],
+    categories[6]: [
+      {'img': 'assets/images/c39.jpeg', 'label': 'Desktops'},
+      {'img': 'assets/images/c40.jpeg', 'label': 'Laptops'},
+      {'img': 'assets/images/c41.jpeg', 'label': 'Monitors'},
+      {'img': 'assets/images/c42.jpeg', 'label': 'Hard Drives'},
+      {'img': 'assets/images/c43.jpeg', 'label': 'Drive Accessories'},
+      {'img': 'assets/images/c44.jpeg', 'label': 'Flash Drives'},
+      {'img': 'assets/images/c45.jpeg', 'label': 'Softwares'},
+      {'img': 'assets/images/c61.jpeg', 'label': 'Printers & Accessories'},
+      {'img': 'assets/images/c46.jpeg', 'label': 'Computer Accessories'},
+    ],
+    categories[7]: [
+      {'img': 'assets/images/c47.jpeg', 'label': 'Televisions'},
+      {'img': 'assets/images/c48.jpeg', 'label': 'Dvd Players'},
+      {'img': 'assets/images/c49.jpeg', 'label': 'Home Theatre'},
+      {'img': 'assets/images/c50.jpeg', 'label': 'Cameras'},
+      {'img': 'assets/images/c51.jpeg', 'label': 'Generators'},
+      {'img': 'assets/images/c52.jpeg', 'label': 'Inverters & atteries'},
+      {'img': 'assets/images/c62.jpeg', 'label': 'Solar Power'},
+    ],
+    categories[8]: [
+      {'img': 'assets/images/c53.jpeg', 'label': 'Bags'},
+      {'img': 'assets/images/c54.jpeg', 'label': 'Clothing'},
+      {'img': 'assets/images/c57.jpeg', 'label': 'Shoes'},
+      {'img': 'assets/images/c37.jpeg', 'label': 'Watches'},
+      {'img': 'assets/images/c55.jpeg', 'label': 'Women\'s Clothing'},
+      {'img': 'assets/images/c56.jpeg', 'label': 'Jewelries'},
+      {'img': 'assets/images/c59.jpeg', 'label': 'Backpacks'},
+      {'img': 'assets/images/c60.jpeg', 'label': 'Umbrellas'},
+    ],
+    categories[9]: [
+      {'img': 'assets/images/c63.jpeg', 'label': 'Baby Clothes'},
+      {'img': 'assets/images/c64.jpeg', 'label': 'Bay Bibs'},
+      {'img': 'assets/images/c65.jpeg', 'label': 'Feeding Bottle'},
+      {'img': 'assets/images/c66.jpeg', 'label': 'Baby Seats'},
+      {'img': 'assets/images/c95.jpeg', 'label': 'Baby Backpacks'},
+      {'img': 'assets/images/c94.jpeg', 'label': 'Baby Walkers'},
+      {'img': 'assets/images/c93.jpeg', 'label': 'Baby Potties'},
+    ],
+    categories[10]: [
+      {'img': 'assets/images/c67.jpeg', 'label': 'Play Station'},
+      {'img': 'assets/images/c68.jpeg', 'label': 'Xbox'},
+      {'img': 'assets/images/c69.jpeg', 'label': 'Nintendo'},
+      {'img': 'assets/images/c70.jpeg', 'label': 'Gaming Accessories'},
+    ],
+    categories[11]: [
+      {'img': 'assets/images/c71.jpeg', 'label': 'Exercising Equipments'},
+      {'img': 'assets/images/c72.jpeg', 'label': 'Exercise Mats'},
+      {'img': 'assets/images/c73.jpeg', 'label': 'Jump Ropes'},
+      {'img': 'assets/images/c74.jpeg', 'label': 'Sport Clothing'},
+    ],
+    categories[12]: [
+      {'img': 'assets/images/c75.jpeg', 'label': 'Car Accessories'},
+      {'img': 'assets/images/c76.jpeg', 'label': 'Car Covers'},
+      {'img': 'assets/images/c77.jpeg', 'label': 'Car Mats'},
+      {'img': 'assets/images/c78.jpeg', 'label': 'Lubricants'},
+      {'img': 'assets/images/c79.jpeg', 'label': 'Seat Covers'},
+      {'img': 'assets/images/c80.jpeg', 'label': 'Tires'},
+      {'img': 'assets/images/c81.jpeg', 'label': 'Car Mirrors'},
+    ],
+  };
 
   NumberFormat currency() {
     // Locale locale = Localizations.localeOf(context);

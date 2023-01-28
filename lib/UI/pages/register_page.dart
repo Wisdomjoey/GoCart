@@ -12,6 +12,7 @@ import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
+import '../../PROVIDERS/user_provider.dart';
 import '../utils/dimensions.dart';
 
 class RegisterPage extends StatefulWidget {
@@ -248,7 +249,8 @@ class _RegisterPageState extends State<RegisterPage> {
                                 Constants(context).snackBar(
                                     'You are logged in already',
                                     Constants.tetiary);
-                                Get.offNamed(RouteHelper.getRoutePage(), arguments: 0);
+                                Get.offNamed(RouteHelper.getRoutePage(),
+                                    arguments: 0);
                               } else {
                                 if (key.currentState!.validate()) {
                                   // Timer(
@@ -268,13 +270,28 @@ class _RegisterPageState extends State<RegisterPage> {
                                         authProvider.status ==
                                             Status.authenticated) {
                                       await Future.delayed(
-                                          const Duration(seconds: 1), (() {
+                                          const Duration(seconds: 1),
+                                          (() async {
                                         if (_checkBox) {
-                                          Get.offNamed(RouteHelper
-                                              .getShopRegisterPage());
+                                          await Provider.of<UserProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .initializeUserData(FirebaseAuth
+                                                  .instance.currentUser!.uid)
+                                              .then((value) {
+                                            Get.offNamed(RouteHelper
+                                                .getShopRegisterPage());
+                                          });
                                         } else {
-                                          Get.offNamed(
-                                              RouteHelper.getPhoneRegisterPage());
+                                          await Provider.of<UserProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .initializeUserData(FirebaseAuth
+                                                  .instance.currentUser!.uid)
+                                              .then((value) {
+                                            Get.offNamed(RouteHelper
+                                                .getPhoneRegisterPage());
+                                          });
                                         }
                                       }));
                                     } else {

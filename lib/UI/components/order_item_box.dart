@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/widgets/box_chip_widget.dart';
@@ -9,21 +10,40 @@ import '../routes/route_helper.dart';
 import '../utils/dimensions.dart';
 
 class OrderItemBox extends StatelessWidget {
-  final Color color;
-  final String text;
-  final String state;
+  final List<Map<String, dynamic>> data;
 
   const OrderItemBox(
       {super.key,
-      this.color = const Color.fromARGB(255, 107, 205, 110),
-      required this.text,
-      required this.state});
+      required this.data});
 
   @override
   Widget build(BuildContext context) {
     return ListView.builder(
-      itemCount: 5,
+      itemCount: data.length,
       itemBuilder: (context, index) {
+        String text = '';
+        Color color = Constants.tetiary;
+
+        switch (data[index][Constants.orderStatus]) {
+          case 'new':
+            text = 'PENDING';
+            color = Colors.blue;
+            break;
+          case 'processing':
+            text = 'PROCESSING';
+            color = Constants.tetiary;
+            break;
+          case 'delivered':
+            text = 'DELIVERED';
+            color = Constants.primary;
+            break;
+          case 'cancelled':
+            text = 'CANCELLED';
+            color = const Color.fromARGB(255, 100, 100, 100);
+            break;
+          default:
+        }
+
         return Container(
           padding: EdgeInsets.only(
               left: Dimensions.sizedBoxWidth10,
@@ -45,9 +65,9 @@ class OrderItemBox extends StatelessWidget {
                   children: [
                     Ink(
                       width: Dimensions.sizedBoxWidth100,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                           image: DecorationImage(
-                              image: AssetImage('assets/images/1.jpg'),
+                              image: CachedNetworkImageProvider(data[index][Constants.imgUrl]),
                               fit: BoxFit.contain)),
                     ),
                     Expanded(
@@ -60,7 +80,7 @@ class OrderItemBox extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                    'Rechargeable Hand drier with wireless charging function.',
+                                    data[index][Constants.name],
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontSize: Dimensions.font12,
@@ -68,7 +88,7 @@ class OrderItemBox extends StatelessWidget {
                                 SizedBox(
                                   height: Dimensions.sizedBoxHeight3,
                                 ),
-                                Text('Order #127339927228',
+                                Text('Order ${data[index][Constants.orderId]}',
                                     style: TextStyle(
                                       fontSize: Dimensions.font12,
                                     ))
@@ -101,7 +121,7 @@ class OrderItemBox extends StatelessWidget {
                 Timer(
                     const Duration(milliseconds: 200),
                     () => Get.toNamed(
-                        RouteHelper.getOrderDetailsPage(state, text)));
+                        RouteHelper.getOrderDetailsPage(), arguments: [data[index], color, text]));
               },
             ),
           ),

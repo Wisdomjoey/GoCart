@@ -76,13 +76,13 @@ class _RatingViewPageState extends State<RatingViewPage> {
                           SizedBox(
                             height: Dimensions.sizedBoxHeight3,
                           ),
-                          StarRating(rating: 0,),
+                          const StarRating(rating: 0,),
                           SizedBox(
                             height: Dimensions.sizedBoxHeight4 * 2,
                           ),
                           Text(
                             '${widget.reviews.length} ratings',
-                            style: TextStyle(fontSize: 12),
+                            style: const TextStyle(fontSize: 12),
                           )
                         ],
                       ),

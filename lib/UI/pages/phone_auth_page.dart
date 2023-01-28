@@ -138,7 +138,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                           onChanged: (value) async {
                             if (value != '') {
                               if (value.length > 1) {
-                                for (var i = 0; i < 6; i++) {
+                                for (var i = 0; i < value.length; i++) {
                                   controllers[i].text = value[i];
                                 }
                                 nodes[e].unfocus();

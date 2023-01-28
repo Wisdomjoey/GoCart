@@ -1,5 +1,6 @@
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
+import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,15 +15,37 @@ import 'package:GOCart/UI/widgets/list_tile_btn_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../../PROVIDERS/cart_provider.dart';
 
-class ProductDetailsPage extends StatelessWidget {
+class ProductDetailsPage extends StatefulWidget {
   final Map<String, dynamic> data;
 
   const ProductDetailsPage({super.key, required this.data});
+
+  @override
+  State<ProductDetailsPage> createState() => _ProductDetailsPageState();
+}
+
+class _ProductDetailsPageState extends State<ProductDetailsPage> {
+  late String productUrlLink;
+
+  setUrlLink() async {
+    await createDynamicLink(widget.data[Constants.uid]).then((value) {
+      productUrlLink = value.toString();
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    setUrlLink();
+  }
 
   Widget _buildPageItem(String imgUrl, int index, BuildContext context) {
     return Container(
@@ -180,7 +203,7 @@ class ProductDetailsPage extends StatelessWidget {
       body: FutureBuilder(
         initialData: const <QueryDocumentSnapshot>[],
         future: Provider.of<ProductProvider>(context, listen: false)
-            .fetchAllReviews(data[Constants.uid]),
+            .fetchAllReviews(widget.data[Constants.uid]),
         builder: (context, AsyncSnapshot snapshot1) {
           List favs = Provider.of<UserProvider>(context)
               .userData[Constants.userFavourites];
@@ -192,7 +215,7 @@ class ProductDetailsPage extends StatelessWidget {
                   ),
                 )
               : SingleChildScrollView(
-                  child: (data.isNotEmpty
+                  child: (widget.data.isNotEmpty
                       ? Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -214,10 +237,11 @@ class ProductDetailsPage extends StatelessWidget {
                                   padEnds: false,
                                   initialPage: 0,
                                 ),
-                                itemCount: data[Constants.imgUrls].length,
+                                itemCount:
+                                    widget.data[Constants.imgUrls].length,
                                 itemBuilder: (context, index, realIndex) {
                                   return _buildPageItem(
-                                      data[Constants.imgUrls][index],
+                                      widget.data[Constants.imgUrls][index],
                                       index,
                                       context);
                                 },
@@ -233,7 +257,7 @@ class ProductDetailsPage extends StatelessWidget {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    data[Constants.name],
+                                    widget.data[Constants.name],
                                     style: TextStyle(
                                       fontSize: Dimensions.font17,
                                     ),
@@ -242,7 +266,7 @@ class ProductDetailsPage extends StatelessWidget {
                                     height: Dimensions.sizedBoxHeight10,
                                   ),
                                   Text(
-                                    '$currency ${data[Constants.prodNewPrice]}',
+                                    '$currency ${widget.data[Constants.prodNewPrice]}',
                                     style: TextStyle(
                                         fontSize: Dimensions.font24,
                                         fontWeight: FontWeight.w500),
@@ -257,7 +281,8 @@ class ProductDetailsPage extends StatelessWidget {
                                       Row(
                                         children: [
                                           StarRating(
-                                            rating: data[Constants.prodRating],
+                                            rating: widget
+                                                .data[Constants.prodRating],
                                           ),
                                           SizedBox(
                                             width:
@@ -273,7 +298,15 @@ class ProductDetailsPage extends StatelessWidget {
                                       Row(
                                         children: [
                                           GestureDetector(
-                                            onTap: () {},
+                                            onTap: () {
+                                              Clipboard.setData(ClipboardData(
+                                                      text: productUrlLink))
+                                                  .then((value) {
+                                                Fluttertoast.showToast(
+                                                    msg:
+                                                        'Link has been copied');
+                                              });
+                                            },
                                             child: const Icon(
                                               Icons.share,
                                               color: Constants.tetiary,
@@ -288,30 +321,17 @@ class ProductDetailsPage extends StatelessWidget {
                                                   .instance.currentUser!.uid;
 
                                               if (!favs.contains(
-                                                  data[Constants.uid])) {
+                                                  widget.data[Constants.uid])) {
                                                 await Provider.of<UserProvider>(
                                                         context,
                                                         listen: false)
                                                     .updateUserData({
                                                   Constants.userFavourites: [
                                                     ...favs,
-                                                    data[Constants.uid]
+                                                    widget.data[Constants.uid]
                                                   ]
                                                 }, uid).then((value) async {
                                                   if (value) {
-                                                    String cartId = ((Provider
-                                                            .of<CartProvider>(
-                                                                context,
-                                                                listen: false)
-                                                        .carts
-                                                        .where((element) =>
-                                                            element[Constants
-                                                                .productId] ==
-                                                            data[Constants.uid])
-                                                        .elementAt(
-                                                            0)) as Map<String,
-                                                        dynamic>)[Constants.uid];
-
                                                     Constants(context).snackBar(
                                                         'Product added to Saved Items',
                                                         Constants.tetiary);
@@ -325,15 +345,15 @@ class ProductDetailsPage extends StatelessWidget {
                                                                 .instance
                                                                 .currentUser!
                                                                 .uid,
-                                                            data[Constants.uid],
-                                                            cartId,
-                                                            data[Constants
+                                                            widget.data[
+                                                                Constants.uid],
+                                                            widget.data[Constants
                                                                 .prodNewPrice]);
                                                   }
                                                 });
                                               } else {
                                                 favs.remove(
-                                                    data[Constants.uid]);
+                                                    widget.data[Constants.uid]);
 
                                                 await Provider.of<UserProvider>(
                                                         context,
@@ -350,7 +370,8 @@ class ProductDetailsPage extends StatelessWidget {
                                               }
                                             },
                                             child: Icon(
-                                              favs.contains(data[Constants.uid])
+                                              favs.contains(widget
+                                                      .data[Constants.uid])
                                                   ? Icons.favorite
                                                   : Icons
                                                       .favorite_border_outlined,
@@ -419,8 +440,9 @@ class ProductDetailsPage extends StatelessWidget {
                                                         builder: (context) =>
                                                             _showDialog(
                                                                 context,
-                                                                data[Constants
-                                                                    .deliveryPrice],
+                                                                widget.data[
+                                                                    Constants
+                                                                        .deliveryPrice],
                                                                 currency));
                                                   },
                                                 )
@@ -431,7 +453,7 @@ class ProductDetailsPage extends StatelessWidget {
                                                   Dimensions.sizedBoxHeight3,
                                             ),
                                             Text(
-                                              'Delivery $currency ${data[Constants.deliveryPrice]}',
+                                              'Delivery $currency ${widget.data[Constants.deliveryPrice]}',
                                               style: TextStyle(
                                                   fontSize: Dimensions.font12),
                                             ),
@@ -519,9 +541,10 @@ class ProductDetailsPage extends StatelessWidget {
                                       weight: FontWeight.w500,
                                       page: RouteHelper.getDetailsPage(),
                                       args: [
-                                        data[Constants.prodDescription],
-                                        data[Constants.prodKeyFeatures],
-                                        data[Constants.prodSpecifications]
+                                        widget.data[Constants.prodDescription],
+                                        widget.data[Constants.prodKeyFeatures],
+                                        widget
+                                            .data[Constants.prodSpecifications]
                                       ],
                                     ),
                                   ),
@@ -535,8 +558,8 @@ class ProductDetailsPage extends StatelessWidget {
                                   Container(
                                     padding: EdgeInsets.all(
                                         Dimensions.sizedBoxWidth10),
-                                    child:
-                                        Text(data[Constants.prodDescription]),
+                                    child: Text(
+                                        widget.data[Constants.prodDescription]),
                                   )
                                 ],
                               ),
@@ -593,7 +616,7 @@ class ProductDetailsPage extends StatelessWidget {
                                                   child: Row(
                                                     children: [
                                                       Text(
-                                                        data[Constants
+                                                        widget.data[Constants
                                                                 .prodRating]
                                                             .toString(),
                                                         style: TextStyle(
@@ -705,11 +728,11 @@ class ProductDetailsPage extends StatelessWidget {
         },
       ),
       bottomNavigationBar: DetailsBottomNav(
-        isAdded: true,
-        prodId: data[Constants.uid],
-        amount: data[Constants.prodNewPrice],
-        shopName: data[Constants.shopName],
-        category: data[Constants.prodCategory],
+        // isAdded: true,
+        prodId: widget.data[Constants.uid],
+        amount: widget.data[Constants.prodNewPrice],
+        shopName: widget.data[Constants.shopName],
+        category: widget.data[Constants.prodCategory],
         leading: Row(
           children: const [
             IconBox(

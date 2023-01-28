@@ -1,11 +1,14 @@
 import 'package:GOCart/CONSTANTS/constants.dart';
 import 'package:GOCart/PREFS/preferences.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
+import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:provider/provider.dart';
 
 import '../UI/routes/route_helper.dart';
@@ -86,7 +89,10 @@ class AuthProvider extends ChangeNotifier {
           .createUserWithEmailAndPassword(email: email, password: password)
           .then((value) async {
         await Provider.of<UserProvider>(context, listen: false)
-            .saveUserData(firstName, lastName, email, value.user!.uid);
+            .saveUserData(firstName, lastName, email, value.user!.uid)
+            .then((value) {
+          initToken(context);
+        });
       });
 
       _status = Status.authenticated;
@@ -342,6 +348,27 @@ class AuthProvider extends ChangeNotifier {
       } else {
         Constants(context).snackBar(e.message!, Colors.red);
       }
+    }
+  }
+
+  Future authenticate() async {
+    LocalAuthentication authentication = LocalAuthentication();
+
+    final bool isBiometricsAvailable = await authentication.isDeviceSupported();
+
+    if (!isBiometricsAvailable) return false;
+
+    try {
+      return await authentication.authenticate(
+          localizedReason: 'Scan Fingerprint',
+          options: const AuthenticationOptions(
+              // biometricOnly: true,
+              useErrorDialogs: true,
+              stickyAuth: true));
+    } on PlatformException catch (e) {
+      // Constants(context).snackBar(e.message!, Colors.red);
+
+      return e.message;
     }
   }
 }

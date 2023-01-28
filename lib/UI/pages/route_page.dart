@@ -1,6 +1,9 @@
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
-import 'package:GOCart/PROVIDERS/user_provider.dart';
+import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/account_app_bar.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
@@ -9,9 +12,10 @@ import 'package:GOCart/UI/widgets/navigation_icon_widget.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import '../../PREFS/preferences.dart';
+import '../../PROVIDERS/cart_provider.dart';
 import '../components/home_app_bar.dart';
 import '../../CONSTANTS/constants.dart';
+import '../utils/firebase_actions.dart';
 
 class RoutePage extends StatefulWidget {
   final int pageId;
@@ -25,31 +29,35 @@ class RoutePage extends StatefulWidget {
 class _RoutePageState extends State<RoutePage> {
   int _activePage = 0;
   bool _allowPageId = true;
-  bool isSeller = false;
 
   final GlobalKey<CurvedNavigationBarState> _globalKey = GlobalKey();
 
   late List _pages;
-
-  getUserData() async {
-    await Preferences().getBoolData(Constants.userIsSeller).then((value) async {
-      isSeller = value!;
-
-      await Preferences()
-          .getBoolData(Constants.userIsSeller)
-          .then((value1) async {
-        isSeller = value1!;
-        _pages[4] = RouteHelper.getAccountPage(isSeller);
-      });
-      // print(value);
-    });
-  }
+  // late PendingDynamicLinkData? dynamicLink;
 
   late PreferredSizeWidget page;
   late List<PreferredSizeWidget> page1;
 
+  fetch() async {
+    String userId = FirebaseAuth.instance.currentUser!.uid;
+
+    await Provider.of<CartProvider>(context, listen: false)
+        .initializeCart(userId);
+  }
+
   @override
   void initState() {
+    FirebaseMessaging.onMessage.listen(initInfo);
+    FirebaseDynamicLinks.instance.onLink.listen((event) async {
+      String prodId = event.link.queryParameters['prodId']!;
+
+      await Provider.of<ProductProvider>(context, listen: false)
+          .getProductData(prodId)
+          .then((value) {
+        Get.toNamed(RouteHelper.getProductDetailsPage(), arguments: value);
+      });
+    });
+
     Future.delayed(Duration.zero, (() {
       Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
 
@@ -58,6 +66,8 @@ class _RoutePageState extends State<RoutePage> {
         Get.offAllNamed(RouteHelper.getLoginPage());
       }
     }));
+
+    fetch();
 
     page = HomeAppBar(
       logo: Container(
@@ -74,10 +84,8 @@ class _RoutePageState extends State<RoutePage> {
       RouteHelper.getCategoriesPage(),
       RouteHelper.getCartPage(),
       RouteHelper.getShopPage(),
-      RouteHelper.getAccountPage(isSeller),
+      RouteHelper.getAccountPage(),
     ];
-
-    getUserData();
 
     page1 = [
       HomeAppBar(

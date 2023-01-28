@@ -37,7 +37,7 @@ class _ManageShopPageState extends State<ManageShopPage> {
   late TextEditingController textEditingController2;
   late TextEditingController tagController;
 
-  late FocusNode focusNode1;
+  // late FocusNode focusNode1;
   late FocusNode focusNode2;
 
   @override
@@ -51,7 +51,7 @@ class _ManageShopPageState extends State<ManageShopPage> {
     tags = widget.shopData[Constants.shopTags];
     imgUrls = widget.shopData[Constants.imgUrls];
 
-    focusNode1 = FocusNode();
+    // focusNode1 = FocusNode();
     focusNode2 = FocusNode();
 
     super.initState();
@@ -63,7 +63,7 @@ class _ManageShopPageState extends State<ManageShopPage> {
     textEditingController2.dispose();
     tagController.dispose();
 
-    focusNode1.dispose();
+    // focusNode1.dispose();
     focusNode2.dispose();
 
     super.dispose();
@@ -154,42 +154,18 @@ class _ManageShopPageState extends State<ManageShopPage> {
                   },
                 ),
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  HeadSedction(
-                    text: 'Shop Name',
-                    tMargin: Dimensions.sizedBoxHeight15 * 2,
-                    textSize: Dimensions.font16,
-                  ),
-                  IconButton(
-                      onPressed: (() {
-                        setState(() {
-                          disability[0] = true;
-                        });
-                      }),
-                      icon: const Icon(
-                        Icons.edit,
-                        size: 20,
-                        color: Constants.tetiary,
-                      ))
-                ],
+              HeadSedction(
+                text: 'Shop Name',
+                tMargin: Dimensions.sizedBoxHeight15 * 2,
+                textSize: Dimensions.font16,
               ),
               SizedBox(
                 height: Dimensions.sizedBoxHeight10 / 2,
               ),
               TextFormField(
                 controller: textEditingController1,
-                focusNode: focusNode1,
-                validator: (value) {
-                  if (value == '') {
-                    return Constants.err;
-                  }
-
-                  return null;
-                },
-                decoration: InputDecoration(
-                  enabled: disability[0],
+                decoration: const InputDecoration(
+                  enabled: false,
                   filled: true,
                 ),
               ),
@@ -351,7 +327,8 @@ class _ManageShopPageState extends State<ManageShopPage> {
                         Constants(context).snackBar(
                             'Please add at least one image!', Colors.red);
                       } else {
-                        await Provider.of<ShopProvider>(context, listen: false).updateShop({
+                        await Provider.of<ShopProvider>(context, listen: false)
+                            .updateShop({
                           Constants.shopName:
                               textEditingController1.text.trim(),
                           Constants.shopAddress:

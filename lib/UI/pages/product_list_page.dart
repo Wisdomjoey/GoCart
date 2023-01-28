@@ -1,4 +1,6 @@
 import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/PREFS/preferences.dart';
+import 'package:GOCart/PROVIDERS/global_provider.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/components/home_app_bar.dart';
@@ -17,15 +19,34 @@ class ProductListPage extends StatefulWidget {
 }
 
 class _ProductListPageState extends State<ProductListPage> {
-  searchProducts() async {
-    return await Provider.of<ProductProvider>(context)
-        .searchProducts(widget.title);
+  getHistory() async {
+    await Preferences().getListData(Constants.prefsSearchHistory).then((value) {
+      if (value != null) {
+        if (!value.contains(widget.title)) {
+          Preferences().saveListData(
+              Constants.prefsSearchHistory, [...value, widget.title]);
+
+          Provider.of<GlobalProvider>(context, listen: false)
+              .setHistory([...value, widget.title]);
+        }
+      } else {
+        Preferences()
+            .saveListData(Constants.prefsSearchHistory, [widget.title]);
+
+        Provider.of<GlobalProvider>(context, listen: false)
+            .setHistory([widget.title]);
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getHistory();
   }
 
   @override
   Widget build(BuildContext context) {
-    List products = searchProducts();
-
     return Scaffold(
       appBar: HomeAppBar(
         implyLeading: true,
@@ -35,21 +56,25 @@ class _ProductListPageState extends State<ProductListPage> {
         title: widget.title,
       ),
       body: SingleChildScrollView(
-        child: Container(
-          margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
-          child: products.isEmpty &&
-                  Provider.of<ProductProvider>(context).process ==
-                      Process.processing
-              ? const CircularProgressIndicator(
-                  color: Constants.tetiary,
-                )
-              : (products.isNotEmpty
-                  ? ProductBox(
-                      snapshotDocs: products,
+        child: FutureBuilder(
+          future: Provider.of<ProductProvider>(context, listen: false)
+              .searchProducts(widget.title),
+          builder: (context, AsyncSnapshot snapshot) {
+            return Container(
+              margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
+              child: snapshot.connectionState == ConnectionState.waiting
+                  ? const CircularProgressIndicator(
+                      color: Constants.tetiary,
                     )
-                  : const Center(
-                      child: Text('No Product'),
-                    )),
+                  : (snapshot.data.isNotEmpty
+                      ? ProductBox(
+                          snapshotDocs: snapshot.data,
+                        )
+                      : const Center(
+                          child: Text('No Product'),
+                        )),
+            );
+          },
         ),
       ),
     );

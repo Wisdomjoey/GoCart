@@ -22,7 +22,6 @@ import 'package:GOCart/UI/pages/details_page.dart';
 import 'package:GOCart/UI/pages/home_page.dart';
 import 'package:GOCart/UI/pages/inbox_page.dart';
 import 'package:GOCart/UI/pages/order_details_page.dart';
-import 'package:GOCart/UI/pages/order_status_page.dart';
 import 'package:GOCart/UI/pages/orders_page.dart';
 import 'package:GOCart/UI/pages/product_details_page.dart';
 import 'package:GOCart/UI/pages/recently_searched_page.dart';
@@ -70,24 +69,20 @@ class RouteHelper {
   static getShopDetailsPage() => shopDetailsPage;
   static getHomePage() => const HomePage();
   static getIntroPage() => introPage;
-  static getAccountPage(bool isSeller) => AccountPage(
-        isSeller: isSeller,
-      );
+  static getAccountPage() => const AccountPage();
   static getCategoriesPage() => const CategoriesPage();
   static String getDetailsPage() => detailsPage;
   static String getProfilePage() => profilePage;
   static String getOrderStatusPage() => orderStatusPage;
   static String getPhoneAuthPage() => phoneAuthPage;
   static String getProductListPage() => productListPage;
-
   static String getShopRegisterPage() => shopRegisterPage;
   static String getPhoneRegisterPage() => phoneRegisterPage;
   static String getOrdersPage() => ordersPage;
   static String getSettingsPage() => settingsPage;
   static String getManageShopPage() => manageShopPage;
   static String getInboxPage() => inboxPage;
-  static String getOrderDetailsPage(String state, String text) =>
-      '$orderDetailsPage?state=$state&text=$text';
+  static String getOrderDetailsPage() => orderDetailsPage;
   static String getRatingsViewPage() => ratingsViewPage;
   static String getProductDetailsPage() => productDetailsPage;
   static String getRecentlyViewedPage() => recentlyViewedPage;
@@ -96,7 +91,7 @@ class RouteHelper {
   static String getSavedItemsPage() => savedItemsPage;
   static String getRegisterPage() => registerPage;
   static String getLoginPage() => loginPage;
-  static String getSplashPage() => splashPage;
+  static String getSplashPage(String? prodId) => '$splashPage?prodId=$prodId';
   static String getDashboardPage() => dashboardPage;
   static String getAddProductPage() => addProductPage;
   static String getEditProductPage() => editProductPage;
@@ -219,12 +214,6 @@ class RouteHelper {
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
-        name: orderStatusPage,
-        page: () => const OrderStatusPage()),
-    GetPage(
-        curve: Curves.easeInOut,
-        transition: Transition.fade,
-        transitionDuration: const Duration(milliseconds: 300),
         name: productListPage,
         page: () {
           //   String? title = Get.parameters['title'];
@@ -281,7 +270,13 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: splashPage,
-        page: () => const SplashPage()),
+        page: () {
+          String? prodId = Get.parameters['prodId'];
+
+          return SplashPage(
+            prodId: prodId,
+          );
+        }),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -299,19 +294,21 @@ class RouteHelper {
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: phoneRegisterPage,
-        page: () => PhoneRegisterPage()),
+        page: () => const PhoneRegisterPage()),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
         transitionDuration: const Duration(milliseconds: 300),
         name: orderDetailsPage,
         page: () {
-          var state = Get.parameters['state'];
-          var text = Get.parameters['text'];
+          Map<String, dynamic> data = Get.arguments[0];
+          Color color = Get.arguments[1];
+          String text = Get.arguments[2];
 
           return OrderDetailsPage(
-            state: state!,
-            text: text!,
+            color: color,
+            text: text,
+            data: data,
           );
         }),
     GetPage(

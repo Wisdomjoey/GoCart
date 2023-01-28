@@ -30,6 +30,7 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
   // late XFile photo;
   List<CroppedFile> images = [];
   List<String> shopCategories = [];
+  List<String> shopNames = [];
   List<String> tags = [];
 
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
@@ -57,6 +58,10 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
 
     for (var element in Constants.shopCategory) {
       checked.addAll({element: false});
+    }
+    for (var element
+        in Provider.of<ShopProvider>(context, listen: false).shops) {
+      shopNames.add(element[Constants.shopName]);
     }
 
     super.initState();
@@ -164,6 +169,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextFormFieldWidget(
+                              val: (() => !shopNames.contains(controller1.text)),
+                              error: 'Shop name already in use',
                               controller: controller1,
                               node: node1,
                               label: 'Shop\'s name',
@@ -319,8 +326,7 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                         await Provider.of<ShopProvider>(context,
                                                 listen: false)
                                             .createShop(
-                                                controller1.text
-                                                    .trim(),
+                                                controller1.text.trim(),
                                                 controller2.text.trim(),
                                                 tags,
                                                 images,
@@ -350,7 +356,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                                     .fetchAllShops()
                                                     .then((value) {
                                                   if (Provider.of<AuthProvider>(
-                                                          context, listen: false)
+                                                          context,
+                                                          listen: false)
                                                       .isPhoneVerified) {
                                                     Get.offNamed(
                                                         RouteHelper

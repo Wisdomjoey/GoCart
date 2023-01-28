@@ -1,16 +1,13 @@
 import 'dart:async';
 
-import 'package:async/async.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
-import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/components/product_box.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
@@ -33,13 +30,10 @@ class ShopDetailsPage extends StatefulWidget {
 
 class _ShopDetailsPageState extends State<ShopDetailsPage> {
   GlobalKey<FormState> key = GlobalKey<FormState>();
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
 
   getShopData() async {
-    return _memoizer.runOnce(() async {
-      return await Provider.of<ShopProvider>(context, listen: false)
-          .getShopData(widget.shopId);
-    });
+    return await Provider.of<ShopProvider>(context, listen: false)
+        .getShopData(widget.shopId);
   }
 
   @override

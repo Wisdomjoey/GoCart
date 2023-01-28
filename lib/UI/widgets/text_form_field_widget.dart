@@ -11,6 +11,7 @@ class TextFormFieldWidget extends StatefulWidget {
   final int? helpMax;
   final Widget? icon;
   final Widget? suffix;
+  final Widget? prefix;
   final bool obscureTxt;
   final FocusNode? node;
   final TextEditingController? controller;
@@ -30,7 +31,7 @@ class TextFormFieldWidget extends StatefulWidget {
       this.error,
       this.help,
       this.helpMax,
-      this.val2});
+      this.val2, this.prefix});
 
   @override
   State<TextFormFieldWidget> createState() => _TextFormFieldWidgetState();
@@ -176,6 +177,7 @@ class _TextFormFieldWidgetState extends State<TextFormFieldWidget> {
             fillColor: Constants.formFillColor,
             icon: widget.icon,
             suffixIcon: widget.suffix,
+            prefix: widget.prefix,
             contentPadding: EdgeInsets.symmetric(
                 horizontal: Dimensions.sizedBoxWidth10 * 2),
             floatingLabelStyle: const TextStyle(color: Constants.tetiary),

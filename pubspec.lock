@@ -8,20 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.12"
-  animated_splash_screen:
-    dependency: "direct main"
-    description:
-      name: animated_splash_screen
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.3.0"
-  animations:
-    dependency: "direct main"
-    description:
-      name: animations
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.7"
   archive:
     dependency: transitive
     description:
@@ -43,13 +29,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.9.0"
-  badges:
-    dependency: "direct main"
-    description:
-      name: badges
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.3"
   boolean_selector:
     dependency: transitive
     description:
@@ -57,13 +36,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
-  bouncing_widget:
-    dependency: "direct main"
-    description:
-      name: bouncing_widget
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.0"
   cached_network_image:
     dependency: "direct main"
     description:
@@ -288,6 +260,41 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.1.0"
+  firebase_dynamic_links:
+    dependency: "direct main"
+    description:
+      name: firebase_dynamic_links
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "5.0.11"
+  firebase_dynamic_links_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_dynamic_links_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.3+26"
+  firebase_messaging:
+    dependency: "direct main"
+    description:
+      name: firebase_messaging
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "14.2.1"
+  firebase_messaging_platform_interface:
+    dependency: transitive
+    description:
+      name: firebase_messaging_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "4.2.10"
+  firebase_messaging_web:
+    dependency: transitive
+    description:
+      name: firebase_messaging_web
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.2.11"
   firebase_storage:
     dependency: "direct main"
     description:
@@ -342,6 +349,27 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "2.0.1"
+  flutter_local_notifications:
+    dependency: "direct main"
+    description:
+      name: flutter_local_notifications
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "13.0.0"
+  flutter_local_notifications_linux:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_linux
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "3.0.0"
+  flutter_local_notifications_platform_interface:
+    dependency: transitive
+    description:
+      name: flutter_local_notifications_platform_interface
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "6.0.0"
   flutter_multi_formatter:
     dependency: "direct main"
     description:
@@ -373,6 +401,13 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fluttertoast:
+    dependency: "direct main"
+    description:
+      name: fluttertoast
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "8.1.2"
   get:
     dependency: "direct main"
     description:
@@ -415,6 +450,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.10.2"
+  hash:
+    dependency: "direct main"
+    description:
+      name: hash
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.0.4"
   html:
     dependency: transitive
     description:
@@ -423,7 +465,7 @@ packages:
     source: hosted
     version: "0.15.1"
   http:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: http
       url: "https://pub.dartlang.org"
@@ -604,13 +646,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.2"
-  page_transition:
-    dependency: transitive
-    description:
-      name: page_transition
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "2.0.9"
   path:
     dependency: transitive
     description:
@@ -889,13 +924,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.12"
-  timelines:
-    dependency: "direct main"
+  timezone:
+    dependency: transitive
     description:
-      name: timelines
+      name: timezone
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "0.9.1"
   typed_data:
     dependency: transitive
     description:

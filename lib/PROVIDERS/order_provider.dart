@@ -1,56 +1,71 @@
+import 'package:GOCart/PROVIDERS/cart_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../CONSTANTS/constants.dart';
 
 enum OrderStats { processing, complete, error, init }
 
 class OrderProvider extends ChangeNotifier {
-  final BuildContext context;
-
   OrderStats _order = OrderStats.init;
-
-  OrderProvider(this.context);
 
   OrderStats get orderStats => _order;
 
   CollectionReference orderCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionOrders);
 
-  Future createOrder(
-      String userId,
-      int quantity,
-      String productId,
-      String productName,
-      String deliveryDate,
-      String imgUrl,
-      double amount,
-      String shopName) async {
+  Future createOrder(String userId, List amount, List<int> quantity,
+      List<Map<String, dynamic>> prodData, BuildContext context) async {
     try {
       _order = OrderStats.processing;
       notifyListeners();
-      DocumentReference documentReference = await orderCollectionRef.add({
-        Constants.uid: '',
-        Constants.orderId:
-            "#${DateTime.now().millisecondsSinceEpoch.toString()}",
-        Constants.quantity: quantity,
-        Constants.userId: userId,
-        Constants.orderdeliveryDate: deliveryDate,
-        Constants.productId: [productId],
-        Constants.amount: [amount],
-        Constants.name: productName,
-        Constants.imgUrl: imgUrl,
-        Constants.orderStatus: Constants.newOrder,
-        Constants.shopName: shopName,
-        Constants.createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
-        Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
-      });
 
-      await documentReference.update({Constants.uid: documentReference.id});
+      for (var i = 0; i < prodData.length; i++) {
+        DocumentReference documentReference = await orderCollectionRef.add({
+          Constants.uid: '',
+          Constants.orderId:
+              "#${DateTime.now().millisecondsSinceEpoch.toString()}",
+          Constants.quantity: quantity[i],
+          Constants.userId: userId,
+          Constants.orderdeliveryDate: '',
+          Constants.productId: [prodData[i][Constants.uid]],
+          Constants.amount: [amount[i]],
+          Constants.name: prodData[i][Constants.name],
+          Constants.imgUrl: prodData[i][Constants.imgUrls][0],
+          Constants.orderStatus: Constants.newOrder,
+          Constants.shopName: prodData[i][Constants.shopName],
+          Constants.createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
+          Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
+        });
+
+        await documentReference
+            .update({Constants.uid: documentReference.id}).then((value) async {
+          if (prodData[i][Constants.prodCategory] == 'Cooked Foods') {
+            for (var element in amount[i]) {
+              await Provider.of<CartProvider>(context, listen: false)
+                  .removeFromFoodCart(userId, prodData[i][Constants.uid],
+                      element, prodData[i][Constants.shopName])
+                  .then((value) {
+                Constants(context).snackBar(
+                    'Product added to cart successfully! ✅', Constants.tetiary);
+              });
+            }
+          } else {
+            await Provider.of<CartProvider>(context, listen: false)
+                .removeFromCart(userId, prodData[i][Constants.uid], amount[i])
+                .then((value) {
+              Constants(context).snackBar(
+                  'Product added to cart successfully! ✅', Constants.tetiary);
+            });
+          }
+        });
+      }
+
       _order = OrderStats.complete;
       notifyListeners();
 
-      return 'Order placed successfully! ✅';
+      return true;
     } on FirebaseException catch (e) {
       _order = OrderStats.error;
       notifyListeners();
@@ -80,32 +95,20 @@ class OrderProvider extends ChangeNotifier {
     });
   }
 
-  Future fetchUserOrders(String userId, String status) async {
+  Future fetchUserOrders(
+      String userId, BuildContext context) async {
     try {
       _order = OrderStats.processing;
+      // notifyListeners();
+
+      QuerySnapshot querySnapshot = await orderCollectionRef
+          .where(Constants.userId, isEqualTo: userId)
+          .get();
+
+      _order = OrderStats.complete;
       notifyListeners();
 
-      if (status == 'Cancelled') {
-        QuerySnapshot querySnapshot = await orderCollectionRef
-            .where(Constants.userId, isEqualTo: userId)
-            .where(Constants.orderStatus, isEqualTo: status)
-            .get();
-
-        _order = OrderStats.complete;
-        notifyListeners();
-
-        return querySnapshot.docs;
-      } else {
-        QuerySnapshot querySnapshot = await orderCollectionRef
-            .where(Constants.userId, isEqualTo: userId)
-            .where(Constants.orderStatus, isNotEqualTo: 'Cancelled')
-            .get();
-
-        _order = OrderStats.complete;
-        notifyListeners();
-
-        return querySnapshot.docs;
-      }
+      return querySnapshot.docs;
     } on FirebaseException catch (e) {
       _order = OrderStats.error;
       notifyListeners();

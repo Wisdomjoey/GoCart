@@ -1,5 +1,4 @@
 import 'package:GOCart/UI/components/home_slider.dart';
-import 'package:async/async.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,8 +19,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   // final CarouselController _carouselController = CarouselController();
-  final AsyncMemoizer _memoizer = AsyncMemoizer();
-
   @override
   Widget build(BuildContext context) {
     // print('height ${Get.context!.height}');

@@ -12,12 +12,14 @@ class CategoriesPage extends StatefulWidget {
 }
 
 class _CategoriesPageState extends State<CategoriesPage> {
-  int data = 0;
-  List<bool> selected = List.generate(Constants.categories.length, (index) => false);
+  String cat = Constants.categories[0];
+  // List<bool> selected = List.generate(Constants.categories.length, (index) => false);
+  Map<String, bool> selected = { for (var element in Constants.categories) element : false };
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: Dimensions.sizedBoxWidth10 * 9,
@@ -27,7 +29,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
             itemCount: Constants.categories.length,
             itemBuilder: (context, index) {
               return Container(
-                decoration: data == index
+                decoration: cat == Constants.categories[index]
                     ? BoxDecoration(
                         border: Border(
                             left: BorderSide(
@@ -47,16 +49,16 @@ class _CategoriesPageState extends State<CategoriesPage> {
                       textAlign: TextAlign.center,
                     ),
                   ),
-                  tileColor: data == index
+                  tileColor: cat == Constants.categories[index]
                       ? Colors.transparent
-                      : (selected[index]
+                      : (selected[Constants.categories[index]]!
                           ? Colors.transparent
                           : Constants.white),
                   onTap: () {
                     setState(() {
-                      selected[data] = false;
-                      data = index;
-                      selected[index] = true;
+                      selected[cat] = false;
+                      cat = Constants.categories[index];
+                      selected[Constants.categories[index]] = true;
                     });
                   },
                 ),
@@ -66,7 +68,7 @@ class _CategoriesPageState extends State<CategoriesPage> {
         ),
         Expanded(
           child: CategoryList(
-            index: data,
+            cat: cat,
           ),
         ),
       ],

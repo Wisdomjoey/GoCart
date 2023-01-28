@@ -1,6 +1,5 @@
 import 'package:GOCart/CONSTANTS/constants.dart';
 import 'package:GOCart/PROVIDERS/shop_provider.dart';
-import 'package:GOCart/UI/components/home_app_bar.dart';
 import 'package:GOCart/UI/pages/dashboard/check_orders_page.dart';
 import 'package:GOCart/UI/pages/dashboard/check_products_page.dart';
 import 'package:GOCart/UI/pages/dashboard/dashboard_page.dart';

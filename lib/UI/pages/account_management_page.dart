@@ -1,5 +1,13 @@
+import 'dart:convert';
+
+import 'package:GOCart/PROVIDERS/global_provider.dart';
+import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:hash/hash.dart';
+import 'package:provider/provider.dart';
 
 import '../components/home_app_bar.dart';
 import '../../CONSTANTS/constants.dart';
@@ -15,6 +23,22 @@ class AccountManagementPage extends StatefulWidget {
 }
 
 class _AccountManagementPageState extends State<AccountManagementPage> {
+  List<TextEditingController> controllers = [];
+  List<FocusNode> nodes = [];
+
+  @override
+  void initState() {
+    for (var i = 0; i < 6; i++) {
+      controllers.add(TextEditingController());
+    }
+
+    for (var i = 0; i < 6; i++) {
+      nodes.add(FocusNode());
+    }
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,8 +64,9 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 child: Column(
                   children: [
                     ListTileBtn(
-                      page: RouteHelper.getProfilePage(),
-                        title: 'Basic Details', textSize: Dimensions.font14),
+                        page: RouteHelper.getProfilePage(),
+                        title: 'Basic Details',
+                        textSize: Dimensions.font14),
                     ListTileBtn(
                         title: 'Edit Phone Number',
                         textSize: Dimensions.font14),
@@ -58,9 +83,23 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                 child: Column(
                   children: [
                     ListTileBtn(
-                        title: 'Change Password', textSize: Dimensions.font14),
+                      title: 'Use Biometrics',
+                      textSize: Dimensions.font15,
+                      trailing: Switch(
+                          value: Provider.of<UserProvider>(context)
+                              .userData[Constants.userPinIsSet],
+                          activeColor: Constants.tetiary,
+                          onChanged: ((value) {
+                            // setState(() {
+                            //   _switch = !_switch;
+                            // });
+                            showDialog(
+                                context: context,
+                                builder: (context) => _showDialog());
+                          })),
+                    ),
                     ListTileBtn(
-                        title: 'Pin Settings', textSize: Dimensions.font14),
+                        title: 'Change Password', textSize: Dimensions.font14),
                     ListTileBtn(
                         title: 'Delete Account', textSize: Dimensions.font14),
                   ],
@@ -70,6 +109,186 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _showDialog() {
+    return Dialog(
+      insetPadding:
+          EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
+      child: Provider.of<GlobalProvider>(context).process == Processes.waiting
+          ? const Center(
+              child: CircularProgressIndicator(color: Constants.white),
+            )
+          : Container(
+              padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 * 2),
+              // height: Dimensions.sizedBoxHeight230,
+              decoration: BoxDecoration(
+                  color: Constants.white,
+                  borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    Provider.of<UserProvider>(context, listen: false)
+                            .userData[Constants.userPinIsSet]
+                        ? 'Enter pin or scan fingerprint to deactivate biometrics login?'
+                        : 'Add pin to be able to use biometrics to login',
+                    style: TextStyle(
+                        fontSize: Dimensions.font17,
+                        fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(
+                    height: Dimensions.sizedBoxHeight10 * 2,
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [0, 1, 2, 3, 4, 5].map((e) {
+                      return Container(
+                        width: Dimensions.sizedBoxWidth25 * 1.5,
+                        height: Dimensions.sizedBoxWidth25 * 1.5,
+                        margin: EdgeInsets.only(
+                            right: e < 4 ? Dimensions.sizedBoxWidth10 / 2 : 0,
+                            left: e == 5 ? Dimensions.sizedBoxWidth10 / 2 : 0),
+                        child: TextFormField(
+                          controller: controllers[e],
+                          focusNode: nodes[e],
+                          onTap: () {
+                            if (e != 0) {
+                              if (controllers[e - 1].text == '') {
+                                nodes[e].unfocus();
+                              } else {
+                                nodes[e].requestFocus();
+                              }
+                            } else {
+                              nodes[e].requestFocus();
+                            }
+                          },
+                          onChanged: (value) async {
+                            if (value != '') {
+                              if (value.length > 1) {
+                                for (var i = 0; i < value.length; i++) {
+                                  controllers[i].text = value[i];
+                                }
+                                nodes[e].unfocus();
+                              } else {
+                                if (e != 5) {
+                                  nodes[e].nextFocus();
+                                } else {
+                                  String pin = '';
+
+                                  for (var element in controllers) {
+                                    pin += element.text;
+                                  }
+                                  var b = utf8.encode(pin);
+                                  List c = SHA256().update(b).digest();
+
+                                  if (Provider.of<UserProvider>(context,
+                                          listen: false)
+                                      .userData[Constants.userPinIsSet]) {
+                                    if (const ListEquality().equals(
+                                        c,
+                                        Provider.of<UserProvider>(context,
+                                                listen: false)
+                                            .userData[Constants.userPin])) {
+                                      Provider.of<GlobalProvider>(context,
+                                              listen: false)
+                                          .setProcess(Processes.waiting);
+
+                                      await Provider.of<UserProvider>(context,
+                                              listen: false)
+                                          .updateUserData(
+                                              {
+                                            Constants.userPin: [],
+                                            Constants.userPinIsSet: false
+                                          },
+                                              FirebaseAuth.instance.currentUser!
+                                                  .uid).then((value) {
+                                        if (value) {
+                                          Provider.of<GlobalProvider>(context,
+                                                  listen: false)
+                                              .setProcess(Processes.done);
+
+                                          Constants(context).snackBar(
+                                              'Biometrics login has been deactivated',
+                                              Constants.tetiary);
+
+                                          Navigator.pop(context);
+                                        }
+                                      });
+                                    } else {
+                                      Constants(context).snackBar(
+                                          'Pin is incorrect', Colors.red);
+                                    }
+                                  } else {
+                                    Provider.of<GlobalProvider>(context,
+                                            listen: false)
+                                        .setProcess(Processes.waiting);
+
+                                    await Provider.of<UserProvider>(context,
+                                            listen: false)
+                                        .updateUserData(
+                                            {
+                                          Constants.userPin: c,
+                                          Constants.userPinIsSet: true
+                                        },
+                                            FirebaseAuth.instance.currentUser!
+                                                .uid).then((value) {
+                                      if (value) {
+                                        Provider.of<GlobalProvider>(context,
+                                                listen: false)
+                                            .setProcess(Processes.done);
+
+                                        Constants(context).snackBar(
+                                            'Biometrics login has been activated',
+                                            Constants.tetiary);
+
+                                        Navigator.pop(context);
+                                      }
+                                    });
+                                  }
+                                }
+                              }
+                            } else {
+                              if (e != 0) {
+                                nodes[e].previousFocus();
+                              } else {
+                                nodes[e].unfocus();
+                              }
+                            }
+                          },
+                          showCursor: false,
+                          textAlign: TextAlign.center,
+                          obscureText: true,
+                          autofocus: e == 0 ? true : false,
+                          style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              fontSize: Dimensions.font23,
+                              color: const Color.fromARGB(255, 116, 116, 116)),
+                          keyboardType: TextInputType.number,
+                          decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.all(10),
+                              filled: true,
+                              border: InputBorder.none,
+                              enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      Dimensions.sizedBoxWidth10),
+                                  borderSide: const BorderSide(
+                                      color: Constants.lightGrey)),
+                              fillColor: Constants.white,
+                              focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      Dimensions.sizedBoxWidth10),
+                                  borderSide:
+                                      const BorderSide(color: Constants.grey))),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }
