@@ -1,5 +1,9 @@
+import 'package:GOCart/PROVIDERS/global_provider.dart';
+import 'package:GOCart/PROVIDERS/user_provider.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../utils/dimensions.dart';
@@ -17,6 +21,7 @@ class _ProfilePageState extends State<ProfilePage> {
   GlobalKey<FormState> key = GlobalKey<FormState>();
 
   List<bool> disability = [false, false, false];
+  bool anchor = true;
 
   late TextEditingController textEditingController1;
   late TextEditingController textEditingController2;
@@ -31,9 +36,6 @@ class _ProfilePageState extends State<ProfilePage> {
     textEditingController1 = TextEditingController();
     textEditingController2 = TextEditingController();
     textEditingController3 = TextEditingController();
-
-    textEditingController2.text = 'Example';
-    textEditingController3.text = 'Example';
 
     focusNode1 = FocusNode();
     focusNode2 = FocusNode();
@@ -61,6 +63,17 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (anchor) {
+      anchor = false;
+      
+      textEditingController1.text =
+          Provider.of<UserProvider>(context).userData[Constants.userUserName];
+      textEditingController2.text =
+          Provider.of<UserProvider>(context).userData[Constants.userFirstName];
+      textEditingController3.text =
+          Provider.of<UserProvider>(context).userData[Constants.userLastName];
+    }
+
     return Scaffold(
       backgroundColor: Constants.white,
       appBar: AppBar(
@@ -109,13 +122,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 TextFormField(
                   controller: textEditingController1,
                   focusNode: focusNode1,
-                  validator: (value) {
-                    if (value == '') {
-                      return Constants.err;
-                    }
+                  // validator: (value) {
+                  //   if (value == '') {
+                  //     return Constants.err;
+                  //   }
 
-                    return null;
-                  },
+                  //   return null;
+                  // },
                   decoration: InputDecoration(
                     enabled: disability[0],
                     filled: true,
@@ -206,9 +219,48 @@ class _ProfilePageState extends State<ProfilePage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
-                    text: 'UPDATE',
-                    pressed: () {
-                      if (key.currentState!.validate()) {}
+                    child: Provider.of<GlobalProvider>(context).process ==
+                            Processes.waiting
+                        ? SizedBox(
+                            width: Dimensions.sizedBoxWidth10 * 2,
+                            height: Dimensions.sizedBoxWidth10 * 2,
+                            child: const CircularProgressIndicator(
+                              color: Constants.white,
+                              strokeWidth: 3,
+                            ))
+                        : Text(
+                            'UPDATE',
+                            style: TextStyle(
+                                color: Constants.white,
+                                fontSize: Dimensions.font14),
+                          ),
+                    pressed: () async {
+                      if (key.currentState!.validate()) {
+                        Provider.of<GlobalProvider>(context, listen: false)
+                            .setProcess(Processes.waiting);
+
+                        await Provider.of<UserProvider>(context, listen: false)
+                            .updateUserData({
+                          Constants.userUserName:
+                              textEditingController1.text.trim(),
+                          Constants.userFirstName:
+                              textEditingController2.text.trim().toLowerCase(),
+                          Constants.userLastName:
+                              textEditingController3.text.trim().toLowerCase(),
+                        }, FirebaseAuth.instance.currentUser!.uid).then(
+                                (value) {
+                          if (value) {
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .setProcess(Processes.done);
+
+                            Constants(context).snackBar(
+                                'Details updated successfully!',
+                                Constants.tetiary);
+
+                            Navigator.pop(context);
+                          }
+                        });
+                      }
                     },
                   ),
                 )

@@ -322,10 +322,8 @@ class _SavedItemsPageState extends State<SavedItemsPage> {
                                                             context,
                                                             listen: false)
                                                         .addToCart(
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid,
+                                                            FirebaseAuth.instance
+                                                                .currentUser!.uid,
                                                             savedItems[index]
                                                                 [Constants.uid],
                                                             savedItems[index][
@@ -333,7 +331,10 @@ class _SavedItemsPageState extends State<SavedItemsPage> {
                                                                     .prodNewPrice],
                                                             savedItems[index][
                                                                 Constants
-                                                                    .shopName])
+                                                                    .shopName],
+                                                            savedItems[index][
+                                                                Constants
+                                                                    .prodCategory])
                                                         .then((value) async {
                                                       favs.remove(
                                                           savedItems[index]

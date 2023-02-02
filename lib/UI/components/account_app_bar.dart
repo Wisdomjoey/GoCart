@@ -39,7 +39,7 @@ class AccountAppBar extends StatelessWidget with PreferredSizeWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${data[Constants.userLastName][0].toUpperCase() + data[Constants.userLastName].substring(1)} ${data[Constants.userFirstName][0].toUpperCase() + data[Constants.userFirstName].substring(1)}',
+                '${data[Constants.userFirstName][0].toUpperCase() + data[Constants.userFirstName].substring(1)} ${data[Constants.userLastName][0].toUpperCase() + data[Constants.userLastName].substring(1)}',
                 style: TextStyle(
                     fontWeight: FontWeight.w500,
                     fontSize: Dimensions.font23,

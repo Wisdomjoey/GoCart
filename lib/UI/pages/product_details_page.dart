@@ -17,7 +17,9 @@ import 'package:GOCart/UI/widgets/icon_box_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../../PROVIDERS/cart_provider.dart';
@@ -33,10 +35,19 @@ class ProductDetailsPage extends StatefulWidget {
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
   late String productUrlLink;
+  String phone = '';
 
   setUrlLink() async {
     await createDynamicLink(widget.data[Constants.uid]).then((value) {
       productUrlLink = value.toString();
+    });
+  }
+
+  getPhone() async {
+    await Provider.of<UserProvider>(context, listen: false)
+        .getUserById(widget.data[Constants.userId])
+        .then((value) {
+      phone = value[Constants.userPhone];
     });
   }
 
@@ -45,6 +56,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
     super.initState();
 
     setUrlLink();
+    getPhone();
   }
 
   Widget _buildPageItem(String imgUrl, int index, BuildContext context) {
@@ -320,53 +332,62 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                               String uid = FirebaseAuth
                                                   .instance.currentUser!.uid;
 
-                                              if (!favs.contains(
-                                                  widget.data[Constants.uid])) {
-                                                await Provider.of<UserProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .updateUserData({
-                                                  Constants.userFavourites: [
-                                                    ...favs,
-                                                    widget.data[Constants.uid]
-                                                  ]
-                                                }, uid).then((value) async {
-                                                  if (value) {
-                                                    Constants(context).snackBar(
-                                                        'Product added to Saved Items',
-                                                        Constants.tetiary);
-
-                                                    await Provider.of<
-                                                                CartProvider>(
-                                                            context,
-                                                            listen: false)
-                                                        .removeFromCart(
-                                                            FirebaseAuth
-                                                                .instance
-                                                                .currentUser!
-                                                                .uid,
-                                                            widget.data[
-                                                                Constants.uid],
-                                                            widget.data[Constants
-                                                                .prodNewPrice]);
-                                                  }
-                                                });
+                                              if (uid ==
+                                                  widget
+                                                      .data[Constants.userId]) {
+                                                Constants(context).snackBar(
+                                                    'You are the owner of this product',
+                                                    Colors.red);
                                               } else {
-                                                favs.remove(
-                                                    widget.data[Constants.uid]);
+                                                if (!favs.contains(widget
+                                                    .data[Constants.uid])) {
+                                                  await Provider.of<
+                                                              UserProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .updateUserData({
+                                                    Constants.userFavourites: [
+                                                      ...favs,
+                                                      widget.data[Constants.uid]
+                                                    ]
+                                                  }, uid).then((value) async {
+                                                    if (value) {
+                                                      Constants(context).snackBar(
+                                                          'Product added to Saved Items',
+                                                          Constants.tetiary);
 
-                                                await Provider.of<UserProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .updateUserData({
-                                                  Constants.userFavourites: favs
-                                                }, uid).then((value) async {
-                                                  if (value) {
-                                                    Constants(context).snackBar(
-                                                        'Product removed from Saved Items',
-                                                        Constants.tetiary);
-                                                  }
-                                                });
+                                                      await Provider.of<
+                                                                  CartProvider>(
+                                                              context,
+                                                              listen: false)
+                                                          .removeFromCart(
+                                                              uid,
+                                                              widget.data[
+                                                                  Constants
+                                                                      .uid],
+                                                              widget.data[Constants
+                                                                  .prodNewPrice]);
+                                                    }
+                                                  });
+                                                } else {
+                                                  favs.remove(widget
+                                                      .data[Constants.uid]);
+
+                                                  await Provider.of<
+                                                              UserProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .updateUserData({
+                                                    Constants.userFavourites:
+                                                        favs
+                                                  }, uid).then((value) async {
+                                                    if (value) {
+                                                      Constants(context).snackBar(
+                                                          'Product removed from Saved Items',
+                                                          Constants.tetiary);
+                                                    }
+                                                  });
+                                                }
                                               }
                                             },
                                             child: Icon(
@@ -730,18 +751,40 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
       bottomNavigationBar: DetailsBottomNav(
         // isAdded: true,
         prodId: widget.data[Constants.uid],
+        userId: widget.data[Constants.userId],
         amount: widget.data[Constants.prodNewPrice],
         shopName: widget.data[Constants.shopName],
         category: widget.data[Constants.prodCategory],
         leading: Row(
-          children: const [
+          children: [
             IconBox(
+              pressed: () =>
+                  Get.toNamed(RouteHelper.getRoutePage(), arguments: 0),
               icon: Icons.home_outlined,
             ),
             IconBox(
+              pressed: () =>
+                  Get.toNamed(RouteHelper.getRoutePage(), arguments: 1),
               icon: Icons.list_alt_outlined,
             ),
             IconBox(
+              pressed: () async {
+                Uri uri = Uri.parse(phone);
+
+                await launchUrl(uri).then((value) {
+                  if (!value) {
+                    Constants(context).snackBar(
+                        'Could not open phone, long press to copy', Colors.red);
+                  }
+                });
+              },
+              longPressed: () {
+                Clipboard.setData(ClipboardData(text: productUrlLink))
+                    .then((value) {
+                  HapticFeedback.vibrate();
+                  Fluttertoast.showToast(msg: 'Number has been copied');
+                });
+              },
               icon: Icons.phone,
             )
           ],

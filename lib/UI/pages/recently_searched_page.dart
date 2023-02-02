@@ -54,69 +54,67 @@ class RecentlySearchedPage extends StatelessWidget {
                   children: [
                     Column(
                       children: history.map((e) {
-                        return Container(
-                          color: Colors.transparent,
-                          width: double.maxFinite,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      color: Colors.red,
+                        return GestureDetector(
+                          onTap: () => Get.toNamed(
+                              RouteHelper.getProductListPage(),
+                              arguments: e),
+                          child: Container(
+                            color: Colors.transparent,
+                            width: double.maxFinite,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Expanded(
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: Dimensions.sizedBoxWidth10,
+                                          ),
+                                          const Icon(
+                                            Icons.history,
+                                            color: Constants.grey,
+                                            size: 17,
+                                          ),
+                                          SizedBox(
+                                            width: Dimensions.sizedBoxWidth10,
+                                          ),
+                                          Text(e),
+                                        ],
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          right: Dimensions.sizedBoxWidth10),
                                       child: GestureDetector(
-                                        onTap: () => Get.toNamed(
-                                            RouteHelper.getProductListPage(),
-                                            arguments: e),
-                                        child: Row(
-                                          children: [
-                                            SizedBox(
-                                              width: Dimensions.sizedBoxWidth10,
-                                            ),
-                                            const Icon(
-                                              Icons.history,
-                                              color: Constants.grey,
-                                              size: 17,
-                                            ),
-                                            SizedBox(
-                                              width: Dimensions.sizedBoxWidth10,
-                                            ),
-                                            Text(e),
-                                          ],
+                                        onTap: () {
+                                          history.remove(e);
+
+                                          Preferences().saveListData(
+                                              Constants.prefsSearchHistory,
+                                              history);
+
+                                          Provider.of<GlobalProvider>(context,
+                                                  listen: false)
+                                              .setHistory(history);
+                                        },
+                                        child: const Icon(
+                                          Icons.close,
+                                          color: Constants.grey,
+                                          size: 17,
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsets.only(right: Dimensions.sizedBoxWidth10),
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        history.remove(e);
-
-                                        Preferences().saveListData(
-                                            Constants.prefsSearchHistory,
-                                            history);
-
-                                        Provider.of<GlobalProvider>(context,
-                                                listen: false)
-                                            .setHistory(history);
-                                      },
-                                      child: const Icon(
-                                        Icons.close,
-                                        color: Constants.grey,
-                                        size: 17,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Divider(
-                                color: Constants.grey,
-                              )
-                            ],
+                                  ],
+                                ),
+                                const Divider(
+                                  color: Constants.grey,
+                                )
+                              ],
+                            ),
                           ),
                         );
                       }).toList(),

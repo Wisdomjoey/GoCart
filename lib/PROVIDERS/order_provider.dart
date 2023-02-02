@@ -30,7 +30,10 @@ class OrderProvider extends ChangeNotifier {
           Constants.userId: userId,
           Constants.orderdeliveryDate: '',
           Constants.productId: [prodData[i][Constants.uid]],
-          Constants.amount: [amount[i]],
+          Constants.amount:
+              prodData[i][Constants.prodCategory] == 'Cooked Foods'
+                  ? amount[i]
+                  : [amount[i]],
           Constants.name: prodData[i][Constants.name],
           Constants.imgUrl: prodData[i][Constants.imgUrls][0],
           Constants.orderStatus: Constants.newOrder,
@@ -42,15 +45,17 @@ class OrderProvider extends ChangeNotifier {
         await documentReference
             .update({Constants.uid: documentReference.id}).then((value) async {
           if (prodData[i][Constants.prodCategory] == 'Cooked Foods') {
-            for (var element in amount[i]) {
-              await Provider.of<CartProvider>(context, listen: false)
-                  .removeFromFoodCart(userId, prodData[i][Constants.uid],
-                      element, prodData[i][Constants.shopName])
-                  .then((value) {
-                Constants(context).snackBar(
-                    'Product added to cart successfully! ✅', Constants.tetiary);
-              });
-            }
+            await Provider.of<CartProvider>(context, listen: false)
+                .removeFromFoodCart(
+                    userId,
+                    prodData[i][Constants.uid],
+                    amount[i].reduce((value, element) => value + element),
+                    prodData[i][Constants.shopName],
+                    true)
+                .then((value) {
+              Constants(context).snackBar(
+                  'Product added to cart successfully! ✅', Constants.tetiary);
+            });
           } else {
             await Provider.of<CartProvider>(context, listen: false)
                 .removeFromCart(userId, prodData[i][Constants.uid], amount[i])
@@ -95,8 +100,7 @@ class OrderProvider extends ChangeNotifier {
     });
   }
 
-  Future fetchUserOrders(
-      String userId, BuildContext context) async {
+  Future fetchUserOrders(String userId, BuildContext context) async {
     try {
       _order = OrderStats.processing;
       // notifyListeners();

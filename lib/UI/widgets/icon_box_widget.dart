@@ -16,6 +16,7 @@ class IconBox extends StatelessWidget {
   final double? width;
   final double? height;
   final VoidCallback? pressed;
+  final VoidCallback? longPressed;
 
   const IconBox(
       {super.key,
@@ -30,7 +31,7 @@ class IconBox extends StatelessWidget {
       this.width,
       this.height,
       this.color,
-      this.pressed});
+      this.pressed, this.longPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +42,7 @@ class IconBox extends StatelessWidget {
       child: isClickable
           ? TextButton(
               onPressed: isDisabled ? null : (pressed ?? () {}),
+              onLongPress: longPressed,
               style: TextButton.styleFrom(
                   padding: const EdgeInsets.all(0),
                   backgroundColor: color ?? Colors.transparent,

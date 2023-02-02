@@ -25,7 +25,7 @@ import 'package:GOCart/UI/pages/order_details_page.dart';
 import 'package:GOCart/UI/pages/orders_page.dart';
 import 'package:GOCart/UI/pages/product_details_page.dart';
 import 'package:GOCart/UI/pages/recently_searched_page.dart';
-import 'package:GOCart/UI/pages/recently_viewed_page.dart';
+import 'package:GOCart/UI/notinuse/recently_viewed_page.dart';
 import 'package:GOCart/UI/pages/register_page.dart';
 import 'package:GOCart/UI/pages/route_page.dart';
 import 'package:GOCart/UI/pages/saved_items_page.dart';
@@ -217,10 +217,12 @@ class RouteHelper {
         name: productListPage,
         page: () {
           //   String? title = Get.parameters['title'];
-          String? title = Get.arguments;
+          String? title = Get.arguments[0];
+          bool? isSearched = Get.arguments[1];
 
           return ProductListPage(
             title: title!,
+            isSearched: isSearched!,
           );
         }),
     GetPage(

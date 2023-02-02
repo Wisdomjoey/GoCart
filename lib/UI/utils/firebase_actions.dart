@@ -23,7 +23,15 @@ var initSettings = InitializationSettings(android: android, iOS: ios);
 void requestPermission() async {
   FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
 
-  NotificationSettings settings = await firebaseMessaging.requestPermission();
+  NotificationSettings settings = await firebaseMessaging.requestPermission(
+    alert: true,
+    announcement: false,
+    badge: true,
+    carPlay: false,
+    criticalAlert: false,
+    provisional: false,
+    sound: true,
+  );
 
   if (settings.authorizationStatus == AuthorizationStatus.authorized) {
     print('granted');
@@ -88,38 +96,50 @@ initInfo(RemoteMessage event) async {
 }
 
 Future sendPushMessage(String token, String title, String body) async {
-  try {
-    http.Response res = await http.post(
-      Uri.parse('https//fcm.googleapis.com/fcm/send'),
-      headers: <String, String>{
-        'Content-Type': 'application/json',
-        'Authorization':
-            'key=AAAAUDNw-so:APA91bE070OAxSTvZ4P2pRUcafEsC6DytqandwGQWIqARjLW1hKbmvewA1KwQ8tkA70__lD2AvNa8s7sAP48yd5VNaVnNm_kkVwEEQD2j6M406pCaDMdRpZsfGQglf878RF7HBefFi6U'
-      },
-      body: jsonEncode(
-        <String, dynamic>{
-          'priority': 'high',
-          'data': <String, dynamic>{
-            'click_action': 'FLUTTER_NOTIFICATION_CLICK',
-            'status': 'done',
-            'body': body,
-            'title': title,
-            'payload': 4
-          },
-          'notification': <String, dynamic>{
-            'title': title,
-            'body': body,
-            'android_channel_id': 'go_cart'
-          },
-          'to': token
-        },
-      ),
-    );
+  // try {
+  //   http.Response res = await http.post(
+  //     Uri.parse(
+  //         'https://fcm.googleapis.com/v1/projects/gocart-b71f6/messages:send'),
+  //     headers: <String, String>{
+  //       'Content-Type': 'application/json; UTF-8',
+  //       'Authorization':
+  //           'Bearer AAAAUDNw-so:APA91bE070OAxSTvZ4P2pRUcafEsC6DytqandwGQWIqARjLW1hKbmvewA1KwQ8tkA70__lD2AvNa8s7sAP48yd5VNaVnNm_kkVwEEQD2j6M406pCaDMdRpZsfGQglf878RF7HBefFi6U'
+  //     },
+  //     body: jsonEncode(
+  //       <String, dynamic>{
+  //         'priority': 'high',
+  //         'data': <String, dynamic>{
+  //           'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+  //           'status': 'done',
+  //           'body': body,
+  //           'title': title,
+  //           'payload': 4
+  //         },
+  //         'notification': <String, dynamic>{
+  //           'title': title,
+  //           'body': body,
+  //           'android_channel_id': 'go_cart'
+  //         },
+  //         'to': token
+  //       },
+  //     ),
+  //   );
 
-    return res;
-  } catch (e) {
-    if (kDebugMode) {}
-  }
+  //   return res;
+  // } catch (e) {
+  //   if (kDebugMode) {}
+  // }
+
+  await FirebaseMessaging.instance.sendMessage(
+    to: token,
+    data: {
+      'click_action': 'FLUTTER_NOTIFICATION_CLICK',
+      'status': 'done',
+      'body': body,
+      'title': title,
+      'payload': '4'
+    },
+  );
 }
 
 Future<Uri> createDynamicLink(String prodId) async {

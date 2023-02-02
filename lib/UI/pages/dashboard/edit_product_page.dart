@@ -24,6 +24,7 @@ class EditProductPage extends StatefulWidget {
 
 class _EditProductPageState extends State<EditProductPage> {
   bool _switch = false;
+  bool _process = false;
   final ImagePicker _picker = ImagePicker();
   // late List<XFile> images;
   // late XFile photo;
@@ -624,7 +625,7 @@ class _EditProductPageState extends State<EditProductPage> {
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           labelText: 'Total Stock',
-                          enabled: disability[4],
+                          enabled: pCat == 'Cooked Foods' ? false : disability[4],
                           filled: true,
                         ),
                       ),
@@ -743,9 +744,7 @@ class _EditProductPageState extends State<EditProductPage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
-                    child: Provider.of<ProductProvider>(context, listen: true)
-                                .process ==
-                            Process.processing
+                    child: _process
                         ? SizedBox(
                             width: Dimensions.sizedBoxWidth10 * 2,
                             height: Dimensions.sizedBoxWidth10 * 2,
@@ -765,6 +764,10 @@ class _EditProductPageState extends State<EditProductPage> {
                           Constants(context).snackBar(
                               'Please add at least one image!', Colors.red);
                         } else {
+                          setState(() {
+                            _process = true;
+                          });
+
                           if (textEditingController7.text != '') {
                             List<String> specs =
                                 textEditingController7.text.trim().split(',');
@@ -810,6 +813,10 @@ class _EditProductPageState extends State<EditProductPage> {
                             Constants.prodKeyFeatures: keyFeatures,
                           }, widget.data[Constants.uid]).then((value) {
                             if (value) {
+                              setState(() {
+                                _process = false;
+                              });
+                              
                               tagController.clear();
                               textEditingController1.clear();
                               textEditingController2.clear();

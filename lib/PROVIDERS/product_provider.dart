@@ -220,7 +220,7 @@ class ProductProvider extends ChangeNotifier {
           await imageReference.delete();
         }
       });
-      
+
       _process = Process.processComplete;
       notifyListeners();
 
@@ -248,6 +248,7 @@ class ProductProvider extends ChangeNotifier {
       List products = [];
       List<String> queries = query.split(' ');
 
+      outer0:
       for (var i = 0; i < documentSnapshot.length; i++) {
         String name = documentSnapshot[i].get(Constants.name);
         String description = documentSnapshot[i][Constants.prodDescription];
@@ -260,10 +261,8 @@ class ProductProvider extends ChangeNotifier {
 
         outer1:
         for (var a = 0; a < queries.length; a++) {
-
           outer2:
           for (var element in specifications) {
-
             outer3:
             for (var element1 in keyFeatures) {
               for (var element2 in tags) {
@@ -287,7 +286,7 @@ class ProductProvider extends ChangeNotifier {
                   break outer3;
                 } else if (element2.contains(queries[a])) {
                   products.add(documentSnapshot[i].data());
-                  break;
+                  break outer0;
                 }
               }
             }

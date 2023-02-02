@@ -46,6 +46,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
       CheckProductsPage(
         shopId: shopData[Constants.uid],
         shopName: shopData[Constants.shopName],
+        address: shopData[Constants.shopAddress],
       )
     ];
   }

@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:GOCart/PROVIDERS/global_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -30,6 +32,19 @@ class ShopDetailsPage extends StatefulWidget {
 
 class _ShopDetailsPageState extends State<ShopDetailsPage> {
   GlobalKey<FormState> key = GlobalKey<FormState>();
+  late TextEditingController controller;
+
+  @override
+  initState() {
+    controller = TextEditingController();
+    super.initState();
+  }
+
+  @override
+  dispose() {
+    controller.dispose();
+    super.dispose();
+  }
 
   getShopData() async {
     return await Provider.of<ShopProvider>(context, listen: false)
@@ -41,6 +56,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
     // var data = getShopData();
     // print(data);
     // Future.delayed(Duration(s: 100), (() => getShopProducts()));
+    String currency = Constants(context).currency().currencySymbol;
 
     return Scaffold(
       body: FutureBuilder(
@@ -123,13 +139,25 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                   fontSize: Dimensions.font24,
                                                   fontWeight: FontWeight.w500),
                                             ),
-                                            Text(
-                                              data[Constants.prodCategory][0],
-                                              style: TextStyle(
-                                                  color: const Color.fromARGB(
-                                                      255, 214, 214, 214),
-                                                  fontSize: Dimensions.font17,
-                                                  fontWeight: FontWeight.w400),
+                                            Row(
+                                              children: List.generate(
+                                                  data[Constants.prodCategory]
+                                                      .length,
+                                                  (index) => Text(
+                                                        '${data[Constants.prodCategory][index]}${index == data[Constants.prodCategory].length ? '' : ', '}',
+                                                        style: TextStyle(
+                                                            color: const Color
+                                                                    .fromARGB(
+                                                                255,
+                                                                214,
+                                                                214,
+                                                                214),
+                                                            fontSize: Dimensions
+                                                                .font17,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w400),
+                                                      )),
                                             ),
                                           ],
                                         )),
@@ -144,65 +172,6 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                 statusBarIconBrightness: Brightness.light),
                             actions: [
                               const Search(),
-                              Row(
-                                children: [
-                                  IconButton(
-                                    splashRadius: 24,
-                                    tooltip: 'Cart',
-                                    icon: Stack(
-                                      alignment: Alignment.center,
-                                      children: [
-                                        const Icon(
-                                            Icons.shopping_cart_outlined),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Provider.of<CartProvider>(
-                                                          context)
-                                                      .cartListNo <
-                                                  1
-                                              ? Container()
-                                              : Container(
-                                                  width: Dimensions.font15,
-                                                  height: Dimensions.font15,
-                                                  margin: EdgeInsets.only(
-                                                      // top: Dimensions.sizedBoxHeight10,
-                                                      left: Dimensions
-                                                          .sizedBoxWidth15),
-                                                  decoration: BoxDecoration(
-                                                      color: Constants.tetiary,
-                                                      border: Border.all(
-                                                          color: Colors
-                                                              .transparent),
-                                                      borderRadius: BorderRadius
-                                                          .circular(Dimensions
-                                                                  .sizedBoxWidth4 *
-                                                              2)),
-                                                  child: Center(
-                                                    child: Text(
-                                                      Provider.of<CartProvider>(
-                                                              context)
-                                                          .cartListNo
-                                                          .toString(),
-                                                      style: TextStyle(
-                                                          color:
-                                                              Constants.white,
-                                                          fontSize:
-                                                              Dimensions.font11,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    ),
-                                                  ),
-                                                ),
-                                        )
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      Get.toNamed(RouteHelper.getRoutePage(),
-                                          arguments: 2);
-                                    },
-                                  ),
-                                ],
-                              ),
                               PopupMenuButton(
                                 splashRadius: 24,
                                 tooltip: 'Menu',
@@ -385,6 +354,9 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                             foodProducts.isEmpty
                                                 ? Container()
                                                 : Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
                                                     children: [
                                                       SizedBox(
                                                         height: Dimensions
@@ -460,7 +432,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                               topLeft: Radius.circular(Dimensions
                                                                                   .sizedBoxWidth4)),
                                                                           image: DecorationImage(
-                                                                              image: CachedNetworkImageProvider(data[Constants.imgUrls][0]),
+                                                                              image: CachedNetworkImageProvider(foodProducts[index][Constants.imgUrls][0]),
                                                                               fit: BoxFit.cover)),
                                                                     ),
                                                                     Expanded(
@@ -489,7 +461,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                               crossAxisAlignment: CrossAxisAlignment.start,
                                                                               children: [
                                                                                 Text(
-                                                                                  'Tractor with wide rollers and high cost maintainence',
+                                                                                  foodProducts[index][Constants.name],
                                                                                   style: TextStyle(fontSize: Dimensions.font13),
                                                                                 ),
                                                                                 SizedBox(
@@ -508,7 +480,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                                           width: Dimensions.sizedBoxWidth3,
                                                                                         ),
                                                                                         Text(
-                                                                                          '213',
+                                                                                          '---',
                                                                                           style: TextStyle(fontWeight: FontWeight.w500, fontSize: Dimensions.font12),
                                                                                         ),
                                                                                       ],
@@ -522,7 +494,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                                   height: Dimensions.sizedBoxHeight10 / 2,
                                                                                 ),
                                                                                 Text(
-                                                                                  '\$ 250 - ~',
+                                                                                  '$currency ${foodProducts[index][Constants.prodMinPrice]} - ~',
                                                                                   style: TextStyle(fontWeight: FontWeight.w500, fontSize: Dimensions.font18),
                                                                                 ),
                                                                               ],
@@ -551,7 +523,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                                             child: Ink(
                                                                                               width: double.maxFinite,
                                                                                               child: Text(
-                                                                                                '3rd block Bakasi hall, yabatech',
+                                                                                                data[Constants.shopAddress],
                                                                                                 overflow: TextOverflow.ellipsis,
                                                                                                 style: TextStyle(fontWeight: FontWeight.w500, fontSize: Dimensions.font12, color: Colors.grey),
                                                                                               ),
@@ -578,7 +550,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                                             width: Dimensions.sizedBoxWidth3,
                                                                                           ),
                                                                                           Text(
-                                                                                            'Mr Kola Shop',
+                                                                                            foodProducts[index][Constants.shopName],
                                                                                             overflow: TextOverflow.ellipsis,
                                                                                             style: TextStyle(fontWeight: FontWeight.w500, fontSize: Dimensions.font12, color: Constants.grey),
                                                                                           ),
@@ -603,8 +575,12 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                       (() => showDialog(
                                                                           context:
                                                                               context,
-                                                                          builder: (context) =>
-                                                                              _showDialog(context))));
+                                                                          builder: (context) => _showDialog(
+                                                                              context,
+                                                                              foodProducts[index][Constants.prodMinPrice],
+                                                                              foodProducts[index][Constants.uid],
+                                                                              data[Constants.shopName],
+                                                                              foodProducts[index][Constants.prodCategory]))));
                                                                 },
                                                               ),
                                                             ),
@@ -670,7 +646,10 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
     );
   }
 
-  Widget _showDialog(context) {
+  Widget _showDialog(
+      context, double minPrice, String prodId, String shopName, String cat) {
+    String currency = Constants(context).currency().currencySymbol;
+
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10 * 2),
@@ -714,14 +693,15 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
               ),
               TextFormField(
                 keyboardType: TextInputType.number,
+                controller: controller,
                 autofocus: true,
                 validator: (value) {
                   if (value == '') {
                     return Constants.err;
                   } else {
                     if (RegExp(r'^[0-9]*$').hasMatch(value!)) {
-                      if (int.parse(value) < 10) {
-                        return 'Please enter at least \$ 10';
+                      if (double.parse(value) < minPrice) {
+                        return 'Please enter at least $currency $minPrice';
                       }
                     } else {
                       return 'Invalid amount!';
@@ -730,13 +710,13 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
 
                   return null;
                 },
-                decoration: const InputDecoration(
-                  icon: Icon(
+                decoration: InputDecoration(
+                  icon: const Icon(
                     Icons.attach_money,
                     color: Constants.tetiary,
                   ),
                   labelText: 'Amount',
-                  helperText: 'Please enter at least \$ 10',
+                  helperText: 'Please enter at least $currency $minPrice',
                 ),
                 cursorColor: Constants.tetiary,
               ),
@@ -749,9 +729,40 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                   child: ElevatedBtn(
                     text: 'ADD TO FOOD CART',
                     icon: const Icon(Icons.add_shopping_cart_outlined),
-                    pressed: () {
-                      if (key.currentState!.validate()) {}
+                    pressed: () async {
+                      if (key.currentState!.validate()) {
+                        Provider.of<GlobalProvider>(context, listen: false)
+                            .setProcess(Processes.waiting);
+
+                        await Provider.of<CartProvider>(context, listen: false)
+                            .addToCart(
+                                FirebaseAuth.instance.currentUser!.uid,
+                                prodId,
+                                double.parse(controller.text.trim()),
+                                shopName,
+                                cat)
+                            .then((value) {
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setProcess(Processes.done);
+                          Navigator.pop(context);
+                        });
+                      }
                     },
+                    child: Provider.of<GlobalProvider>(context).process ==
+                            Processes.waiting
+                        ? SizedBox(
+                            width: Dimensions.sizedBoxWidth10 * 2,
+                            height: Dimensions.sizedBoxWidth10 * 2,
+                            child: const CircularProgressIndicator(
+                              color: Constants.white,
+                              strokeWidth: 3,
+                            ))
+                        : Text(
+                            'ADD TO FOOD CART',
+                            style: TextStyle(
+                                color: Constants.white,
+                                fontSize: Dimensions.font14),
+                          ),
                   ))
             ],
           ),

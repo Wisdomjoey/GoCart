@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:provider/provider.dart';
 
 class CartProvider extends ChangeNotifier {
   final BuildContext context;
@@ -17,6 +19,9 @@ class CartProvider extends ChangeNotifier {
 
   double _cartSubtotal = 0;
   double get cartSubtotal => _cartSubtotal;
+
+  List<Map<String, dynamic>> _prodData = [];
+  List<Map<String, dynamic>> get prodData => _prodData;
 
   List _carts = [];
   List get carts => _carts;
@@ -42,21 +47,27 @@ class CartProvider extends ChangeNotifier {
     await getCart(userId);
     await getFoodCart(userId);
 
-    _cartListNo = foodSnapshot.docs.length + cartSnapshot.docs.length;
-
-    for (var element in cartSnapshot.docs) {
-      _cart.addAll(
-          {element.get(Constants.productId): element.get(Constants.quantity)});
-
-      _cartSubtotal += element.get(Constants.amount) * element.get(Constants.quantity);
+    if (_cartListNo == 0) {
+      _cartListNo = foodSnapshot.docs.length + cartSnapshot.docs.length;
     }
 
-    for (var element in foodSnapshot.docs) {
-      _cart.addAll(
-          {element.get(Constants.shopName): element.get(Constants.quantity)});
+    if (_cart.isEmpty && _cartSubtotal == 0) {
+      for (var element in cartSnapshot.docs) {
+        _cart.addAll({
+          element.get(Constants.productId): element.get(Constants.quantity)
+        });
 
-      for (var element1 in element.get(Constants.amount)) {
-        _cartSubtotal += element1 * element.get(Constants.quantity);
+        _cartSubtotal +=
+            element.get(Constants.amount) * element.get(Constants.quantity);
+      }
+
+      for (var element in foodSnapshot.docs) {
+        _cart.addAll(
+            {element.get(Constants.shopName): element.get(Constants.quantity)});
+
+        for (var element1 in element.get(Constants.amount)) {
+          _cartSubtotal += element1 * element.get(Constants.quantity);
+        }
       }
     }
 
@@ -77,15 +88,10 @@ class CartProvider extends ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future addToCart(
-      String userId, String productId, double amount, String shopName) async {
+  Future addToCart(String userId, String productId, double amount,
+      String shopName, String prodCat) async {
     try {
-      QuerySnapshot querySnapshot = await productCollectionRef
-          .where(Constants.prodCategory, isEqualTo: 'food')
-          .where(Constants.uid, isEqualTo: productId)
-          .get();
-
-      if (querySnapshot.docs.isNotEmpty) {
+      if (prodCat == 'Cooked Foods') {
         CollectionReference collectionReference = userCollectionRef
             .doc(userId)
             .collection(Constants.collectionFoodCart);
@@ -133,7 +139,7 @@ class CartProvider extends ChangeNotifier {
           });
         }
       } else {
-        productCollectionRef.doc(productId).get().then((value) async {
+        await productCollectionRef.doc(productId).get().then((value) async {
           if (value.get(Constants.prodTotalStock) > 0) {
             CollectionReference collectionReference = userCollectionRef
                 .doc(userId)
@@ -183,32 +189,33 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future removeFromCart(
-      String userId, String productId, double amount) async {
+  Future removeFromCart(String userId, String productId, double amount) async {
     try {
-      String cartId = ((_carts
-          .where((element) => element[Constants.productId] == productId)
-          .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
+      if (carts.isNotEmpty) {
+        String cartId = ((_carts
+            .where((element) => element[Constants.productId] == productId)
+            .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
 
-      DocumentReference documentReference = userCollectionRef
-          .doc(userId)
-          .collection(Constants.collectionCart)
-          .doc(cartId);
+        DocumentReference documentReference = userCollectionRef
+            .doc(userId)
+            .collection(Constants.collectionCart)
+            .doc(cartId);
 
-      await documentReference.delete().then((value) async {
-        _cart.remove(productId);
-        _cartListNo--;
-        _cartSubtotal -= amount;
-        notifyListeners();
+        await documentReference.delete().then((value) async {
+          _cart.remove(productId);
+          _cartListNo--;
+          _cartSubtotal -= amount;
+          notifyListeners();
 
-        await getCart(userId).then((value) {
-          Constants(context).snackBar(
-              'Product removed from cart successfully! ✅', Constants.tetiary);
+          await getCart(userId).then((value) {
+            Constants(context).snackBar(
+                'Product removed from cart successfully! ✅', Constants.tetiary);
+          });
         });
-      });
 
-      // return 'Product removed from cart successfully! ✅';
-      return true;
+        // return 'Product removed from cart successfully! ✅';
+        return true;
+      }
     } on FirebaseException catch (e) {
       Constants(context).snackBar(e.message!, Colors.red);
 
@@ -216,43 +223,61 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future removeFromFoodCart(
-      String userId, String productId, double amount, String shopName) async {
+  Future removeFromFoodCart(String userId, String? productId, double amount,
+      String shopName, bool anchor) async {
     try {
-      String cartId = ((_carts
-          .where((element) => element[Constants.shopName] == shopName)
-          .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
+      if (foodCarts.isNotEmpty) {
+        String cartId = ((_foodCarts
+            .where((element) => element[Constants.shopName] == shopName)
+            .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
 
-      DocumentReference documentReference = userCollectionRef
-          .doc(userId)
-          .collection(Constants.collectionFoodCart)
-          .doc(cartId);
+        DocumentReference documentReference = userCollectionRef
+            .doc(userId)
+            .collection(Constants.collectionFoodCart)
+            .doc(cartId);
 
-      await documentReference.update({
-        Constants.productId: FieldValue.arrayRemove([productId]),
-        Constants.amount: FieldValue.arrayRemove([amount]),
-        Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
-      }).then((value) async {
-        _cartSubtotal -= amount;
-        notifyListeners();
+        if (anchor) {
+          await documentReference.delete().then((value) async {
+            _cartSubtotal -= amount;
+            _cartListNo--;
+            notifyListeners();
 
-        await getFoodCart(userId).then((value) {
-          Constants(context).snackBar(
-              'Product removed from cart successfully! ✅', Constants.tetiary);
-        });
-      });
+            await getFoodCart(userId).then((value) {
+              Constants(context).snackBar(
+                  'Product removed from cart successfully! ✅',
+                  Constants.tetiary);
+            });
+          });
+        } else {
+          await documentReference.update({
+            Constants.productId: FieldValue.arrayRemove([productId]),
+            Constants.amount: FieldValue.arrayRemove([amount]),
+            Constants.updatedAt:
+                DateTime.now().millisecondsSinceEpoch.toString(),
+          }).then((value) async {
+            _cartSubtotal -= amount;
+            notifyListeners();
 
-      // return 'Product removed from cart successfully! ✅';
-      return true;
+            await getFoodCart(userId).then((value) {
+              Constants(context).snackBar(
+                  'Product removed from cart successfully! ✅',
+                  Constants.tetiary);
+            });
+          });
+        }
+
+        // return 'Product removed from cart successfully! ✅';
+        return true;
+      }
     } on FirebaseException catch (e) {
       return e.message;
     }
   }
 
-  Future increaseCartProduct(String productId, String userId, String category,
+  Future increaseCartProduct(String? productId, String userId, String category,
       String shopName, double amount) async {
     if (category == 'Cooked Foods') {
-      String cartId = ((_carts
+      String cartId = ((_foodCarts
           .where((element) => element[Constants.shopName] == shopName)
           .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
 
@@ -304,7 +329,7 @@ class CartProvider extends ChangeNotifier {
             Constants.updatedAt:
                 DateTime.now().millisecondsSinceEpoch.toString(),
           }).then((_) async {
-            _cart[productId] += 1;
+            _cart[productId!] += 1;
             _cartSubtotal += amount;
             notifyListeners();
 
@@ -318,10 +343,10 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future decreaseCartProduct(String productId, String userId, String category,
+  Future decreaseCartProduct(String? productId, String userId, String category,
       double amount, String shopName) async {
     if (category == 'Cooked Foods') {
-      String cartId = ((_carts
+      String cartId = ((_foodCarts
           .where((element) => element[Constants.shopName] == shopName)
           .elementAt(0)) as Map<String, dynamic>)[Constants.uid];
 
@@ -361,14 +386,14 @@ class CartProvider extends ChangeNotifier {
 
       await productCollectionRef.doc(productId).get().then((value) async {
         if (quantity - 1 < 1) {
-          await removeFromCart(userId, productId, amount);
+          await removeFromCart(userId, productId!, amount);
         } else {
           await documentReference.update({
             Constants.quantity: quantity - 1,
             Constants.updatedAt:
                 DateTime.now().millisecondsSinceEpoch.toString(),
           }).then((_) async {
-            _cart[productId] -= 1;
+            _cart[productId!] -= 1;
             _cartSubtotal -= amount;
             notifyListeners();
 
@@ -379,25 +404,36 @@ class CartProvider extends ChangeNotifier {
         }
       });
 
-          return true;
+      return true;
     }
   }
 
   Future getCart(String userId) async {
     try {
-      QuerySnapshot querySnapshot = await userCollectionRef
+      await userCollectionRef
           .doc(userId)
           .collection(Constants.collectionCart)
-          .get();
+          .get()
+          .then((value) async {
+        List newCart = [];
+        List<Map<String, dynamic>> data = [];
 
-      List newCart = [];
+        for (var element in value.docs) {
+          newCart.add(element.data());
+        }
 
-      for (var element in querySnapshot.docs) {
-        newCart.add(element.data());
-      }
+        for (var element in newCart) {
+          var snapshot =
+              await Provider.of<ProductProvider>(context, listen: false)
+                  .getProductData(element[Constants.productId]);
 
-      _carts = newCart;
-      notifyListeners();
+          data.add(snapshot);
+        }
+
+        _prodData = data;
+        _carts = newCart;
+        notifyListeners();
+      });
     } on FirebaseException catch (e) {
       _carts = [];
       notifyListeners();
@@ -429,8 +465,8 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future updateFoodCartItemAmount(String userId, double firstAmount,
-      double amount, String cartId, String productId) async {
+  Future updateFoodCartItemAmount(
+      String userId, double firstAmount, double amount, String cartId) async {
     try {
       DocumentReference documentReference = userCollectionRef
           .doc(userId)

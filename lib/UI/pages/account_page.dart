@@ -81,15 +81,15 @@ class AccountPage extends StatelessWidget {
                     textSize: Dimensions.font14,
                     page: RouteHelper.getSavedItemsPage(),
                   ),
-                  ListTileBtn(
-                    title: 'Recently Viewed',
-                    leading: Icon(
-                      Icons.history_rounded,
-                      size: Dimensions.font20 + 2,
-                    ),
-                    textSize: Dimensions.font14,
-                    page: RouteHelper.getRecentlyViewedPage(),
-                  ),
+                  // ListTileBtn(
+                  //   title: 'Recently Viewed',
+                  //   leading: Icon(
+                  //     Icons.history_rounded,
+                  //     size: Dimensions.font20 + 2,
+                  //   ),
+                  //   textSize: Dimensions.font14,
+                  //   page: RouteHelper.getRecentlyViewedPage(),
+                  // ),
                   ListTileBtn(
                     title: 'Recently Searched',
                     leading: Icon(

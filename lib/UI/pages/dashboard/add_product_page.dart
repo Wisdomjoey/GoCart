@@ -25,6 +25,7 @@ class AddProductPage extends StatefulWidget {
 
 class _AddProductPageState extends State<AddProductPage> {
   bool _switch = false;
+  bool _process = false;
   final ImagePicker _picker = ImagePicker();
   // late List<XFile> images;
   // late XFile photo;
@@ -248,7 +249,7 @@ class _AddProductPageState extends State<AddProductPage> {
                       });
                     })),
                 HeadSedction(
-                  text: 'Add Product Description *',
+                  text: 'Add Product Description ${dropdownValue == 'Cooked Foods' ? '(optional)' : '*'}',
                   tMargin: Dimensions.sizedBoxHeight15 * 2,
                   textSize: Dimensions.font16,
                 ),
@@ -258,7 +259,7 @@ class _AddProductPageState extends State<AddProductPage> {
                 TextFormField(
                   controller: textEditingController2,
                   focusNode: focusNode2,
-                  validator: (value) {
+                  validator: dropdownValue == 'Cooked Foods' ? null : (value) {
                     if (value == '') {
                       return errMsg;
                     } else {
@@ -290,14 +291,16 @@ class _AddProductPageState extends State<AddProductPage> {
                     const Text(
                         'Do you want to add a discount to this product?'),
                     Switch(
-                        value: dropdownValue == 'Cooked Foods' ? false : _switch,
+                        value:
+                            dropdownValue == 'Cooked Foods' ? false : _switch,
                         activeColor: Constants.tetiary,
-                        onChanged: dropdownValue ==
-                            'Cooked Foods' ? null : ((value) {
-                          setState(() {
-                            _switch = !_switch;
-                          });
-                        })),
+                        onChanged: dropdownValue == 'Cooked Foods'
+                            ? null
+                            : ((value) {
+                                setState(() {
+                                  _switch = !_switch;
+                                });
+                              })),
                   ],
                 ),
                 dropdownValue == 'Cooked Foods'
@@ -466,7 +469,7 @@ class _AddProductPageState extends State<AddProductPage> {
                               Radius.circular(Dimensions.sizedBoxWidth4)))),
                 ),
                 HeadSedction(
-                  text: 'Additional Details *',
+                  text: 'Additional Details ${dropdownValue == 'Cooked Foods' ? '(optional)' : '*'}',
                   tMargin: Dimensions.sizedBoxHeight15 * 2,
                   textSize: Dimensions.font16,
                 ),
@@ -479,17 +482,20 @@ class _AddProductPageState extends State<AddProductPage> {
                       child: TextFormField(
                         controller: textEditingController6,
                         focusNode: focusNode6,
-                        validator: dropdownValue == 'Cooked Foods' ? null : (value) {
-                          if (value == '') {
-                            return errMsg;
-                          } else {
-                            return null;
-                          }
-                        },
+                        validator: dropdownValue == 'Cooked Foods'
+                            ? null
+                            : (value) {
+                                if (value == '') {
+                                  return errMsg;
+                                } else {
+                                  return null;
+                                }
+                              },
                         keyboardType: TextInputType.number,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Total Stock',
                           hintText: '50',
+                          enabled: dropdownValue == 'Cooked Foods' ? false : true
                         ),
                       ),
                     ),
@@ -561,9 +567,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
-                    child: Provider.of<ProductProvider>(context, listen: true)
-                                .process ==
-                            Process.processing
+                    child: _process
                         ? SizedBox(
                             width: Dimensions.sizedBoxWidth10 * 2,
                             height: Dimensions.sizedBoxWidth10 * 2,
@@ -583,6 +587,10 @@ class _AddProductPageState extends State<AddProductPage> {
                           Constants(context).snackBar(
                               'Please add at least one image!', Colors.red);
                         } else {
+                          setState(() {
+                            _process = true;
+                          });
+
                           if (textEditingController7.text != '') {
                             List<String> specs =
                                 textEditingController7.text.trim().split(',');
@@ -625,7 +633,9 @@ class _AddProductPageState extends State<AddProductPage> {
                                           textEditingController9.text.trim()),
                                   dropdownValue,
                                   images,
-                                  int.parse(textEditingController6.text.trim()),
+                                  textEditingController6.text == ''
+                                      ? 0
+                                      : int.parse(textEditingController6.text.trim()),
                                   tags,
                                   widget.shopId,
                                   FirebaseAuth.instance.currentUser!.uid,
@@ -633,6 +643,10 @@ class _AddProductPageState extends State<AddProductPage> {
                                   keyFeatures)
                               .then((value) {
                             if (value) {
+                              setState(() {
+                                _process = false;
+                              });
+                              
                               tagController.clear();
                               textEditingController1.clear();
                               textEditingController2.clear();

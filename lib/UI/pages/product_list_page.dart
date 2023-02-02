@@ -11,8 +11,9 @@ import '../utils/dimensions.dart';
 
 class ProductListPage extends StatefulWidget {
   final String title;
+  final bool isSearched;
 
-  const ProductListPage({super.key, required this.title});
+  const ProductListPage({super.key, required this.title, required this.isSearched});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
@@ -42,7 +43,9 @@ class _ProductListPageState extends State<ProductListPage> {
   @override
   void initState() {
     super.initState();
-    getHistory();
+    if (widget.isSearched) {
+      getHistory();
+    }
   }
 
   @override
@@ -55,27 +58,29 @@ class _ProductListPageState extends State<ProductListPage> {
         textSize: Dimensions.font23,
         title: widget.title,
       ),
-      body: SingleChildScrollView(
-        child: FutureBuilder(
-          future: Provider.of<ProductProvider>(context, listen: false)
-              .searchProducts(widget.title),
-          builder: (context, AsyncSnapshot snapshot) {
-            return Container(
-              margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
-              child: snapshot.connectionState == ConnectionState.waiting
-                  ? const CircularProgressIndicator(
+      body: FutureBuilder(
+        future: Provider.of<ProductProvider>(context, listen: false)
+            .searchProducts(widget.title),
+        builder: (context, AsyncSnapshot snapshot) {
+          return Container(
+            margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
+            child: snapshot.connectionState == ConnectionState.waiting
+                ? const Center(
+                  child: CircularProgressIndicator(
                       color: Constants.tetiary,
-                    )
-                  : (snapshot.data.isNotEmpty
-                      ? ProductBox(
+                    ),
+                )
+                : (snapshot.data.isNotEmpty
+                    ? SingleChildScrollView(
+                        child: ProductBox(
                           snapshotDocs: snapshot.data,
-                        )
-                      : const Center(
-                          child: Text('No Product'),
-                        )),
-            );
-          },
-        ),
+                        ),
+                      )
+                    : const Center(
+                        child: Text('No Product'),
+                      )),
+          );
+        },
       ),
     );
   }

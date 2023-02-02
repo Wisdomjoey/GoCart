@@ -248,7 +248,7 @@ class Constants {
       {'img': 'assets/images/c64.jpeg', 'label': 'Bay Bibs'},
       {'img': 'assets/images/c65.jpeg', 'label': 'Feeding Bottle'},
       {'img': 'assets/images/c66.jpeg', 'label': 'Baby Seats'},
-      {'img': 'assets/images/c95.jpeg', 'label': 'Baby Backpacks'},
+      {'img': 'assets/images/c95.jpg', 'label': 'Baby Backpacks'},
       {'img': 'assets/images/c94.jpeg', 'label': 'Baby Walkers'},
       {'img': 'assets/images/c93.jpeg', 'label': 'Baby Potties'},
     ],

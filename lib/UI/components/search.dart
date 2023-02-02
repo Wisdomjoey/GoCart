@@ -112,7 +112,10 @@ class _MySearchDelegateState extends State<_MySearchDelegate> {
                             onEditingComplete: (() {
                               if (textEditingController.text != '') {
                                 Get.offNamed(RouteHelper.getProductListPage(),
-                                    arguments: textEditingController.text);
+                                    arguments: [
+                                      textEditingController.text.trim(),
+                                      true
+                                    ]);
                               }
                             }),
                             autofocus: true,

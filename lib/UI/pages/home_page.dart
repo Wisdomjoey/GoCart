@@ -124,7 +124,13 @@ class _HomePageState extends State<HomePage> {
 
                         if (snapshot.hasData) {
                           for (var element in snapshot.data!.docs) {
-                            data.add(element.data());
+                              var data1 = element.data() as Map;
+
+                              // setState(() {
+                              if (data1[Constants.prodCategory] !=
+                                  'Cooked Foods') {
+                                data.add(data1);
+                              }
                           }
                         }
 

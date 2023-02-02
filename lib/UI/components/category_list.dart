@@ -1,10 +1,12 @@
 import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 import '../../CONSTANTS/constants.dart';
 import '../../PROVIDERS/user_provider.dart';
+import '../routes/route_helper.dart';
 
 class CategoryList extends StatelessWidget {
   final String cat;
@@ -39,15 +41,9 @@ class CategoryList extends StatelessWidget {
                   minLeadingWidth: Dimensions.sizedBoxWidth4 / 2,
                   visualDensity: VisualDensity(
                       vertical: -(Dimensions.sizedBoxHeight4 / 2)),
-                  onTap: () async {
-                    await sendPushMessage(
-                            Provider.of<UserProvider>(context, listen: false)
-                                .userData[Constants.userFCMToken],
-                            'Title test',
-                            'Test body, Hi this notification worked')
-                        .then((value) {
-                      print(value.toString());
-                    });
+                  onTap: () {
+                    Get.toNamed(RouteHelper.getProductListPage(),
+                        arguments: [cat, false]);
                   },
                 ),
               )),

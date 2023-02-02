@@ -91,58 +91,58 @@ class _LoginPageState extends State<LoginPage> {
                                 Dimensions.sizedBoxHeight10 * 4),
                             child: InkWell(
                               onTap: () async {
-                                if (Provider.of<AuthProvider>(context,
-                                                listen: false)
-                                            .isSigned ==
-                                        null ||
-                                    Provider.of<AuthProvider>(context,
-                                                listen: false)
-                                            .isSigned ==
-                                        false) {
-                                  await authProvider
-                                      .googleSignin()
-                                      .then((value) {
-                                    if (value == true) {
-                                      Constants(context).snackBar(
-                                          'Sign In Succesful!',
-                                          Constants.tetiary);
+                                // if (Provider.of<AuthProvider>(context,
+                                //                 listen: false)
+                                //             .isSigned ==
+                                //         null ||
+                                //     Provider.of<AuthProvider>(context,
+                                //                 listen: false)
+                                //             .isSigned ==
+                                //         false) {
+                                //   await authProvider
+                                //       .googleSignin()
+                                //       .then((value) {
+                                //     if (value == true) {
+                                //       Constants(context).snackBar(
+                                //           'Sign In Succesful!',
+                                //           Constants.tetiary);
 
-                                      Get.offNamed(RouteHelper.getRoutePage(),
-                                          arguments: 0);
-                                    } else if (value == false) {
-                                      Constants(context).snackBar(
-                                          'Sign In Failed!', Colors.red);
-                                    } else {
-                                      if (authProvider.status ==
-                                          Status.authenticateError) {
-                                        Constants(context)
-                                            .snackBar(value, Colors.red);
-                                      }
-                                    }
-                                  });
-                                } else {
-                                  await authProvider
-                                      .googleSignin1()
-                                      .then((value) {
-                                    if (value == true) {
-                                      Constants(context).snackBar(
-                                          'Sign In Succesful!',
-                                          Constants.tetiary);
+                                //       Get.offNamed(RouteHelper.getRoutePage(),
+                                //           arguments: 0);
+                                //     } else if (value == false) {
+                                //       Constants(context).snackBar(
+                                //           'Sign In Failed!', Colors.red);
+                                //     } else {
+                                //       if (authProvider.status ==
+                                //           Status.authenticateError) {
+                                //         Constants(context)
+                                //             .snackBar(value, Colors.red);
+                                //       }
+                                //     }
+                                //   });
+                                // } else {
+                                //   await authProvider
+                                //       .googleSignin1()
+                                //       .then((value) {
+                                //     if (value == true) {
+                                //       Constants(context).snackBar(
+                                //           'Sign In Succesful!',
+                                //           Constants.tetiary);
 
-                                      Get.offNamed(RouteHelper.getRoutePage(),
-                                          arguments: 0);
-                                    } else if (value == false) {
-                                      Constants(context).snackBar(
-                                          'Sign In Failed!', Colors.red);
-                                    } else {
-                                      if (authProvider.status ==
-                                          Status.authenticateError) {
-                                        Constants(context)
-                                            .snackBar(value, Colors.red);
-                                      }
-                                    }
-                                  });
-                                }
+                                //       Get.offNamed(RouteHelper.getRoutePage(),
+                                //           arguments: 0);
+                                //     } else if (value == false) {
+                                //       Constants(context).snackBar(
+                                //           'Sign In Failed!', Colors.red);
+                                //     } else {
+                                //       if (authProvider.status ==
+                                //           Status.authenticateError) {
+                                //         Constants(context)
+                                //             .snackBar(value, Colors.red);
+                                //       }
+                                //     }
+                                //   });
+                                // }
                               },
                               borderRadius: BorderRadius.circular(
                                   Dimensions.sizedBoxHeight10 * 4),

@@ -52,6 +52,12 @@ class UserProvider extends ChangeNotifier {
     return snapshot;
   }
 
+  Future getUserById(String userId) async {
+    DocumentSnapshot snapshot = await userCollectionRef.doc(userId).get();
+
+    return snapshot.data();
+  }
+
   // Future getUserDataById(String uid) async {
   //   DocumentSnapshot snapshot = await userCollectionRef.doc(uid).get();
 

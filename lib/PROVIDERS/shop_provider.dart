@@ -85,7 +85,7 @@ class ShopProvider extends ChangeNotifier {
 
         await Provider.of<UserProvider>(context1, listen: false).updateUserData(
             {Constants.userIsSeller: true}, userId).then((value) async {
-          Preferences().saveBoolData(Constants.userIsSeller, true);
+          // Preferences().saveBoolData(Constants.userIsSeller, true);
 
           await fetchAllShops().then((value) {
             Constants(context).snackBar(

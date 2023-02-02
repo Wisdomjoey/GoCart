@@ -17,6 +17,7 @@ class DetailsBottomNav extends StatefulWidget {
   final Icon? icon;
   final VoidCallback? pressed;
   final String? prodId;
+  final String? userId;
   final String? shopName;
   final String? category;
   final double? amount;
@@ -31,7 +32,8 @@ class DetailsBottomNav extends StatefulWidget {
       this.shopName,
       this.amount,
       this.category,
-      this.child});
+      this.child,
+      this.userId});
 
   @override
   State<DetailsBottomNav> createState() => _DetailsBottomNavState();
@@ -67,38 +69,47 @@ class _DetailsBottomNavState extends State<DetailsBottomNav> {
                                 Processes.waiting
                             ? null
                             : () async {
-                                List favs = Provider.of<UserProvider>(context,
-                                        listen: false)
-                                    .userData[Constants.userFavourites];
-                                Provider.of<GlobalProvider>(context,
-                                        listen: false)
-                                    .setProcess(Processes.waiting);
+                                String uid =
+                                    FirebaseAuth.instance.currentUser!.uid;
 
-                                setState(() {
-                                  added = !added;
-                                });
-
-                                await Provider.of<CartProvider>(context,
-                                        listen: false)
-                                    .addToCart(
-                                        FirebaseAuth.instance.currentUser!.uid,
-                                        widget.prodId!,
-                                        widget.amount!,
-                                        widget.shopName!)
-                                    .then((value) async {
-                                  favs.remove(widget.prodId!);
-
-                                  await Provider.of<UserProvider>(context,
+                                if (uid == widget.userId) {
+                                  Constants(context).snackBar(
+                                      'You are the owner of this product',
+                                      Colors.red);
+                                } else {
+                                  List favs = Provider.of<UserProvider>(context,
                                           listen: false)
-                                      .updateUserData(
-                                          {Constants.userFavourites: favs},
-                                          FirebaseAuth.instance.currentUser!
-                                              .uid).then((value) {
-                                    Provider.of<GlobalProvider>(context,
-                                            listen: false)
-                                        .setProcess(Processes.done);
+                                      .userData[Constants.userFavourites];
+                                  Provider.of<GlobalProvider>(context,
+                                          listen: false)
+                                      .setProcess(Processes.waiting);
+
+                                  setState(() {
+                                    added = !added;
                                   });
-                                });
+
+                                  await Provider.of<CartProvider>(context,
+                                          listen: false)
+                                      .addToCart(
+                                          uid,
+                                          widget.prodId!,
+                                          widget.amount!,
+                                          widget.shopName!,
+                                          widget.category!)
+                                      .then((value) async {
+                                    favs.remove(widget.prodId!);
+
+                                    await Provider.of<UserProvider>(context,
+                                            listen: false)
+                                        .updateUserData(
+                                            {Constants.userFavourites: favs},
+                                            uid).then((value) {
+                                      Provider.of<GlobalProvider>(context,
+                                              listen: false)
+                                          .setProcess(Processes.done);
+                                    });
+                                  });
+                                }
                               }),
                     text: widget.text,
                     icon: widget.icon,

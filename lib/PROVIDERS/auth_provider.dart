@@ -31,8 +31,8 @@ class AuthProvider extends ChangeNotifier {
   bool _loginStatus = false;
   bool get loginStatus => _loginStatus;
 
-  bool? _isSigned = false;
-  bool? get isSigned => _isSigned;
+  // bool? _isSigned = false;
+  // bool? get isSigned => _isSigned;
 
   bool _isPhoneVerified = false;
   bool get isPhoneVerified => _isPhoneVerified;
@@ -42,7 +42,7 @@ class AuthProvider extends ChangeNotifier {
 
   initialize(Status statusState) async {
     _status = statusState;
-    _isSigned = await Preferences().getBoolData(Constants.prefsUserSigned);
+    // _isSigned = await Preferences().getBoolData(Constants.prefsUserSigned);
     notifyListeners();
   }
 
@@ -147,18 +147,18 @@ class AuthProvider extends ChangeNotifier {
             //   documentSnapshot[Constants.userFirstName],
             //   documentSnapshot[Constants.userLastName]
             // ]);
-            Preferences().saveStringData(Constants.prefsUserEmail,
-                documentSnapshot[Constants.userEmail]);
-            Preferences().saveStringData(Constants.prefsUserFirstName,
-                documentSnapshot[Constants.userFirstName]);
-            Preferences().saveStringData(Constants.prefsUserLastName,
-                documentSnapshot[Constants.userLastName]);
-            Preferences().saveBoolData(Constants.prefsUserIsSeller,
-                documentSnapshot[Constants.userIsSeller]);
-            Preferences().saveBoolData(Constants.prefsUserIsSeller, true);
+            // Preferences().saveStringData(Constants.prefsUserEmail,
+            //     documentSnapshot[Constants.userEmail]);
+            // Preferences().saveStringData(Constants.prefsUserFirstName,
+            //     documentSnapshot[Constants.userFirstName]);
+            // Preferences().saveStringData(Constants.prefsUserLastName,
+            //     documentSnapshot[Constants.userLastName]);
+            // Preferences().saveBoolData(Constants.prefsUserIsSeller,
+            //     documentSnapshot[Constants.userIsSeller]);
+            // Preferences().saveBoolData(Constants.prefsUserIsSeller, true);
 
             _status = Status.authenticated;
-            _isSigned = true;
+            // _isSigned = true;
             notifyListeners();
 
             return true;
@@ -220,14 +220,14 @@ class AuthProvider extends ChangeNotifier {
             //   documentSnapshot[Constants.userFirstName],
             //   documentSnapshot[Constants.userLastName]
             // ]);
-            Preferences().saveStringData(Constants.prefsUserEmail,
-                documentSnapshot[Constants.userEmail]);
-            Preferences().saveStringData(Constants.prefsUserFirstName,
-                documentSnapshot[Constants.userFirstName]);
-            Preferences().saveStringData(Constants.prefsUserLastName,
-                documentSnapshot[Constants.userLastName]);
-            Preferences().saveBoolData(Constants.prefsUserSigned,
-                documentSnapshot[Constants.userIsSeller]);
+            // Preferences().saveStringData(Constants.prefsUserEmail,
+            //     documentSnapshot[Constants.userEmail]);
+            // Preferences().saveStringData(Constants.prefsUserFirstName,
+            //     documentSnapshot[Constants.userFirstName]);
+            // Preferences().saveStringData(Constants.prefsUserLastName,
+            //     documentSnapshot[Constants.userLastName]);
+            // Preferences().saveBoolData(Constants.prefsUserSigned,
+            //     documentSnapshot[Constants.userIsSeller]);
 
             _status = Status.authenticated;
             notifyListeners();
@@ -266,10 +266,10 @@ class AuthProvider extends ChangeNotifier {
       // }
 
       // Preferences().saveListData(Constants.prefsUserFullName, ['', '']);
-      Preferences().saveStringData(Constants.prefsUserEmail, '');
-      Preferences().saveStringData(Constants.prefsUserFirstName, '');
-      Preferences().saveStringData(Constants.prefsUserLastName, '');
-      Preferences().saveBoolData(Constants.prefsUserIsSeller, false);
+      // Preferences().saveStringData(Constants.prefsUserEmail, '');
+      // Preferences().saveStringData(Constants.prefsUserFirstName, '');
+      // Preferences().saveStringData(Constants.prefsUserLastName, '');
+      // Preferences().saveBoolData(Constants.prefsUserIsSeller, false);
     } on FirebaseException catch (e) {
       return e.message;
     }
@@ -318,7 +318,7 @@ class AuthProvider extends ChangeNotifier {
                 'Phone Number Verified Successfully!', Constants.tetiary);
 
             _isPhoneVerified = true;
-            Preferences().saveBoolData(Constants.prefsUserPhoneVerified, true);
+            // Preferences().saveBoolData(Constants.prefsUserPhoneVerified, true);
 
             await Provider.of<UserProvider>(context, listen: false)
                 .initializeUserData(firebaseAuth.currentUser!.uid)
@@ -336,9 +336,30 @@ class AuthProvider extends ChangeNotifier {
 
     } on FirebaseException catch (e) {
       if (e.code == 'provider-already-linked') {
-        Constants(context).snackBar('already linked', Constants.primary);
+        PhoneAuthCredential credential =
+            PhoneAuthProvider.credential(verificationId: verId, smsCode: otp);
 
-        Get.offAllNamed(RouteHelper.getRoutePage(), arguments: 0);
+        await firebaseAuth.currentUser
+            ?.updatePhoneNumber(credential)
+            .then((value) async {
+          await Provider.of<UserProvider>(context, listen: false)
+              .updateUserData({
+            Constants.userIsPhoneVerified: true,
+            Constants.userPhone: '+234$phone'
+          }, FirebaseAuth.instance.currentUser!.uid).then((value) async {
+            Constants(context).snackBar(
+                'Phone Number Verified Successfully!', Constants.tetiary);
+
+            _isPhoneVerified = true;
+            // Preferences().saveBoolData(Constants.prefsUserPhoneVerified, true);
+
+            await Provider.of<UserProvider>(context, listen: false)
+                .initializeUserData(firebaseAuth.currentUser!.uid)
+                .then((value) {
+              Get.offAllNamed(RouteHelper.getRoutePage(), arguments: 0);
+            });
+          });
+        });
       } else if (e.message!.contains(
           'The sms verification code used to create the phone auth credential is invalid')) {
         Constants(context).snackBar('Code entered is wrong', Colors.red);
