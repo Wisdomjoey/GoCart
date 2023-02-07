@@ -32,9 +32,10 @@ class _SellerDashboardState extends State<SellerDashboard> {
     super.initState();
 
     shopData = (Provider.of<ShopProvider>(context, listen: false).shops.where(
-        (element) =>
-            element[Constants.userId] ==
-            FirebaseAuth.instance.currentUser!.uid)).elementAt(0) as Map<String, dynamic>;
+            (element) =>
+                element[Constants.userId] ==
+                FirebaseAuth.instance.currentUser!.uid)).elementAt(0)
+        as Map<String, dynamic>;
 
     pages = [
       DashboardPage(
@@ -62,7 +63,8 @@ class _SellerDashboardState extends State<SellerDashboard> {
         actions: [
           IconButton(
               onPressed: (() {
-                Get.toNamed(RouteHelper.getManageShopPage(), arguments: shopData);
+                Get.toNamed(RouteHelper.getManageShopPage(),
+                    arguments: shopData);
               }),
               tooltip: 'Manage Shop',
               icon: Stack(alignment: Alignment.center, children: [

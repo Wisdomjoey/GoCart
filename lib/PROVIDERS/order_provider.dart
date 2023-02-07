@@ -5,22 +5,17 @@ import 'package:provider/provider.dart';
 
 import '../CONSTANTS/constants.dart';
 
-enum OrderStats { processing, complete, error, init }
-
 class OrderProvider extends ChangeNotifier {
-  OrderStats _order = OrderStats.init;
-
-  OrderStats get orderStats => _order;
+  final BuildContext context;
 
   CollectionReference orderCollectionRef =
       FirebaseFirestore.instance.collection(Constants.collectionOrders);
 
-  Future createOrder(String userId, List amount, List<int> quantity,
-      List<Map<String, dynamic>> prodData, BuildContext context) async {
-    try {
-      _order = OrderStats.processing;
-      notifyListeners();
+  OrderProvider(this.context);
 
+  Future createOrder(String userId, List amount, List<int> quantity,
+      List<Map<String, dynamic>> prodData) async {
+    try {
       for (var i = 0; i < prodData.length; i++) {
         DocumentReference documentReference = await orderCollectionRef.add({
           Constants.uid: '',
@@ -51,6 +46,8 @@ class OrderProvider extends ChangeNotifier {
                     prodData[i][Constants.uid],
                     amount[i].reduce((value, element) => value + element),
                     prodData[i][Constants.shopName],
+                    true,
+                    null,
                     true)
                 .then((value) {
               Constants(context).snackBar(
@@ -67,56 +64,35 @@ class OrderProvider extends ChangeNotifier {
         });
       }
 
-      _order = OrderStats.complete;
-      notifyListeners();
-
       return true;
     } on FirebaseException catch (e) {
-      _order = OrderStats.error;
-      notifyListeners();
-
       return e.message;
     }
   }
 
   Future updateOrderStatus(String status, String orderUid) async {
-    _order = OrderStats.processing;
-    notifyListeners();
     DocumentReference documentReference = orderCollectionRef.doc(orderUid);
 
     await documentReference.update({
       Constants.orderStatus: status,
       Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
     }).then((_) {
-      _order = OrderStats.complete;
-      notifyListeners();
-
-      return 'Order status updated! ✅';
+      Constants(context)
+          .snackBar('Order status updated! ✅', Constants.tetiary);
     }).catchError((err) {
-      _order = OrderStats.error;
-      notifyListeners();
-
-      return err;
+      Constants(context)
+          .snackBar(err.toString(), Colors.red);
     });
   }
 
-  Future fetchUserOrders(String userId, BuildContext context) async {
+  Future fetchUserOrders(String userId) async {
     try {
-      _order = OrderStats.processing;
-      // notifyListeners();
-
       QuerySnapshot querySnapshot = await orderCollectionRef
           .where(Constants.userId, isEqualTo: userId)
           .get();
 
-      _order = OrderStats.complete;
-      notifyListeners();
-
       return querySnapshot.docs;
     } on FirebaseException catch (e) {
-      _order = OrderStats.error;
-      notifyListeners();
-
       Constants(context).snackBar(e.message!, Constants.tetiary);
 
       return [];

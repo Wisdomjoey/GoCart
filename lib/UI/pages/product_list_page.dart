@@ -13,7 +13,8 @@ class ProductListPage extends StatefulWidget {
   final String title;
   final bool isSearched;
 
-  const ProductListPage({super.key, required this.title, required this.isSearched});
+  const ProductListPage(
+      {super.key, required this.title, required this.isSearched});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
@@ -66,18 +67,39 @@ class _ProductListPageState extends State<ProductListPage> {
             margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
             child: snapshot.connectionState == ConnectionState.waiting
                 ? const Center(
-                  child: CircularProgressIndicator(
+                    child: CircularProgressIndicator(
                       color: Constants.tetiary,
                     ),
-                )
+                  )
                 : (snapshot.data.isNotEmpty
                     ? SingleChildScrollView(
                         child: ProductBox(
                           snapshotDocs: snapshot.data,
                         ),
                       )
-                    : const Center(
-                        child: Text('No Product'),
+                    :  Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Center(
+                            child: SizedBox(
+                              width: Dimensions.sizedBoxWidth100 * 2.5,
+                              height: Dimensions.sizedBoxWidth100 * 2.5,
+                              child: Image.asset(
+                                'assets/images/Search.png',
+                                width: Dimensions.sizedBoxWidth100 * 3,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            height: Dimensions.sizedBoxWidth10 * 2,
+                          ),
+                          const Center(
+                            child: Text(
+                              'Product Not Found',
+                              style: TextStyle(color: Constants.grey),
+                            ),
+                          ),
+                        ],
                       )),
           );
         },

@@ -1,5 +1,4 @@
 import 'package:GOCart/CONSTANTS/constants.dart';
-import 'package:GOCart/PREFS/preferences.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -27,9 +26,6 @@ class AuthProvider extends ChangeNotifier {
 
   Status _status = Status.uninitialized;
   Status get status => _status;
-
-  bool _loginStatus = false;
-  bool get loginStatus => _loginStatus;
 
   // bool? _isSigned = false;
   // bool? get isSigned => _isSigned;
@@ -275,11 +271,6 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  setLoginStatus() {
-    _loginStatus = firebaseAuth.currentUser != null;
-    notifyListeners();
-  }
-
   verifyPhoneNumber(BuildContext context, String phone) async {
     await FirebaseAuth.instance.verifyPhoneNumber(
         phoneNumber: '+234$phone',
@@ -390,6 +381,22 @@ class AuthProvider extends ChangeNotifier {
       // Constants(context).snackBar(e.message!, Colors.red);
 
       return e.message;
+    }
+  }
+
+  Future reauthenticate(BuildContext context, String email, String password) async {
+    try {
+      AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+
+      User? user = (await firebaseAuth.currentUser!.reauthenticateWithCredential(credential)).user;
+
+      if (user != null) {
+        return true;
+      }
+    } on FirebaseException catch (e) {
+      Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 }

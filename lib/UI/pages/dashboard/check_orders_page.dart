@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../CONSTANTS/constants.dart';
+import '../../../PROVIDERS/global_provider.dart';
 import '../../utils/dimensions.dart';
 import '../../widgets/box_chip_widget.dart';
 
@@ -149,6 +150,9 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                                                     .imgUrl]),
                                                     fit: BoxFit.contain)),
                                           ),
+                                          SizedBox(
+                                            width: Dimensions.sizedBoxWidth10,
+                                          ),
                                           Expanded(
                                             child: Ink(
                                               child: Column(
@@ -223,9 +227,10 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.orderId],
                                               data[index][Constants.imgUrl],
                                               data[index][Constants.name],
-                                              'NEW ORDER',
+                                              'NEW',
                                               data[index][Constants.amount][0],
-                                              Constants.tetiary));
+                                              Constants.tetiary,
+                                              data[index][Constants.uid]));
                                     },
                                   ),
                                 ),
@@ -304,6 +309,9 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                                                   Constants
                                                                       .imgUrl]),
                                                       fit: BoxFit.contain)),
+                                            ),
+                                            SizedBox(
+                                              width: Dimensions.sizedBoxWidth10,
                                             ),
                                             Expanded(
                                               child: Ink(
@@ -386,7 +394,8 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.name],
                                               'PROCESSING',
                                               data[index][Constants.amount][0],
-                                              Constants.tetiary));
+                                              Constants.tetiary,
+                                              data[index][Constants.uid]));
                                     },
                                   ),
                                 ),
@@ -465,6 +474,9 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                                                   Constants
                                                                       .imgUrl]),
                                                       fit: BoxFit.contain)),
+                                            ),
+                                            SizedBox(
+                                              width: Dimensions.sizedBoxWidth10,
                                             ),
                                             Expanded(
                                               child: Ink(
@@ -547,7 +559,8 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.name],
                                               'DELIVERED',
                                               data[index][Constants.amount][0],
-                                              Constants.primary));
+                                              Constants.primary,
+                                              data[index][Constants.uid]));
                                     },
                                   ),
                                 ),
@@ -626,6 +639,9 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                                                   Constants
                                                                       .imgUrl]),
                                                       fit: BoxFit.contain)),
+                                            ),
+                                            SizedBox(
+                                              width: Dimensions.sizedBoxWidth10,
                                             ),
                                             Expanded(
                                               child: Ink(
@@ -713,7 +729,8 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               'CANCELLED - PURCHASE UNSUCCESSFUL',
                                               data[index][Constants.amount][0],
                                               const Color.fromARGB(
-                                                  255, 100, 100, 100)));
+                                                  255, 100, 100, 100),
+                                              data[index][Constants.uid]));
                                     },
                                   ),
                                 ),
@@ -729,7 +746,9 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
   }
 
   Widget _showDialog(context, String orderId, String imgUrl, String name,
-      String status, double price, Color color) {
+      String status, double price, Color color, String orderUid) {
+    String currency = Constants(context).currency().currencySymbol;
+
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
@@ -768,6 +787,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
               height: Dimensions.sizedBoxHeight10,
             ),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   width: Dimensions.sizedBoxWidth100,
@@ -776,6 +796,9 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                       image: DecorationImage(
                           image: CachedNetworkImageProvider(imgUrl),
                           fit: BoxFit.contain)),
+                ),
+                SizedBox(
+                  width: Dimensions.sizedBoxWidth10,
                 ),
                 Expanded(
                   child: Text(name,
@@ -800,7 +823,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                           fontSize: Dimensions.font14),
                       children: [
                         TextSpan(
-                          text: '\$ $price',
+                          text: '$currency${Constants.format.format(price)}',
                           style: const TextStyle(color: Colors.grey),
                         ),
                       ]),
@@ -844,8 +867,43 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                         padding: EdgeInsets.symmetric(
                             vertical: Dimensions.sizedBoxHeight4),
                         width: Dimensions.sizedBoxWidth100,
-                        child: const ElevatedBtn(
+                        child: ElevatedBtn(
+                          pressed: () async {
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .setProcess(Processes.waiting);
+
+                            await Provider.of<OrderProvider>(context,
+                                    listen: false)
+                                .updateOrderStatus(
+                                    Constants.processing, orderUid)
+                                .whenComplete(() {
+                              Provider.of<GlobalProvider>(context,
+                                      listen: false)
+                                  .setProcess(Processes.done);
+                              Navigator.pop(context);
+                            });
+                          },
                           text: 'Update',
+                          disabled:
+                              Provider.of<GlobalProvider>(context).process ==
+                                      Processes.waiting
+                                  ? true
+                                  : false,
+                          child: Provider.of<GlobalProvider>(context).process ==
+                                  Processes.waiting
+                              ? SizedBox(
+                                  width: Dimensions.sizedBoxWidth10 * 1.5,
+                                  height: Dimensions.sizedBoxWidth10 * 1.5,
+                                  child: const CircularProgressIndicator(
+                                    color: Constants.white,
+                                    strokeWidth: 3,
+                                  ))
+                              : Text(
+                                  'Update',
+                                  style: TextStyle(
+                                      color: Constants.white,
+                                      fontSize: Dimensions.font14),
+                                ),
                         ),
                       )
                     ],

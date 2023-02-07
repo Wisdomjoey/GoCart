@@ -16,6 +16,8 @@ class Constants {
 
   Constants(this.context);
 
+  static NumberFormat format = NumberFormat.decimalPattern('en');
+
   static const backgroundColor = Color.fromARGB(255, 243, 243, 243);
   static const primary = Colors.green;
   static const secondary = Color(0XFF00923F);

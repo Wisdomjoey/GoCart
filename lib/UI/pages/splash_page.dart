@@ -31,18 +31,24 @@ class _SplashPageState extends State<SplashPage> {
   double _opacity = 0.0;
 
   late bool _isLoggedIn;
+  late Timer timer1;
+  late Timer timer2;
+  late Timer timer3;
+  late Timer timer4;
 
   @override
   void initState() {
-    Provider.of<GlobalProvider>(context, listen: false)
-        .setLink(widget.prodId, context);
+    if (widget.prodId != null) {
+      Provider.of<GlobalProvider>(context, listen: false)
+          .setLink(widget.prodId, context);
+    }
 
-    Timer(const Duration(milliseconds: 500), ((() {
+    timer1 = Timer(const Duration(milliseconds: 500), ((() {
       setState(() {
         _alignment = Alignment.center;
       });
     })));
-    Timer(const Duration(milliseconds: 1500), ((() {
+    timer2 = Timer(const Duration(milliseconds: 1500), ((() {
       setState(() {
         _h = Dimensions.sizedBoxWidth10 * 7;
         _w = Dimensions.sizedBoxWidth100 * 2;
@@ -54,55 +60,57 @@ class _SplashPageState extends State<SplashPage> {
     //     _h = 130;
     //   });
     // })));
-    Timer(const Duration(milliseconds: 2200), ((() {
+    timer3 = Timer(const Duration(milliseconds: 2200), ((() {
       setState(() {
         _opacity = 1.0;
       });
     })));
-    Timer(const Duration(milliseconds: 4300), ((() async {
-      // Get.offNamed(RouteHelper.getRegisterPage());
-      Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
-
-      _isLoggedIn =
-          Provider.of<AuthProvider>(context, listen: false).loginStatus;
+    timer4 = Timer(const Duration(milliseconds: 4300), ((() async {
+      _isLoggedIn = FirebaseAuth.instance.currentUser == null ? false : true;
 
       if (_isLoggedIn) {
         await Provider.of<ShopProvider>(context, listen: false)
             .fetchAllShops()
-            .then((value) async {
-          await Provider.of<UserProvider>(context, listen: false)
-              .initializeUserData(FirebaseAuth.instance.currentUser!.uid)
-              .then((value1) async {
-            await Preferences()
-                .getListData(Constants.prefsSearchHistory)
-                .then((value2) {
-              if (value2 != null) {
-                Provider.of<GlobalProvider>(context, listen: false)
-                    .setHistory(value2);
-              }
+            .whenComplete(() async {
+          if (mounted) {
+            await Provider.of<UserProvider>(context, listen: false)
+                .initializeUserData(FirebaseAuth.instance.currentUser!.uid)
+                .whenComplete(() async {
+              if (mounted) {
+                await Preferences()
+                    .getListData(Constants.prefsSearchHistory)
+                    .then((value2) {
+                  if (mounted) {
+                    if (value2 != null) {
+                      Provider.of<GlobalProvider>(context, listen: false)
+                          .setHistory(value2);
+                    }
 
-              if (Provider.of<UserProvider>(context, listen: false)
-                  .userData[Constants.userPinIsSet]) {
-                Get.off(() => const LocalAuthPage());
-              } else {
-                Map<String, dynamic>? prodData =
-                    Provider.of<GlobalProvider>(context, listen: false)
-                        .prodData;
+                    if (Provider.of<UserProvider>(context, listen: false)
+                        .userData[Constants.userPinIsSet]) {
+                      Get.off(() => const LocalAuthPage());
+                    } else {
+                      Map<String, dynamic>? prodData =
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .prodData;
 
-                if (prodData != null) {
-                  Get.offNamedUntil(
-                      RouteHelper.getProductDetailsPage(),
-                      arguments: prodData,
-                      (route) => false);
-                } else {
-                  Get.offNamedUntil(
-                      RouteHelper.getRoutePage(),
-                      arguments: 0,
-                      (route) => false);
-                }
+                      if (prodData != null) {
+                        Get.offNamed(
+                          RouteHelper.getProductDetailsPage(),
+                          arguments: prodData,
+                        );
+                      } else {
+                        Get.offNamed(
+                          RouteHelper.getRoutePage(),
+                          arguments: 0,
+                        );
+                      }
+                    }
+                  }
+                });
               }
             });
-          });
+          }
         });
         // Get.offNamedUntil(RouteHelper.getPhoneRegisterPage(), (route) => false);
       } else {
@@ -118,6 +126,11 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void dispose() {
+    timer1.cancel();
+    timer2.cancel();
+    timer3.cancel();
+    timer4.cancel();
+
     super.dispose();
   }
 

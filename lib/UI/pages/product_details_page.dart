@@ -759,17 +759,17 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
           children: [
             IconBox(
               pressed: () =>
-                  Get.toNamed(RouteHelper.getRoutePage(), arguments: 0),
+                  Get.offNamed(RouteHelper.getRoutePage(), arguments: 0),
               icon: Icons.home_outlined,
             ),
             IconBox(
               pressed: () =>
-                  Get.toNamed(RouteHelper.getRoutePage(), arguments: 1),
+                  Get.offNamed(RouteHelper.getRoutePage(), arguments: 1),
               icon: Icons.list_alt_outlined,
             ),
             IconBox(
               pressed: () async {
-                Uri uri = Uri.parse(phone);
+                Uri uri = Uri.parse('tel:$phone');
 
                 await launchUrl(uri).then((value) {
                   if (!value) {

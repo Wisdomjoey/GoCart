@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:GOCart/PROVIDERS/global_provider.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
@@ -125,53 +126,99 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
     );
   }
 
-  Widget _showPasswordD() {
+  Widget _showPasswordD(String purpose) {
     return Dialog(
       insetPadding:
           EdgeInsets.symmetric(horizontal: Dimensions.sizedBoxWidth10),
-      child: Container(
-        padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 * 2),
-        // height: Dimensions.sizedBoxHeight230,
-        decoration: BoxDecoration(
-            color: Constants.white,
-            borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
-        child: Form(
-          key: key,
-          child: TextFormField(
-            controller: controller,
-            validator: (value) => !isValidPass(value!) ? 'Invalid password combination' : null,
-            obscureText: true,
-            autofocus: true,
-            decoration: const InputDecoration(
-                labelText: 'New Password',
-                helperText: 'More than 8 and at least 1 capital, 1 lowercase and 1 special characters',
-                helperMaxLines: 2,
-                prefix: Icon(
-                  Icons.key,
-                  color: Constants.grey,
-                )),
-            onEditingComplete: () {
-              if (key.currentState!.validate()) {
-                if (controller.text != '') {
-                  try {
-                    FirebaseAuth.instance.currentUser!
-                        .updatePassword(controller.text.trim())
-                        .then((value) {
-                      Constants(context).snackBar(
-                          'Password has been changed successfully!',
-                          Constants.tetiary);
+      child: Provider.of<GlobalProvider>(context).process == Processes.waiting
+          ? const Center(
+              child: CircularProgressIndicator(color: Constants.white),
+            )
+          : Container(
+              padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 * 2),
+              // height: Dimensions.sizedBoxHeight230,
+              decoration: BoxDecoration(
+                  color: Constants.white,
+                  borderRadius: BorderRadius.circular(Dimensions.font25 / 5)),
+              child: Form(
+                key: key,
+                child: TextFormField(
+                  controller: controller,
+                  validator: purpose != ''
+                      ? null
+                      : ((value) => !isValidPass(value!)
+                          ? 'Invalid password combination'
+                          : null),
+                  obscureText: true,
+                  autofocus: true,
+                  decoration: InputDecoration(
+                      labelText: purpose != ''
+                          ? 'Enter current password'
+                          : 'New Password',
+                      helperText: purpose != ''
+                          ? null
+                          : 'More than 8 and at least 1 capital, 1 lowercase and 1 special characters',
+                      helperMaxLines: 2,
+                      prefix: const Icon(
+                        Icons.key,
+                        color: Constants.grey,
+                      )),
+                  onEditingComplete: () async {
+                    if (purpose != '') {
+                      Provider.of<GlobalProvider>(context, listen: false)
+                          .setProcess(Processes.waiting);
 
-                      Navigator.pop(context);
-                    });
-                  } on FirebaseException catch (e) {
-                    Constants(context).snackBar(e.message!, Colors.red);
-                  }
-                }
-              }
-            },
-          ),
-        ),
-      ),
+                      await Provider.of<AuthProvider>(context, listen: false)
+                          .reauthenticate(
+                              context,
+                              Provider.of<UserProvider>(context, listen: false)
+                                  .userData[Constants.userEmail],
+                              controller.text)
+                          .then((value) async {
+                        if (value) {
+                          Provider.of<GlobalProvider>(context, listen: false)
+                              .setProcess(Processes.done);
+
+                          if (purpose == 'Password') {
+                            Navigator.pop(context);
+
+                            showDialog(
+                                context: context,
+                                builder: (context) => _showPasswordD(''));
+                          } else {
+                            await Provider.of<AuthProvider>(context,
+                                    listen: false)
+                                .signOut()
+                                .then((value) async {
+                              Get.offAllNamed(RouteHelper.registerPage);
+                              await FirebaseAuth.instance.currentUser!.delete();
+                            });
+                          }
+                        }
+                      });
+                    } else {
+                      if (key.currentState!.validate()) {
+                        if (controller.text != '') {
+                          try {
+                            FirebaseAuth.instance.currentUser!
+                                .updatePassword(controller.text.trim())
+                                .then((value) {
+                              Constants(context).snackBar(
+                                  'Password has been changed successfully!',
+                                  Constants.tetiary);
+
+                              Navigator.pop(context);
+                            });
+                          } on FirebaseException catch (e) {
+                            Constants(context).snackBar(e.message!, Colors.red);
+                          }
+                        }
+                      }
+                    }
+                  },
+                ),
+              ),
+            ),
     );
   }
 
@@ -253,7 +300,7 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                                       Provider.of<UserProvider>(context,
                                               listen: false)
                                           .userData[Constants.userPin]);
-                                          
+
                                   switch (purpose) {
                                     case 'Biometrics':
                                       if (Provider.of<UserProvider>(context,
@@ -333,40 +380,6 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                                       break;
 
                                     case 'Phone':
-                                      if (matches) {
-                                        Navigator.pop(context);
-
-                                        for (var element in controllers) {
-                                          element.clear();
-                                        }
-
-                                        Get.toNamed(
-                                            RouteHelper.getPhoneRegisterPage());
-                                      } else {
-                                        Constants(context).snackBar(
-                                            'Pin is incorrect', Colors.red);
-                                      }
-                                      break;
-
-                                    case 'Password':
-                                      if (matches) {
-                                        Navigator.pop(context);
-
-                                        for (var element in controllers) {
-                                          element.clear();
-                                        }
-
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) =>
-                                                _showPasswordD());
-                                      } else {
-                                        Constants(context).snackBar(
-                                            'Pin is incorrect', Colors.red);
-                                      }
-                                      break;
-
-                                    case 'Delete':
                                       if (matches) {
                                         Navigator.pop(context);
 

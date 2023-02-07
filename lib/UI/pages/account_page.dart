@@ -136,7 +136,6 @@ class AccountPage extends StatelessWidget {
                   if (value != null) {
                     Constants(context).snackBar(value, Colors.red);
                   }
-                  Get.offNamed(RouteHelper.getLoginPage());
                 });
               },
             )

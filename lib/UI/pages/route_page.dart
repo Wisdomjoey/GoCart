@@ -58,15 +58,6 @@ class _RoutePageState extends State<RoutePage> {
       });
     });
 
-    Future.delayed(Duration.zero, (() {
-      Provider.of<AuthProvider>(context, listen: false).setLoginStatus();
-
-      if (!Provider.of<AuthProvider>(context, listen: false).loginStatus) {
-        Constants(context).snackBar('You are not logged in', Colors.red);
-        Get.offAllNamed(RouteHelper.getLoginPage());
-      }
-    }));
-
     fetch();
 
     page = HomeAppBar(
@@ -114,6 +105,13 @@ class _RoutePageState extends State<RoutePage> {
       ),
       AccountAppBar()
     ];
+
+    FirebaseAuth.instance.authStateChanges().listen((event) {
+      if (event == null) {
+        Constants(context).snackBar('You are logged out', Colors.red);
+        Get.offAllNamed(RouteHelper.getLoginPage());
+      }
+    });
 
     super.initState();
   }

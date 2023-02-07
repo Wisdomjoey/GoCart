@@ -43,7 +43,7 @@ class _OrdersPageState extends State<OrdersPage>
       ),
       body: FutureBuilder(
         future: Provider.of<OrderProvider>(context, listen: false)
-            .fetchUserOrders(FirebaseAuth.instance.currentUser!.uid, context),
+            .fetchUserOrders(FirebaseAuth.instance.currentUser!.uid),
         builder: (context, AsyncSnapshot snapshot) {
           List<Map<String, dynamic>> open = [];
           List<Map<String, dynamic>> closed = [];

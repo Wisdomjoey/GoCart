@@ -240,7 +240,7 @@ class CheckProductsPage extends StatelessWidget {
                                                                       2,
                                                                 ),
                                                                 Text(
-                                                                  '$currency ${food[index][Constants.prodMinPrice]} - ~',
+                                                                  '$currency ${Constants.format.format(food[index][Constants.prodMinPrice])} - ~',
                                                                   style: TextStyle(
                                                                       fontWeight:
                                                                           FontWeight
@@ -615,7 +615,7 @@ class CheckProductsPage extends StatelessWidget {
                                                               .spaceBetween,
                                                       children: [
                                                         Text(
-                                                          '$currency ${prod[index][Constants.prodNewPrice]}',
+                                                          '$currency ${Constants.format.format(prod[index][Constants.prodNewPrice])}',
                                                           style: TextStyle(
                                                               fontSize:
                                                                   Dimensions

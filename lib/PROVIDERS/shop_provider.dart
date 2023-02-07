@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:GOCart/CONSTANTS/constants.dart';
-import 'package:GOCart/PREFS/preferences.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -206,7 +205,8 @@ class ShopProvider extends ChangeNotifier {
     }
   }
 
-  Future addImage(List<CroppedFile> croppedFiles, String userId, String shopId) async {
+  Future addImage(
+      List<CroppedFile> croppedFiles, String userId, String shopId) async {
     try {
       List<String> newUrls = [];
       int counter = 1;
@@ -358,12 +358,15 @@ class ShopProvider extends ChangeNotifier {
         _shops.add(element.data());
       }
       notifyListeners();
+      return true;
     } on FirebaseException catch (e) {
       _load = Load.processError;
       _shops = [];
       notifyListeners();
 
       Constants(context).snackBar(e.message!, Colors.red);
+
+      return false;
     }
   }
 
@@ -445,8 +448,8 @@ class ShopProvider extends ChangeNotifier {
   }
 
   Stream<QuerySnapshot> getAllShopProducts(String shopId) {
-      return productCollectionRef
-          .where(Constants.shopId, isEqualTo: shopId)
-          .snapshots(includeMetadataChanges: true);
+    return productCollectionRef
+        .where(Constants.shopId, isEqualTo: shopId)
+        .snapshots(includeMetadataChanges: true);
   }
 }

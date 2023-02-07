@@ -103,7 +103,7 @@ class ProductBox extends StatelessWidget {
                       height: Dimensions.sizedBoxHeight4,
                     ),
                     Text(
-                      '$currency ${product[Constants.prodNewPrice]}',
+                      '$currency ${Constants.format.format(product[Constants.prodNewPrice])}',
                       style: TextStyle(
                           fontSize: Dimensions.font16,
                           fontWeight: FontWeight.w500),

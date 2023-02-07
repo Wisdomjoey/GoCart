@@ -102,12 +102,29 @@ class CartProvider extends ChangeNotifier {
         if (querySnapshot.docs.isNotEmpty) {
           DocumentReference documentReference =
               collectionReference.doc(querySnapshot.docs[0][Constants.uid]);
+          await documentReference.get().then((value) {
+            List prodsId = value.get(Constants.productId);
 
-          documentReference.update({
-            Constants.productId: FieldValue.arrayUnion([productId]),
-            Constants.amount: FieldValue.arrayUnion([amount]),
-            Constants.updatedAt:
-                DateTime.now().millisecondsSinceEpoch.toString(),
+            if (prodsId.contains(productId)) {
+              Constants(context)
+                  .snackBar('Product already in cart!', Colors.red);
+            } else {
+              documentReference.update({
+                Constants.productId: FieldValue.arrayUnion([productId]),
+                Constants.amount: FieldValue.arrayUnion([amount]),
+                Constants.updatedAt:
+                    DateTime.now().millisecondsSinceEpoch.toString(),
+              }).then((value) async {
+                await getFoodCart(userId).then((value) {
+                  _cartSubtotal += amount;
+                  notifyListeners();
+
+                  Constants(context).snackBar(
+                      'Product added to cart successfully! ✅',
+                      Constants.tetiary);
+                });
+              });
+            }
           });
         } else {
           DocumentReference documentReference = await collectionReference.add({
@@ -133,8 +150,6 @@ class CartProvider extends ChangeNotifier {
 
               Constants(context).snackBar(
                   'Product added to cart successfully! ✅', Constants.tetiary);
-
-              return true;
             });
           });
         }
@@ -224,7 +239,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future removeFromFoodCart(String userId, String? productId, double amount,
-      String shopName, bool anchor) async {
+      String shopName, bool anchor, int? amountInd, bool getCart) async {
     try {
       if (foodCarts.isNotEmpty) {
         String cartId = ((_foodCarts
@@ -242,27 +257,35 @@ class CartProvider extends ChangeNotifier {
             _cartListNo--;
             notifyListeners();
 
-            await getFoodCart(userId).then((value) {
+            if (getCart) {
+              await getFoodCart(userId).then((value) {
+                Constants(context).snackBar(
+                    'Product removed from cart successfully! ✅',
+                    Constants.tetiary);
+              });
+            } else {
               Constants(context).snackBar(
                   'Product removed from cart successfully! ✅',
                   Constants.tetiary);
-            });
+            }
           });
         } else {
+          DocumentSnapshot documentSnapshot = await documentReference.get();
+          List amounts = documentSnapshot.get(Constants.amount);
+          amounts.removeAt(amountInd!);
+
           await documentReference.update({
             Constants.productId: FieldValue.arrayRemove([productId]),
-            Constants.amount: FieldValue.arrayRemove([amount]),
+            Constants.amount: amounts,
             Constants.updatedAt:
                 DateTime.now().millisecondsSinceEpoch.toString(),
           }).then((value) async {
             _cartSubtotal -= amount;
             notifyListeners();
 
-            await getFoodCart(userId).then((value) {
-              Constants(context).snackBar(
-                  'Product removed from cart successfully! ✅',
-                  Constants.tetiary);
-            });
+            Constants(context).snackBar(
+                'Food Item removed from cart successfully! ✅',
+                Constants.tetiary);
           });
         }
 
@@ -477,7 +500,7 @@ class CartProvider extends ChangeNotifier {
 
       List data = documentSnapshot[Constants.amount];
 
-      int index = data.indexOf(amount);
+      int index = data.indexOf(firstAmount);
 
       data[index] = amount;
 

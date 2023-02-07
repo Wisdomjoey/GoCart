@@ -100,19 +100,19 @@ class MyApp extends StatelessWidget {
           create: (context) => AuthProvider(),
         ),
         ChangeNotifierProvider(
+          create: (context) => UserProvider(context),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ShopProvider(context),
+        ),
+        ChangeNotifierProvider(
           create: (context) => ProductProvider(context),
         ),
         ChangeNotifierProvider(
           create: (context) => CartProvider(context),
         ),
         ChangeNotifierProvider(
-          create: (context) => OrderProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => ShopProvider(context),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => UserProvider(context),
+          create: (context) => OrderProvider(context),
         ),
         ChangeNotifierProvider(
           create: (context) => GlobalProvider(),

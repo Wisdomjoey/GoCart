@@ -85,7 +85,7 @@ class OrderDetailsPage extends StatelessWidget {
                               height: Dimensions.sizedBoxHeight10 / 5,
                             ),
                             Text(
-                              'Total: $currency${data[Constants.amount][0]}',
+                              'Total: $currency${Constants.format.format(data[Constants.amount][0])}',
                               style: TextStyle(
                                   fontSize: Dimensions.font12,
                                   color:
@@ -194,7 +194,7 @@ class OrderDetailsPage extends StatelessWidget {
                                                           .sizedBoxHeight10,
                                                     ),
                                                     Text(
-                                                      '$currency${data[Constants.amount][0]}',
+                                                      '$currency${Constants.format.format(data[Constants.amount][0])}',
                                                       style: TextStyle(
                                                           fontSize:
                                                               Dimensions.font12,
@@ -291,7 +291,7 @@ class OrderDetailsPage extends StatelessWidget {
                                               255, 138, 138, 138)),
                                     ),
                                     Text(
-                                      '$currency${data[Constants.amount][0] * data[Constants.quantity]}',
+                                      '$currency${Constants.format.format(data[Constants.amount][0] * data[Constants.quantity])}',
                                       style: TextStyle(
                                           fontSize: Dimensions.font12),
                                     ),
@@ -310,7 +310,7 @@ class OrderDetailsPage extends StatelessWidget {
                                               255, 138, 138, 138)),
                                     ),
                                     Text(
-                                      '$currency${snapshot.data[Constants.deliveryPrice]}',
+                                      '$currency${Constants.format.format(snapshot.data[Constants.deliveryPrice])}',
                                       style: TextStyle(
                                           fontSize: Dimensions.font12),
                                     ),
@@ -348,7 +348,7 @@ class OrderDetailsPage extends StatelessWidget {
                                               255, 138, 138, 138)),
                                     ),
                                     Text(
-                                      '$currency${(data[Constants.amount][0] * data[Constants.quantity]) + snapshot.data[Constants.deliveryPrice]}',
+                                      '$currency${Constants.format.format((data[Constants.amount][0] * data[Constants.quantity]) + snapshot.data[Constants.deliveryPrice])}',
                                       style: TextStyle(
                                           fontSize: Dimensions.font12,
                                           fontWeight: FontWeight.w500),

@@ -727,6 +727,10 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
+                    disabled: Provider.of<GlobalProvider>(context).process ==
+                            Processes.waiting
+                        ? true
+                        : false,
                     text: 'ADD TO FOOD CART',
                     icon: const Icon(Icons.add_shopping_cart_outlined),
                     pressed: () async {
@@ -744,6 +748,7 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                             .then((value) {
                           Provider.of<GlobalProvider>(context, listen: false)
                               .setProcess(Processes.done);
+                          controller.clear();
                           Navigator.pop(context);
                         });
                       }

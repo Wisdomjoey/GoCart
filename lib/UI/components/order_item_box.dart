@@ -74,6 +74,7 @@ class OrderItemBox extends StatelessWidget {
                                         data[index][Constants.imgUrl]),
                                     fit: BoxFit.contain)),
                           ),
+                          SizedBox(width: Dimensions.sizedBoxWidth10,),
                           Expanded(
                             child: Ink(
                               child: Column(

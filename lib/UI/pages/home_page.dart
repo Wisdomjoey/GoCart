@@ -81,7 +81,10 @@ class _HomePageState extends State<HomePage> {
                                 child: _categoryList(Constants.categories[e]),
                                 onTap: () => Get.toNamed(
                                     RouteHelper.getProductListPage(),
-                                    arguments: Constants.categories[e]),
+                                    arguments: [
+                                      Constants.categories[e],
+                                      false
+                                    ]),
                               ))
                           .toList(),
                     ),
@@ -124,13 +127,13 @@ class _HomePageState extends State<HomePage> {
 
                         if (snapshot.hasData) {
                           for (var element in snapshot.data!.docs) {
-                              var data1 = element.data() as Map;
+                            var data1 = element.data() as Map;
 
-                              // setState(() {
-                              if (data1[Constants.prodCategory] !=
-                                  'Cooked Foods') {
-                                data.add(data1);
-                              }
+                            // setState(() {
+                            if (data1[Constants.prodCategory] !=
+                                'Cooked Foods') {
+                              data.add(data1);
+                            }
                           }
                         }
 
