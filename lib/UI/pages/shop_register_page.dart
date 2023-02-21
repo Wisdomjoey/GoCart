@@ -31,6 +31,7 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
   List<CroppedFile> images = [];
   List<String> shopCategories = [];
   List<String> shopNames = [];
+  List<String> imgNames = [];
   List<String> tags = [];
 
   final GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
@@ -169,7 +170,8 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             TextFormFieldWidget(
-                              val: (() => !shopNames.contains(controller1.text)),
+                              val: (() =>
+                                  !shopNames.contains(controller1.text)),
                               error: 'Shop name already in use',
                               controller: controller1,
                               node: node1,
@@ -250,6 +252,36 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                       (context) => _buildBottomSheet(context));
                                 },
                               ),
+                            ),
+                            Wrap(
+                              spacing: Dimensions.sizedBoxWidth10 / 2,
+                              children: imgNames.map((e) {
+                                return Chip(
+                                  backgroundColor: Constants.tetiary,
+                                  label: SizedBox(
+                                    width: Dimensions.sizedBoxWidth100,
+                                    child: Flexible(
+                                      child: Text(
+                                        e,
+                                        overflow: TextOverflow.fade,
+                                        style: const TextStyle(
+                                            color: Constants.white),
+                                      ),
+                                    ),
+                                  ),
+                                  deleteIcon: const Icon(
+                                    Icons.close,
+                                    color: Constants.white,
+                                  ),
+                                  onDeleted: () {
+                                    setState(() {
+                                      int index = imgNames.indexOf(e);
+                                      images.removeAt(index);
+                                      imgNames.removeAt(index);
+                                    });
+                                  },
+                                );
+                              }).toList(),
                             ),
                             SizedBox(
                               height: Dimensions.sizedBoxHeight10 / 2,
@@ -339,35 +371,26 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
                                             await Provider.of<CartProvider>(
                                                     context,
                                                     listen: false)
-                                                .getCart(FirebaseAuth
+                                                .initializeCart(FirebaseAuth
                                                     .instance.currentUser!.uid)
                                                 .then((value) async {
-                                              await Provider.of<CartProvider>(
+                                              await Provider.of<ShopProvider>(
                                                       context,
                                                       listen: false)
-                                                  .getFoodCart(FirebaseAuth
-                                                      .instance
-                                                      .currentUser!
-                                                      .uid)
-                                                  .then((value) async {
-                                                await Provider.of<ShopProvider>(
+                                                  .fetchAllShops()
+                                                  .then((value) {
+                                                if (Provider.of<AuthProvider>(
                                                         context,
                                                         listen: false)
-                                                    .fetchAllShops()
-                                                    .then((value) {
-                                                  if (Provider.of<AuthProvider>(
-                                                          context,
-                                                          listen: false)
-                                                      .isPhoneVerified) {
-                                                    Get.offNamed(
-                                                        RouteHelper
-                                                            .getRoutePage(),
-                                                        arguments: 0);
-                                                  } else {
-                                                    Get.offNamed(RouteHelper
-                                                        .getPhoneRegisterPage());
-                                                  }
-                                                });
+                                                    .isPhoneVerified) {
+                                                  Get.offNamed(
+                                                      RouteHelper
+                                                          .getRoutePage(),
+                                                      arguments: 0);
+                                                } else {
+                                                  Get.offNamed(RouteHelper
+                                                      .getPhoneRegisterPage());
+                                                }
                                               });
                                             });
                                           }
@@ -393,117 +416,123 @@ class _ShopRegisterPageState extends State<ShopRegisterPage> {
   }
 
   Widget _buildBottomSheet(BuildContext context) {
-    return SizedBox(
-      width: double.maxFinite,
-      height: double.maxFinite,
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Container(
-          padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 * 2),
-          decoration: const BoxDecoration(color: Constants.white, boxShadow: [
-            BoxShadow(
-                color: Constants.grey, offset: Offset(-5, 0), blurRadius: 10)
-          ]),
-          height: Dimensions.sizedBoxHeight100 * 1.5,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  GestureDetector(
-                    onTap: (() async {
-                      await _getCamImage().then((value) async {
-                        if (value == null) return;
-
-                        await _cropImage(value.path).then((value) {
+    return GestureDetector(
+      onTap: () => Navigator.pop(context),
+      child: Container(
+        width: double.maxFinite,
+        height: double.maxFinite,
+        color: const Color.fromARGB(23, 0, 0, 0),
+        child: Align(
+          alignment: Alignment.bottomCenter,
+          child: Container(
+            padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 * 2),
+            decoration: const BoxDecoration(color: Constants.white, boxShadow: [
+              BoxShadow(
+                  color: Constants.grey, offset: Offset(-5, 0), blurRadius: 10)
+            ]),
+            height: Dimensions.sizedBoxHeight100 * 1.5,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: (() async {
+                        await _getCamImage().then((value) async {
                           if (value == null) return;
-
-                          setState(() {
-                            images.add(value);
-                          });
-                        });
-                      });
-                    }),
-                    child: SizedBox(
-                      width: Dimensions.sizedBoxWidth10 * 7,
-                      height: Dimensions.sizedBoxWidth10 * 7,
-                      child: Center(
-                        child: Column(
-                          children: [
-                            const Icon(
-                              Icons.camera_alt,
-                              color: Constants.grey,
-                            ),
-                            SizedBox(
-                              height: Dimensions.sizedBoxHeight10,
-                            ),
-                            Text(
-                              'Take a shot',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: Dimensions.font12),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: Dimensions.sizedBoxWidth10,
-                  ),
-                  GestureDetector(
-                    onTap: (() async {
-                      await _getImage().then((value) async {
-                        for (var element in value) {
-                          await _cropImage(element!.path).then((value) {
-                            if (value == null) return;
-
+    
+                          await _cropImage(value.path).then((value1) {
+                            if (value1 == null) return;
+    
                             setState(() {
-                              images.add(value);
+                              images.add(value1);
+                              imgNames.add(value.name);
                             });
                           });
-                        }
-                      });
-                    }),
-                    child: SizedBox(
-                      width: Dimensions.sizedBoxWidth10 * 7,
-                      height: Dimensions.sizedBoxWidth10 * 7,
-                      child: Center(
-                        child: Column(
-                          children: [
-                            const Icon(
-                              Icons.storage,
-                              color: Constants.grey,
-                            ),
-                            SizedBox(
-                              height: Dimensions.sizedBoxHeight10,
-                            ),
-                            Text(
-                              'Pick from storage',
-                              textAlign: TextAlign.center,
-                              style: TextStyle(fontSize: Dimensions.font12),
-                            )
-                          ],
+                        });
+                      }),
+                      child: SizedBox(
+                        width: Dimensions.sizedBoxWidth10 * 7,
+                        height: Dimensions.sizedBoxWidth10 * 7,
+                        child: Center(
+                          child: Column(
+                            children: [
+                              const Icon(
+                                Icons.camera_alt,
+                                color: Constants.grey,
+                              ),
+                              SizedBox(
+                                height: Dimensions.sizedBoxHeight10,
+                              ),
+                              Text(
+                                'Take a shot',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: Dimensions.font12),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  GestureDetector(
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(fontSize: Dimensions.font18),
+                    SizedBox(
+                      width: Dimensions.sizedBoxWidth10,
                     ),
-                    onTap: () => Navigator.pop(context),
-                  )
-                ],
-              )
-            ],
+                    GestureDetector(
+                      onTap: (() async {
+                        await _getImage().then((value) async {
+                          for (var element in value) {
+                            await _cropImage(element!.path).then((value1) {
+                              if (value1 == null) return;
+    
+                              setState(() {
+                                images.add(value1);
+                                imgNames.add(element.name);
+                              });
+                            });
+                          }
+                        });
+                      }),
+                      child: SizedBox(
+                        width: Dimensions.sizedBoxWidth10 * 7,
+                        height: Dimensions.sizedBoxWidth10 * 7,
+                        child: Center(
+                          child: Column(
+                            children: [
+                              const Icon(
+                                Icons.storage,
+                                color: Constants.grey,
+                              ),
+                              SizedBox(
+                                height: Dimensions.sizedBoxHeight10,
+                              ),
+                              Text(
+                                'Pick from storage',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(fontSize: Dimensions.font12),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GestureDetector(
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(fontSize: Dimensions.font18),
+                      ),
+                      onTap: () => Navigator.pop(context),
+                    )
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),

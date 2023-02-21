@@ -111,10 +111,13 @@ class _AccountManagementPageState extends State<AccountManagementPage> {
                     ListTileBtn(
                         onTap: () => showDialog(
                             context: context,
-                            builder: (context) => _showDialog('Password')),
+                            builder: (context) => _showPasswordD('Password')),
                         title: 'Change Password',
                         textSize: Dimensions.font14),
                     ListTileBtn(
+                        onTap: () => showDialog(
+                            context: context,
+                            builder: (context) => _showPasswordD('Delete')),
                         title: 'Delete Account', textSize: Dimensions.font14),
                   ],
                 ),

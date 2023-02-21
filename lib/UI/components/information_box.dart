@@ -1,13 +1,19 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
+import 'package:intl/intl.dart';
 
 import '../../CONSTANTS/constants.dart';
 
 class InformationBox extends StatelessWidget {
-  const InformationBox({super.key});
+  final Map<String, dynamic> data;
+
+  const InformationBox({super.key, required this.data});
 
   @override
   Widget build(BuildContext context) {
+    DateTime date = DateTime.parse(data['date']);
+
     return Container(
       margin: EdgeInsets.only(
           left: Dimensions.sizedBoxWidth10,
@@ -22,7 +28,7 @@ class InformationBox extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '23 December',
+            DateFormat('d MMMM').format(date),
             style: TextStyle(
                 color: const Color.fromARGB(255, 145, 145, 145),
                 fontSize: Dimensions.font12),
@@ -31,7 +37,7 @@ class InformationBox extends StatelessWidget {
             height: Dimensions.sizedBoxHeight10,
           ),
           Text(
-            '23 December',
+            '${date.hour} : ${date.minute} : ${date.second}',
             style: TextStyle(
                 color: const Color.fromARGB(255, 145, 145, 145),
                 fontSize: Dimensions.font12),
@@ -46,7 +52,7 @@ class InformationBox extends StatelessWidget {
             height: Dimensions.sizedBoxHeight4 * 2,
           ),
           Container(
-            height: Dimensions.sizedBoxHeight100 / 2,
+            height: Dimensions.sizedBoxHeight15 * 5,
             width: double.maxFinite,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(Dimensions.sizedBoxWidth4),
@@ -56,19 +62,29 @@ class InformationBox extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  height: Dimensions.sizedBoxHeight15 * 2,
-                  width: Dimensions.sizedBoxHeight15 * 2,
-                  decoration: const BoxDecoration(
+                  height: Dimensions.sizedBoxHeight15 * 4,
+                  width: Dimensions.sizedBoxHeight15 * 4,
+                  decoration: BoxDecoration(
                       image: DecorationImage(
-                          image: AssetImage('assets/images/1.jpg'),
+                          image: CachedNetworkImageProvider(data[Constants.imgUrl]),
                           fit: BoxFit.cover)),
                 ),
                 SizedBox(
                   width: Dimensions.sizedBoxWidth10,
                 ),
-                Text(
-                  'Dummy Product Data Available',
-                  style: TextStyle(fontSize: Dimensions.font12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      data[Constants.inboxSubject],
+                      style: TextStyle(fontSize: Dimensions.font13),
+                    ),
+                    SizedBox(height: Dimensions.sizedBoxHeight10 / 2,),
+                    Text(
+                      data[Constants.inboxMessage],
+                      style: TextStyle(fontSize: Dimensions.font12, color: Constants.grey),
+                    ),
+                  ],
                 )
               ],
             ),

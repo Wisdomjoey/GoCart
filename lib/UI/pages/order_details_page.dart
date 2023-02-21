@@ -1,7 +1,10 @@
 import 'dart:async';
 
 import 'package:GOCart/PROVIDERS/product_provider.dart';
+import 'package:GOCart/UI/pages/add_review_page.dart';
+import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
@@ -33,9 +36,25 @@ class OrderDetailsPage extends StatelessWidget {
         textSize: Dimensions.font24,
       ),
       body: FutureBuilder(
-        future: Provider.of<ProductProvider>(context, listen: false)
-            .getProductData(data[Constants.productId][0]),
-        builder: (context, AsyncSnapshot snapshot) {
+        future: Future.wait([
+          Provider.of<ProductProvider>(context, listen: false)
+              .getProductData(data[Constants.productId]),
+          Provider.of<ProductProvider>(context, listen: false)
+              .fetchAllReviews(data[Constants.productId])
+        ]),
+        builder: (context, AsyncSnapshot<List> snapshot) {
+          List revs = [];
+
+          if (snapshot.hasData) {
+            if (snapshot.data![1].isNotEmpty) {
+              revs = snapshot.data![1]
+                  .where((element) =>
+                      element[Constants.userId] ==
+                      FirebaseAuth.instance.currentUser!.uid)
+                  .elementAt(0);
+            }
+          }
+
           return snapshot.connectionState == ConnectionState.waiting
               ? const Center(
                   child: CircularProgressIndicator(color: Constants.tetiary),
@@ -85,7 +104,7 @@ class OrderDetailsPage extends StatelessWidget {
                               height: Dimensions.sizedBoxHeight10 / 5,
                             ),
                             Text(
-                              'Total: $currency${Constants.format.format(data[Constants.amount][0])}',
+                              'Total: $currency${Constants.format.format(data[Constants.amount])}',
                               style: TextStyle(
                                   fontSize: Dimensions.font12,
                                   color:
@@ -163,6 +182,9 @@ class OrderDetailsPage extends StatelessWidget {
                                                               .imgUrl]),
                                                   fit: BoxFit.contain)),
                                         ),
+                                        SizedBox(
+                                          width: Dimensions.sizedBoxWidth10,
+                                        ),
                                         Expanded(
                                           child: Ink(
                                             child: Column(
@@ -194,7 +216,7 @@ class OrderDetailsPage extends StatelessWidget {
                                                           .sizedBoxHeight10,
                                                     ),
                                                     Text(
-                                                      '$currency${Constants.format.format(data[Constants.amount][0])}',
+                                                      '$currency${Constants.format.format(data[Constants.amount])}',
                                                       style: TextStyle(
                                                           fontSize:
                                                               Dimensions.font12,
@@ -218,7 +240,7 @@ class OrderDetailsPage extends StatelessWidget {
                                   const Duration(milliseconds: 200),
                                   () => Get.toNamed(
                                       RouteHelper.getProductDetailsPage(),
-                                      arguments: snapshot.data));
+                                      arguments: snapshot.data![0]));
                             },
                           ),
                         ),
@@ -291,7 +313,7 @@ class OrderDetailsPage extends StatelessWidget {
                                               255, 138, 138, 138)),
                                     ),
                                     Text(
-                                      '$currency${Constants.format.format(data[Constants.amount][0] * data[Constants.quantity])}',
+                                      '$currency${Constants.format.format(data[Constants.amount] * data[Constants.quantity])}',
                                       style: TextStyle(
                                           fontSize: Dimensions.font12),
                                     ),
@@ -310,7 +332,7 @@ class OrderDetailsPage extends StatelessWidget {
                                               255, 138, 138, 138)),
                                     ),
                                     Text(
-                                      '$currency${Constants.format.format(snapshot.data[Constants.deliveryPrice])}',
+                                      '$currency${Constants.format.format(snapshot.data![0][Constants.deliveryPrice])}',
                                       style: TextStyle(
                                           fontSize: Dimensions.font12),
                                     ),
@@ -348,7 +370,7 @@ class OrderDetailsPage extends StatelessWidget {
                                               255, 138, 138, 138)),
                                     ),
                                     Text(
-                                      '$currency${Constants.format.format((data[Constants.amount][0] * data[Constants.quantity]) + snapshot.data[Constants.deliveryPrice])}',
+                                      '$currency${Constants.format.format((data[Constants.amount] * data[Constants.quantity]) + snapshot.data![0][Constants.deliveryPrice])}',
                                       style: TextStyle(
                                           fontSize: Dimensions.font12,
                                           fontWeight: FontWeight.w500),
@@ -431,9 +453,33 @@ class OrderDetailsPage extends StatelessWidget {
                           ],
                         ),
                       ),
+                      text == 'DELIVERED' && revs.isEmpty
+                          ? Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: Dimensions.sizedBoxHeight15,
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.all(
+                                      Dimensions.sizedBoxWidth4 * 2),
+                                  child: SizedBox(
+                                    width: double.maxFinite,
+                                    height: Dimensions.sizedBoxHeight100 / 2,
+                                    child: ElevatedBtn(
+                                      pressed: () => Get.to(() => AddReviewPage(
+                                            prodData: data,
+                                          )),
+                                      text: 'Add Review',
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Container(),
                       SizedBox(
                         height: Dimensions.sizedBoxHeight10,
-                      )
+                      ),
                     ],
                   ),
                 );

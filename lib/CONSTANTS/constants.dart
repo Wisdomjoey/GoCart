@@ -65,7 +65,7 @@ class Constants {
   static const String quantity = "quantity";
   static const String newOrder = "new";
   static const String processing = "processing";
-  static const String closed = "closed";
+  static const String delivered = "delivered";
   static const String cancelled = "cancelled";
   static const String deliveryPrice = "deliveryPrice";
 

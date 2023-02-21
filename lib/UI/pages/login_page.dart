@@ -1,4 +1,6 @@
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/PROVIDERS/cart_provider.dart';
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/pages/local_auth_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -58,7 +60,10 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
-      value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+      value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.light),
       child: Scaffold(
         appBar: const CurvedPainter(text1: 'Welcome', text2: 'Back 😊'),
         backgroundColor: Constants.white,
@@ -277,24 +282,39 @@ class _LoginPageState extends State<LoginPage> {
                                     if (value == true &&
                                         authProvider.status ==
                                             Status.authenticated) {
-                                      Constants(context).snackBar(
-                                          'Sign In Succesful!',
-                                          Constants.tetiary);
-
-                                      await Provider.of<UserProvider>(context,
+                                      await Provider.of<CartProvider>(context,
                                               listen: false)
-                                          .initializeUserData(FirebaseAuth
+                                          .initializeCart(FirebaseAuth
                                               .instance.currentUser!.uid)
-                                          .then((value) {
-                                        if (Provider.of<UserProvider>(context,
+                                          .whenComplete(() async {
+                                        await Provider.of<ShopProvider>(context,
                                                 listen: false)
-                                            .userData[Constants.userPinIsSet]) {
-                                          Get.off(() => const LocalAuthPage());
-                                        } else {
-                                          Get.offNamed(
-                                              RouteHelper.getRoutePage(),
-                                              arguments: 0);
-                                        }
+                                            .fetchAllShops()
+                                            .whenComplete(() async {
+                                          await Provider.of<UserProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .initializeUserData(FirebaseAuth
+                                                  .instance.currentUser!.uid)
+                                              .then((value) {
+                                            Constants(context).snackBar(
+                                                'Sign In Succesful!',
+                                                Constants.tetiary);
+
+                                            if (Provider.of<UserProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .userData[
+                                                Constants.userPinIsSet]) {
+                                              Get.off(
+                                                  () => const LocalAuthPage());
+                                            } else {
+                                              Get.offNamed(
+                                                  RouteHelper.getRoutePage(),
+                                                  arguments: 0);
+                                            }
+                                          });
+                                        });
                                       });
                                     } else if (value == false) {
                                       Constants(context).snackBar(
@@ -323,7 +343,8 @@ class _LoginPageState extends State<LoginPage> {
                                     fontSize: Dimensions.font15,
                                     decoration: TextDecoration.underline),
                               ),
-                              onTap: () {},
+                              onTap: () => Get.toNamed(
+                                  RouteHelper.getPasswordResetPage()),
                             ),
                             SizedBox(
                               height: Dimensions.sizedBoxHeight10 * 2,

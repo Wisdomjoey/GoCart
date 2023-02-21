@@ -113,6 +113,9 @@ class _DetailsBottomNavState extends State<DetailsBottomNav> {
                               }),
                     text: widget.text,
                     icon: widget.icon,
+                    disabled: Provider.of<GlobalProvider>(context).process ==
+                            Processes.waiting
+                        ? true : false,
                     child: Provider.of<GlobalProvider>(context).process ==
                             Processes.waiting
                         ? SizedBox(

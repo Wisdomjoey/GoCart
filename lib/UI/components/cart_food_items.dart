@@ -108,7 +108,8 @@ class _CartFoodItemsState extends State<CartFoodItems> {
                             physics: const NeverScrollableScrollPhysics(),
                             itemBuilder: (context, index) {
                               return Container(
-                                margin: EdgeInsets.only(bottom: Dimensions.sizedBoxHeight10),
+                                margin: EdgeInsets.only(
+                                    bottom: Dimensions.sizedBoxHeight10),
                                 width: double.maxFinite,
                                 height: Dimensions.sizedBoxHeight100,
                                 child: Row(
@@ -217,18 +218,19 @@ class _CartFoodItemsState extends State<CartFoodItems> {
                                                                   .reduce((value,
                                                                           element) =>
                                                                       value +
-                                                                      element),
+                                                                      element)
+                                                                  .toDouble(),
                                                               widget.shopName,
                                                               true,
                                                               null,
-                                                              false)
+                                                              false,
+                                                              true)
                                                           .then((value) {
                                                         Provider.of<GlobalProvider>(
                                                                 context,
                                                                 listen: false)
                                                             .setProcess(
-                                                                Processes
-                                                                    .waiting);
+                                                                Processes.done);
                                                       }).whenComplete(() =>
                                                               Get.close(1));
                                                     } else {
@@ -240,19 +242,22 @@ class _CartFoodItemsState extends State<CartFoodItems> {
                                                               widget.prodData[index]
                                                                   [Constants
                                                                       .uid],
-                                                              widget.amount[
-                                                                  index],
+                                                              widget
+                                                                  .amount[index]
+                                                                  .toDouble(),
                                                               widget.shopName,
                                                               false,
                                                               index,
-                                                              false)
-                                                          .then((value) => Provider.of<GlobalProvider>(
-                                                                  context,
-                                                                  listen: false)
-                                                              .setProcess(Processes
-                                                                  .done))
-                                                          .whenComplete(
-                                                              () => Get.close(1));
+                                                              false,
+                                                              true)
+                                                          .then((value) =>
+                                                              Provider.of<GlobalProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false)
+                                                                  .setProcess(
+                                                                      Processes.done))
+                                                          .whenComplete(() => Get.close(1));
                                                     }
                                                   },
                                                   child: const Icon(

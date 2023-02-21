@@ -15,9 +15,12 @@ class HomeSlider extends StatefulWidget {
 class _HomeSliderState extends State<HomeSlider> {
   final double _height = Dimensions.pageViewContainer;
   var _currentPageValue = 0.0;
-  
+  String asset = 'assets/images';
+
   @override
   Widget build(BuildContext context) {
+    List imgs = ['$asset/b1.jpg', '$asset/b2.webp', '$asset/b3.jpg', '$asset/b4.jpg', '$asset/b5.webp'];
+
     return Column(
       children: [
         SizedBox(
@@ -42,7 +45,7 @@ class _HomeSliderState extends State<HomeSlider> {
             ),
             itemCount: 5,
             itemBuilder: (context, index, realIndex) {
-              return _buildPageItem(index);
+              return _buildPageItem(index, imgs[index]);
             },
           ),
         ),
@@ -65,7 +68,7 @@ class _HomeSliderState extends State<HomeSlider> {
     );
   }
 
-  Widget _buildPageItem(int position) {
+  Widget _buildPageItem(int position, String img) {
     return Container(
       height: Dimensions.pageViewContainer,
       margin: EdgeInsets.only(
@@ -82,7 +85,7 @@ class _HomeSliderState extends State<HomeSlider> {
             splashColor: const Color.fromARGB(35, 55, 55, 55),
             child: Ink.image(
                 fit: BoxFit.cover,
-                image: const AssetImage('assets/images/med.gif')),
+                image: AssetImage(img)),
             onTap: () {},
           ),
         ),

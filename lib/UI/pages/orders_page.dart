@@ -97,12 +97,12 @@ class _OrdersPageState extends State<OrdersPage>
                       height: Dimensions.sizedBoxHeight10,
                     ),
                     Expanded(
-                      child: TabBarView(
-                          controller: _tabController,
-                          children: [
-                            OrderItemBox(data: open),
-                            OrderItemBox(data: closed,),
-                          ]),
+                      child: TabBarView(controller: _tabController, children: [
+                        OrderItemBox(data: open),
+                        OrderItemBox(
+                          data: closed,
+                        ),
+                      ]),
                     )
                   ],
                 );

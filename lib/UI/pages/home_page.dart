@@ -76,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                         horizontal: Dimensions.sizedBoxWidth10 / 2),
                     child: ListView(
                       scrollDirection: Axis.horizontal,
-                      children: [0, 1, 2, 3, 4]
+                      children: [0, 2, 3, 4, 5]
                           .map((e) => GestureDetector(
                                 child: _categoryList(Constants.categories[e]),
                                 onTap: () => Get.toNamed(

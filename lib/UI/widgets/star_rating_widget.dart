@@ -5,8 +5,9 @@ import '../../CONSTANTS/constants.dart';
 
 class StarRating extends StatelessWidget {
   final double rating;
+  final MainAxisAlignment? axis;
 
-  const StarRating({super.key, required this.rating});
+  const StarRating({super.key, required this.rating, this.axis});
 
   @override
   Widget build(BuildContext context) {
@@ -15,6 +16,7 @@ class StarRating extends StatelessWidget {
     int empty = 5 - rating.ceil();
 
     return Row(
+      mainAxisAlignment: axis ?? MainAxisAlignment.start,
       children: [
         ...List.generate(
             filled,

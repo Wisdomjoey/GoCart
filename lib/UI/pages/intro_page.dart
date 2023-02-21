@@ -6,6 +6,7 @@ import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:GOCart/UI/widgets/elevated_button_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import '../../CONSTANTS/constants.dart';
 
@@ -15,7 +16,29 @@ class IntroPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     requestPermission();
-    
+
+    permissions() async {
+      await Permission.camera.request().then((value) async {
+        if (value.isGranted) {
+          await Permission.phone.request().then((value1) async {
+            if (value1.isGranted) {
+              await Permission.storage.request().then((value2) {
+                if (value2.isDenied) {
+                  Navigator.pop(context);
+                }
+              });
+            } else {
+              Navigator.pop(context);
+            }
+          });
+        } else {
+          Navigator.pop(context);
+        }
+      });
+    }
+
+    permissions();
+
     return Scaffold(
       body: Stack(children: [
         Container(

@@ -69,9 +69,9 @@ class _LocalAuthPageState extends State<LocalAuthPage> {
 
       if (isEqual) {
         if (prodData != null) {
-          Get.toNamed(RouteHelper.getProductDetailsPage(), arguments: prodData);
+          Get.offNamed(RouteHelper.getProductDetailsPage(), arguments: prodData);
         } else {
-          Get.toNamed(RouteHelper.getRoutePage(), arguments: 0);
+          Get.offNamed(RouteHelper.getRoutePage(), arguments: 0);
         }
       } else {
         HapticFeedback.vibrate().then((value) => HapticFeedback.vibrate().then(
@@ -116,7 +116,7 @@ class _LocalAuthPageState extends State<LocalAuthPage> {
         .then((value) async {
       if (value == true) {
         if (prodData != null) {
-          Get.toNamed(RouteHelper.getProductDetailsPage(), arguments: prodData);
+          Get.offNamed(RouteHelper.getProductDetailsPage(), arguments: prodData);
         } else {
           Get.offNamed(RouteHelper.getRoutePage(), arguments: 0);
         }

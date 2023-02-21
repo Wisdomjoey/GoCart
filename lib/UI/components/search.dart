@@ -182,7 +182,7 @@ class _MySearchDelegateState extends State<_MySearchDelegate> {
                         return GestureDetector(
                           onTap: () {
                             Get.offNamed(RouteHelper.getProductListPage(),
-                                arguments: e);
+                                arguments: [e, false]);
                           },
                           child: Container(
                             color: Colors.transparent,

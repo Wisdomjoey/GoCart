@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:GOCart/CONSTANTS/constants.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
@@ -7,11 +5,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:http/http.dart' as http;
 
 FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();

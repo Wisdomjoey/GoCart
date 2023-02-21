@@ -133,9 +133,9 @@ class MyApp extends StatelessWidget {
         initialRoute: RouteHelper.getSplashPage(
             dynamicLink?.link.queryParameters['prodId']),
         getPages: RouteHelper.routes,
-        home: SplashPage(
-          prodId: dynamicLink?.link.queryParameters['prodId'],
-        ),
+        // home: SplashPage(
+        //   prodId: dynamicLink?.link.queryParameters['prodId'],
+        // ),
         // home: const RoutePage(
         //   pageId: 0,
         // ),

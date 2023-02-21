@@ -228,7 +228,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.imgUrl],
                                               data[index][Constants.name],
                                               'NEW',
-                                              data[index][Constants.amount][0],
+                                              data[index][Constants.amount],
                                               Constants.tetiary,
                                               data[index][Constants.uid]));
                                     },
@@ -393,7 +393,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.imgUrl],
                                               data[index][Constants.name],
                                               'PROCESSING',
-                                              data[index][Constants.amount][0],
+                                              data[index][Constants.amount],
                                               Constants.tetiary,
                                               data[index][Constants.uid]));
                                     },
@@ -406,7 +406,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
             ),
             StreamBuilder(
               stream: Provider.of<OrderProvider>(context, listen: false)
-                  .fetchSellerOrders(widget.shopName, Constants.closed),
+                  .fetchSellerOrders(widget.shopName, Constants.delivered),
               builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                 List data = [];
 
@@ -558,7 +558,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.imgUrl],
                                               data[index][Constants.name],
                                               'DELIVERED',
-                                              data[index][Constants.amount][0],
+                                              data[index][Constants.amount],
                                               Constants.primary,
                                               data[index][Constants.uid]));
                                     },
@@ -727,7 +727,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                                               data[index][Constants.imgUrl],
                                               data[index][Constants.name],
                                               'CANCELLED - PURCHASE UNSUCCESSFUL',
-                                              data[index][Constants.amount][0],
+                                              data[index][Constants.amount],
                                               const Color.fromARGB(
                                                   255, 100, 100, 100),
                                               data[index][Constants.uid]));
@@ -875,7 +875,7 @@ class _CheckOrdersPageState extends State<CheckOrdersPage>
                             await Provider.of<OrderProvider>(context,
                                     listen: false)
                                 .updateOrderStatus(
-                                    Constants.processing, orderUid)
+                                    Constants.processing, orderUid, null, null)
                                 .whenComplete(() {
                               Provider.of<GlobalProvider>(context,
                                       listen: false)

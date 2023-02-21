@@ -30,6 +30,7 @@ class _AddProductPageState extends State<AddProductPage> {
   // late List<XFile> images;
   // late XFile photo;
   List<CroppedFile> images = [];
+  List<String> imgNames = [];
   List<String> tags = [];
   List<String> specifications = [];
   List<String> keyFeatures = [];
@@ -141,11 +142,12 @@ class _AddProductPageState extends State<AddProductPage> {
                           await _getCamImage().then((value) async {
                             if (value == null) return;
 
-                            await _cropImage(value.path).then((value) {
-                              if (value == null) return;
+                            await _cropImage(value.path).then((value1) {
+                              if (value1 == null) return;
 
                               setState(() {
-                                images.add(value);
+                                images.add(value1);
+                                imgNames.add(value.name);
                               });
                             });
                           });
@@ -176,11 +178,12 @@ class _AddProductPageState extends State<AddProductPage> {
                           onTap: (() async {
                             await _getImage().then((value) async {
                               for (var element in value) {
-                                await _cropImage(element!.path).then((value) {
-                                  if (value == null) return;
+                                await _cropImage(element!.path).then((value1) {
+                                  if (value1 == null) return;
 
                                   setState(() {
-                                    images.add(value);
+                                    images.add(value1);
+                                    imgNames.add(element.name);
                                   });
                                 });
                               }
@@ -195,6 +198,36 @@ class _AddProductPageState extends State<AddProductPage> {
                       ),
                     ),
                   ),
+                ),
+                SizedBox(height: Dimensions.sizedBoxHeight10,),
+                Wrap(
+                  spacing: Dimensions.sizedBoxWidth10 / 2,
+                  children: imgNames.map((e) {
+                    return Chip(
+                      backgroundColor: Constants.tetiary,
+                      label: SizedBox(
+                        width: Dimensions.sizedBoxWidth100,
+                        child: Flexible(
+                          child: Text(
+                            e,
+                            overflow: TextOverflow.fade,
+                            style: const TextStyle(color: Constants.white),
+                          ),
+                        ),
+                      ),
+                      deleteIcon: const Icon(
+                        Icons.close,
+                        color: Constants.white,
+                      ),
+                      onDeleted: () {
+                        setState(() {
+                          int index = imgNames.indexOf(e);
+                          images.removeAt(index);
+                          imgNames.removeAt(index);
+                        });
+                      },
+                    );
+                  }).toList(),
                 ),
                 HeadSedction(
                   text: 'Add Product Name *',
@@ -249,7 +282,8 @@ class _AddProductPageState extends State<AddProductPage> {
                       });
                     })),
                 HeadSedction(
-                  text: 'Add Product Description ${dropdownValue == 'Cooked Foods' ? '(optional)' : '*'}',
+                  text:
+                      'Add Product Description ${dropdownValue == 'Cooked Foods' ? '(optional)' : '*'}',
                   tMargin: Dimensions.sizedBoxHeight15 * 2,
                   textSize: Dimensions.font16,
                 ),
@@ -259,13 +293,15 @@ class _AddProductPageState extends State<AddProductPage> {
                 TextFormField(
                   controller: textEditingController2,
                   focusNode: focusNode2,
-                  validator: dropdownValue == 'Cooked Foods' ? null : (value) {
-                    if (value == '') {
-                      return errMsg;
-                    } else {
-                      return null;
-                    }
-                  },
+                  validator: dropdownValue == 'Cooked Foods'
+                      ? null
+                      : (value) {
+                          if (value == '') {
+                            return errMsg;
+                          } else {
+                            return null;
+                          }
+                        },
                   maxLines: 8,
                   decoration: InputDecoration(
                       labelText: 'Description',
@@ -469,7 +505,8 @@ class _AddProductPageState extends State<AddProductPage> {
                               Radius.circular(Dimensions.sizedBoxWidth4)))),
                 ),
                 HeadSedction(
-                  text: 'Additional Details ${dropdownValue == 'Cooked Foods' ? '(optional)' : '*'}',
+                  text:
+                      'Additional Details ${dropdownValue == 'Cooked Foods' ? '(optional)' : '*'}',
                   tMargin: Dimensions.sizedBoxHeight15 * 2,
                   textSize: Dimensions.font16,
                 ),
@@ -493,10 +530,10 @@ class _AddProductPageState extends State<AddProductPage> {
                               },
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
-                          labelText: 'Total Stock',
-                          hintText: '50',
-                          enabled: dropdownValue == 'Cooked Foods' ? false : true
-                        ),
+                            labelText: 'Total Stock',
+                            hintText: '50',
+                            enabled:
+                                dropdownValue == 'Cooked Foods' ? false : true),
                       ),
                     ),
                     SizedBox(
@@ -635,7 +672,8 @@ class _AddProductPageState extends State<AddProductPage> {
                                   images,
                                   textEditingController6.text == ''
                                       ? 0
-                                      : int.parse(textEditingController6.text.trim()),
+                                      : int.parse(
+                                          textEditingController6.text.trim()),
                                   tags,
                                   widget.shopId,
                                   FirebaseAuth.instance.currentUser!.uid,
@@ -646,7 +684,7 @@ class _AddProductPageState extends State<AddProductPage> {
                               setState(() {
                                 _process = false;
                               });
-                              
+
                               tagController.clear();
                               textEditingController1.clear();
                               textEditingController2.clear();

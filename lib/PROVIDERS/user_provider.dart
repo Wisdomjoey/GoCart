@@ -94,7 +94,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   Future addToInbox(
-      String userId, String? productId, String message, String subject) async {
+      String userId, String imgUrl, String message, String subject) async {
     try {
       CollectionReference collectionReference =
           userCollectionRef.doc(userId).collection(Constants.collectionInbox);
@@ -103,7 +103,8 @@ class UserProvider extends ChangeNotifier {
         Constants.uid: '',
         Constants.inboxSubject: subject,
         Constants.inboxMessage: message,
-        Constants.productId: productId ?? ''
+        'date': DateTime.now().toString(),
+        Constants.imgUrl: imgUrl
       });
 
       await documentReference.update({Constants.uid: documentReference.id});
@@ -133,6 +134,12 @@ class UserProvider extends ChangeNotifier {
         .collection(Constants.collectionInbox)
         .get();
 
-    return querySnapshot;
+    List data = [];
+
+    for (var element in querySnapshot.docs) {
+      data.add(element.data());
+    }
+
+    return data;
   }
 }

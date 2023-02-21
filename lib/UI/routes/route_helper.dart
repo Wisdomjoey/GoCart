@@ -4,6 +4,7 @@ import 'package:GOCart/UI/pages/dashboard/add_product_page.dart';
 import 'package:GOCart/UI/pages/dashboard/edit_product_page.dart';
 import 'package:GOCart/UI/pages/dashboard/manage_shop_page.dart';
 import 'package:GOCart/UI/pages/intro_page.dart';
+import 'package:GOCart/UI/pages/password_reset_page.dart';
 import 'package:GOCart/UI/pages/phone_auth_page.dart';
 import 'package:GOCart/UI/pages/phone_register_page.dart';
 import 'package:GOCart/UI/pages/dashboard/seller_dasboard.dart';
@@ -62,6 +63,7 @@ class RouteHelper {
   static const String introPage = '/intro';
   static const String profilePage = '/profile';
   static const String dashboardPage = '/dashboard';
+  static const String passwordResetPage = '/password-reset';
 
   static getCartPage() => const CartPage();
   static String getInitial() => initial;
@@ -81,6 +83,7 @@ class RouteHelper {
   static String getOrdersPage() => ordersPage;
   static String getSettingsPage() => settingsPage;
   static String getManageShopPage() => manageShopPage;
+  static String getPasswordResetPage() => passwordResetPage;
   static String getInboxPage() => inboxPage;
   static String getOrderDetailsPage() => orderDetailsPage;
   static String getRatingsViewPage() => ratingsViewPage;
@@ -116,6 +119,12 @@ class RouteHelper {
         transitionDuration: const Duration(milliseconds: 300),
         name: ordersPage,
         page: () => const OrdersPage()),
+    GetPage(
+        curve: Curves.easeInOut,
+        transition: Transition.fade,
+        transitionDuration: const Duration(milliseconds: 300),
+        name: passwordResetPage,
+        page: () => const PasswordResetPage()),
     GetPage(
         curve: Curves.easeInOut,
         transition: Transition.fade,
@@ -258,7 +267,7 @@ class RouteHelper {
           List data = Get.arguments;
 
           return RatingViewPage(
-            reviews: data,
+            reviews: data[0], rating: data[1],
           );
         }),
     GetPage(

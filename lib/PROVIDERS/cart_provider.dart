@@ -23,6 +23,9 @@ class CartProvider extends ChangeNotifier {
   List<Map<String, dynamic>> _prodData = [];
   List<Map<String, dynamic>> get prodData => _prodData;
 
+  List _fProdData = [];
+  List get fProdData => _fProdData;
+
   List _carts = [];
   List get carts => _carts;
 
@@ -104,6 +107,7 @@ class CartProvider extends ChangeNotifier {
               collectionReference.doc(querySnapshot.docs[0][Constants.uid]);
           await documentReference.get().then((value) {
             List prodsId = value.get(Constants.productId);
+            List amounts = value.get(Constants.amount);
 
             if (prodsId.contains(productId)) {
               Constants(context)
@@ -111,7 +115,7 @@ class CartProvider extends ChangeNotifier {
             } else {
               documentReference.update({
                 Constants.productId: FieldValue.arrayUnion([productId]),
-                Constants.amount: FieldValue.arrayUnion([amount]),
+                Constants.amount: [...amounts, amount],
                 Constants.updatedAt:
                     DateTime.now().millisecondsSinceEpoch.toString(),
               }).then((value) async {
@@ -204,7 +208,7 @@ class CartProvider extends ChangeNotifier {
     }
   }
 
-  Future removeFromCart(String userId, String productId, double amount) async {
+  Future removeFromCart(String userId, String productId, double amount, bool showMsg) async {
     try {
       if (carts.isNotEmpty) {
         String cartId = ((_carts
@@ -223,8 +227,11 @@ class CartProvider extends ChangeNotifier {
           notifyListeners();
 
           await getCart(userId).then((value) {
-            Constants(context).snackBar(
-                'Product removed from cart successfully! ✅', Constants.tetiary);
+            if (showMsg) {
+              Constants(context).snackBar(
+                  'Product removed from cart successfully! ✅',
+                  Constants.tetiary);
+            }
           });
         });
 
@@ -239,7 +246,7 @@ class CartProvider extends ChangeNotifier {
   }
 
   Future removeFromFoodCart(String userId, String? productId, double amount,
-      String shopName, bool anchor, int? amountInd, bool getCart) async {
+      String shopName, bool anchor, int? amountInd, bool getCart, bool showMsg) async {
     try {
       if (foodCarts.isNotEmpty) {
         String cartId = ((_foodCarts
@@ -259,14 +266,18 @@ class CartProvider extends ChangeNotifier {
 
             if (getCart) {
               await getFoodCart(userId).then((value) {
+                if (showMsg) {
+                  Constants(context).snackBar(
+                      'Product removed from cart successfully! ✅',
+                      Constants.tetiary);
+                }
+              });
+            } else {
+              if (showMsg) {
                 Constants(context).snackBar(
                     'Product removed from cart successfully! ✅',
                     Constants.tetiary);
-              });
-            } else {
-              Constants(context).snackBar(
-                  'Product removed from cart successfully! ✅',
-                  Constants.tetiary);
+              }
             }
           });
         } else {
@@ -283,9 +294,11 @@ class CartProvider extends ChangeNotifier {
             _cartSubtotal -= amount;
             notifyListeners();
 
-            Constants(context).snackBar(
-                'Food Item removed from cart successfully! ✅',
-                Constants.tetiary);
+            if (showMsg) {
+              Constants(context).snackBar(
+                  'Food Item removed from cart successfully! ✅',
+                  Constants.tetiary);
+            }
           });
         }
 
@@ -409,7 +422,7 @@ class CartProvider extends ChangeNotifier {
 
       await productCollectionRef.doc(productId).get().then((value) async {
         if (quantity - 1 < 1) {
-          await removeFromCart(userId, productId!, amount);
+          await removeFromCart(userId, productId!, amount, true);
         } else {
           await documentReference.update({
             Constants.quantity: quantity - 1,
@@ -467,19 +480,21 @@ class CartProvider extends ChangeNotifier {
 
   Future getFoodCart(String userId) async {
     try {
-      QuerySnapshot querySnapshot = await userCollectionRef
+      await userCollectionRef
           .doc(userId)
           .collection(Constants.collectionFoodCart)
-          .get();
+          .get()
+          .then((value) async {
+        List newCart = [];
 
-      List newCart = [];
+        for (var element in value.docs) {
+          newCart.add(element.data());
+        }
 
-      for (var element in querySnapshot.docs) {
-        newCart.add(element.data());
-      }
-
-      _foodCarts = newCart;
-      notifyListeners();
+        _fProdData = newCart;
+        _foodCarts = newCart;
+        notifyListeners();
+      });
     } on FirebaseException catch (e) {
       _foodCarts = [];
       notifyListeners();

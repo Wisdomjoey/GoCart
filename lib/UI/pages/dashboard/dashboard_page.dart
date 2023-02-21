@@ -25,11 +25,10 @@ class DashboardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, dynamic> data =
-        (Provider.of<ShopProvider>(context)
-                .shops
-                .where((element) => element[Constants.uid] == shopId))
-            .elementAt(0) as Map<String, dynamic>;
+    Map<String, dynamic> data = (Provider.of<ShopProvider>(context)
+            .shops
+            .where((element) => element[Constants.uid] == shopId)).elementAt(0)
+        as Map<String, dynamic>;
 
     return SingleChildScrollView(
       child: Padding(
@@ -59,8 +58,13 @@ class DashboardPage extends StatelessWidget {
                 series: [
                   LineSeries<_SalesData, String>(
                       dataSource: data[Constants.sales].isNotEmpty
-                          ? data[Constants.sales].map((e) => _SalesData(
-                              e[Constants.month], e[Constants.prodTotalSales]))
+                          ? List.generate(
+                              data[Constants.sales].length,
+                              (index) => _SalesData(
+                                  data[Constants.sales][index][Constants.month],
+                                  data[Constants.sales][index]
+                                          [Constants.prodTotalSales]
+                                      .toDouble()))
                           : [
                               _SalesData(
                                   DateFormat('MMM').format(DateTime.now()), 0)
@@ -95,8 +99,12 @@ class DashboardPage extends StatelessWidget {
                 series: [
                   LineSeries<_SalesData, String>(
                       dataSource: data[Constants.sales].isNotEmpty
-                          ? data[Constants.sales].map((e) => _SalesData(
-                              e[Constants.month], e[Constants.sales]))
+                          ? List.generate(
+                              data[Constants.sales].length,
+                              (index) => _SalesData(
+                                  data[Constants.sales][index][Constants.month],
+                                  data[Constants.sales][index]
+                                      [Constants.sales].toDouble()))
                           : [
                               _SalesData(
                                   DateFormat('MMM').format(DateTime.now()), 0)

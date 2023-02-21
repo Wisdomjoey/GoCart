@@ -5,6 +5,7 @@ import 'package:GOCart/PROVIDERS/order_provider.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/components/cart_food_items.dart';
+import 'package:GOCart/UI/pages/order_complete_page.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,7 @@ class _CartPageState extends State<CartPage> {
     List foodCart = Provider.of<CartProvider>(context).foodCarts;
     List<Map<String, dynamic>> prodData =
         Provider.of<CartProvider>(context).prodData;
+    List fProdData = Provider.of<CartProvider>(context).fProdData;
 
     return (Provider.of<CartProvider>(context).carts.isEmpty && foodCart.isEmpty
         // &&
@@ -939,6 +941,8 @@ class _CartPageState extends State<CartPage> {
                           DetailsBottomNav(
                             // isAdded: false,
                             pressed: () async {
+                              List data = prodData;
+
                               Provider.of<GlobalProvider>(context,
                                       listen: false)
                                   .setProcess(Processes.waiting);
@@ -950,39 +954,17 @@ class _CartPageState extends State<CartPage> {
                                       context,
                                       listen: false)
                                   .carts) {
-                                if (element[Constants.prodCategory] ==
-                                    'Cooked Foods') {
-                                  int q = Provider.of<CartProvider>(context)
-                                      .cart[element[Constants.shopName]];
-                                  Map<String, dynamic> cart = (Provider.of<
-                                          CartProvider>(context, listen: false)
-                                      .carts
-                                      .where((element1) =>
-                                          element1[Constants.shopName] ==
-                                          element[Constants.shopName])
-                                      .elementAt(0)) as Map<String, dynamic>;
+                                int q = Provider.of<CartProvider>(context,
+                                        listen: false)
+                                    .cart[element[Constants.productId]];
+                                Map<String, dynamic> cart = (prodData
+                                    .where((element1) =>
+                                        element1[Constants.uid] ==
+                                        element[Constants.productId])
+                                    .elementAt(0));
 
-                                  quantity.add(q);
-                                  List temp = [];
-
-                                  for (var element in cart[Constants.amount]) {
-                                    temp.add(element * q);
-                                  }
-
-                                  amount.add(temp);
-                                } else {
-                                  int q = Provider.of<CartProvider>(context,
-                                          listen: false)
-                                      .cart[element[Constants.productId]];
-                                  Map<String, dynamic> cart = (prodData
-                                      .where((element1) =>
-                                          element1[Constants.uid] ==
-                                          element[Constants.productId])
-                                      .elementAt(0));
-
-                                  quantity.add(q);
-                                  amount.add(cart[Constants.prodNewPrice] * q);
-                                }
+                                quantity.add(q);
+                                amount.add(cart[Constants.prodNewPrice] * q);
                               }
 
                               await Provider.of<OrderProvider>(context,
@@ -991,11 +973,41 @@ class _CartPageState extends State<CartPage> {
                                       FirebaseAuth.instance.currentUser!.uid,
                                       amount,
                                       quantity,
-                                      prodData)
-                                  .then((value) {
-                                Provider.of<GlobalProvider>(context,
-                                        listen: false)
-                                    .setProcess(Processes.done);
+                                      prodData.isEmpty ? null : prodData,
+                                      fProdData.isEmpty ? null : fProdData,
+                                      fProdData.isNotEmpty
+                                          ? ((Provider.of<ShopProvider>(context,
+                                                      listen: false)
+                                                  .shops
+                                                  .where((element) =>
+                                                      element[
+                                                          Constants.shopName] ==
+                                                      foodCart[0]
+                                                          [Constants.shopName])
+                                                  .elementAt(0))
+                                              as Map)[Constants.imgUrls][0]
+                                          : null,
+                                      Provider.of<UserProvider>(context,
+                                              listen: false)
+                                          .userData[Constants.userPhone])
+                                  .then((value) async {
+                                if (value) {
+                                  Provider.of<GlobalProvider>(context,
+                                          listen: false)
+                                      .setProcess(Processes.done);
+
+                                  for (var element in data) {
+                                    await Provider.of<UserProvider>(context,
+                                            listen: false)
+                                        .addToInbox(
+                                            FirebaseAuth
+                                                .instance.currentUser!.uid,
+                                            element[Constants.imgUrls][0],
+                                            'You placed an oreder on this product',
+                                            'Order');
+                                  }
+                                  Get.to(() => const OrderCompletePage());
+                                }
                               });
                             },
                             leading: IconBox(
@@ -1090,17 +1102,18 @@ class _CartPageState extends State<CartPage> {
                                     Constants.userFavourites: [...favs, prodId]
                                   }, uid).then((value) async {
                                     if (value) {
-                                      Constants(context).snackBar(
-                                          'Product added to Saved Items',
-                                          Constants.tetiary);
-
                                       await Provider.of<CartProvider>(context,
                                               listen: false)
                                           .removeFromCart(
                                               FirebaseAuth
                                                   .instance.currentUser!.uid,
                                               prodId!,
-                                              amount[0]);
+                                              amount[0],
+                                              false)
+                                          .whenComplete(() => Constants(context)
+                                              .snackBar(
+                                                  'Product added to Saved Items',
+                                                  Constants.tetiary));
                                     }
                                   });
                                 } else {
@@ -1118,6 +1131,11 @@ class _CartPageState extends State<CartPage> {
                               textColor: Constants.tetiary,
                               isElevated: false,
                               addBorder: true,
+                              disabled: Provider.of<GlobalProvider>(context)
+                                          .process ==
+                                      Processes.waiting
+                                  ? true
+                                  : false,
                               icon: const Icon(
                                 Icons.favorite_border,
                                 color: Constants.tetiary,
@@ -1161,7 +1179,8 @@ class _CartPageState extends State<CartPage> {
                                 .removeFromCart(
                                     FirebaseAuth.instance.currentUser!.uid,
                                     prodId!,
-                                    amount[0])
+                                    amount[0],
+                                    true)
                                 .then((value) {
                               Provider.of<GlobalProvider>(context,
                                       listen: false)
@@ -1181,8 +1200,9 @@ class _CartPageState extends State<CartPage> {
                                     shopName!,
                                     true,
                                     null,
+                                    true,
                                     true)
-                                .then((value) {
+                                .whenComplete(() {
                               Provider.of<GlobalProvider>(context,
                                       listen: false)
                                   .setProcess(Processes.done);
@@ -1194,6 +1214,10 @@ class _CartPageState extends State<CartPage> {
                       Icons.delete_outline,
                       color: Constants.white,
                     ),
+                    disabled: Provider.of<GlobalProvider>(context).process ==
+                            Processes.waiting
+                        ? true
+                        : false,
                     child: Provider.of<GlobalProvider>(context).process ==
                             Processes.waiting
                         ? SizedBox(

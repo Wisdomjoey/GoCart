@@ -106,12 +106,14 @@ class _RoutePageState extends State<RoutePage> {
       AccountAppBar()
     ];
 
-    FirebaseAuth.instance.authStateChanges().listen((event) {
-      if (event == null) {
-        Constants(context).snackBar('You are logged out', Colors.red);
-        Get.offAllNamed(RouteHelper.getLoginPage());
-      }
-    });
+    if (mounted) {
+      FirebaseAuth.instance.authStateChanges().listen((event) {
+        if (event == null) {
+          Constants(context).snackBar('You are logged out', Colors.red);
+          Get.offAllNamed(RouteHelper.getLoginPage());
+        }
+      });
+    }
 
     super.initState();
   }

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:GOCart/CONSTANTS/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_cropper/image_cropper.dart';
@@ -434,65 +435,38 @@ class ProductProvider extends ChangeNotifier {
     }
   }
 
-  Future uploadRating(String productId, int rateNo) async {
+  Future uploadReview(String productId, String name, String title, String body,
+      int rateNo, double? rating) async {
     try {
       _process = Process.processing;
-      notifyListeners();
+      // notifyListeners();
       CollectionReference collectionReference = productCollectionRef
           .doc(productId)
           .collection(Constants.collectionReviews);
 
       DocumentReference documentReference = await collectionReference.add({
         Constants.uid: '',
+        Constants.userId: FirebaseAuth.instance.currentUser!.uid,
         Constants.reviewStarNo: rateNo,
-        Constants.name: '',
-        Constants.reviewTitle: '',
-        Constants.reviewBody: '',
+        Constants.name: name,
+        Constants.reviewTitle: title,
+        Constants.reviewBody: body,
         Constants.createdAt: DateTime.now().millisecondsSinceEpoch.toString(),
         Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
       });
 
       await documentReference
-          .update({Constants.uid: documentReference.id}).then((_) {
-        _process = Process.processComplete;
-        notifyListeners();
+          .update({Constants.uid: documentReference.id}).then((_) async {
+        updateProduct({
+          Constants.prodRating: rating ?? rateNo.toDouble(),
+        }, productId)
+            .then((value) {
+          _process = Process.processComplete;
+          notifyListeners();
 
-        Constants(context)
-            .snackBar('Rating uploaded successfully! ✅', Constants.tetiary);
-      });
-
-      return true;
-    } on FirebaseException catch (e) {
-      _process = Process.processError;
-      notifyListeners();
-
-      Constants(context).snackBar(e.message!, Colors.red);
-
-      return false;
-    }
-  }
-
-  Future uploadReview(String productId, String name, String title, String body,
-      String reviewId) async {
-    try {
-      _process = Process.processing;
-      notifyListeners();
-      DocumentReference documentReference = productCollectionRef
-          .doc(productId)
-          .collection(Constants.collectionReviews)
-          .doc(reviewId);
-
-      await documentReference.update({
-        Constants.name: name,
-        Constants.reviewTitle: title,
-        Constants.reviewBody: body,
-        Constants.updatedAt: DateTime.now().millisecondsSinceEpoch.toString(),
-      }).then((value) {
-        _process = Process.processComplete;
-        notifyListeners();
-
-        Constants(context)
-            .snackBar('Review uploaded successfully! ✅', Constants.tetiary);
+          Constants(context)
+              .snackBar('Review uploaded successfully! ✅', Constants.tetiary);
+        });
       });
 
       return true;
@@ -515,7 +489,13 @@ class ProductProvider extends ChangeNotifier {
           .collection(Constants.collectionReviews)
           .get();
 
-      return querySnapshot.docs;
+      List data = [];
+
+      for (var element in querySnapshot.docs) {
+        data.add(element.data());
+      }
+
+      return data;
     } on FirebaseException catch (e) {
       _process = Process.processError;
       notifyListeners();

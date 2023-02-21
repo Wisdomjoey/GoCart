@@ -18,6 +18,7 @@ import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -352,10 +353,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                     ]
                                                   }, uid).then((value) async {
                                                     if (value) {
-                                                      Constants(context).snackBar(
-                                                          'Product added to Saved Items',
-                                                          Constants.tetiary);
-
                                                       await Provider.of<
                                                                   CartProvider>(
                                                               context,
@@ -366,7 +363,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                                                   Constants
                                                                       .uid],
                                                               widget.data[Constants
-                                                                  .prodNewPrice]);
+                                                                  .prodNewPrice],
+                                                              false)
+                                                          .whenComplete(() =>
+                                                              Constants(context)
+                                                                  .snackBar(
+                                                                      'Product added to Saved Items',
+                                                                      Constants
+                                                                          .tetiary));
                                                     }
                                                   });
                                                 } else {
@@ -604,7 +608,10 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     color: Constants.white,
                                     child: ListTileBtn(
                                       page: RouteHelper.getRatingsViewPage(),
-                                      args: snapshot1.data,
+                                      args: [
+                                        snapshot1.data,
+                                        widget.data[Constants.prodRating]
+                                      ],
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -692,14 +699,24 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                           return Column(
                                             children: [
                                               ReviewBoxCon(
-                                                  date: snapshot1.data[index]
-                                                      [Constants.updatedAt],
-                                                  topic: snapshot1.data[index]
-                                                      [Constants.reviewTitle],
-                                                  review: snapshot1.data[index]
-                                                      [Constants.reviewBody],
-                                                  name: snapshot1.data[index]
-                                                      [Constants.name]),
+                                                date: DateFormat("yyyy-MM-dd")
+                                                    .format(DateTime
+                                                        .fromMillisecondsSinceEpoch(
+                                                            int.parse(snapshot1
+                                                                    .data[index]
+                                                                [Constants
+                                                                    .updatedAt])))
+                                                    .toString(),
+                                                topic: snapshot1.data[index]
+                                                    [Constants.reviewTitle],
+                                                review: snapshot1.data[index]
+                                                    [Constants.reviewBody],
+                                                name: snapshot1.data[index]
+                                                    [Constants.name],
+                                                rating: snapshot1.data[index]
+                                                        [Constants.reviewStarNo]
+                                                    .toDouble(),
+                                              ),
                                               index < snapshot1.data.length - 2
                                                   ? const Divider(
                                                       color:

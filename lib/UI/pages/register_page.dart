@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:GOCart/PROVIDERS/shop_provider.dart';
 import 'package:GOCart/UI/utils/validator.dart';
 import 'package:GOCart/UI/widgets/text_form_field_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -79,7 +80,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion(
-      value: const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
+      value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarBrightness: Brightness.light,
+          statusBarIconBrightness: Brightness.light),
       child: Scaffold(
         appBar: const CurvedPainter(text1: 'Hello 👋,', text2: 'Welcome'),
         backgroundColor: Constants.white,
@@ -283,14 +287,20 @@ class _RegisterPageState extends State<RegisterPage> {
                                                 .getShopRegisterPage());
                                           });
                                         } else {
-                                          await Provider.of<UserProvider>(
+                                          await Provider.of<ShopProvider>(
                                                   context,
                                                   listen: false)
-                                              .initializeUserData(FirebaseAuth
-                                                  .instance.currentUser!.uid)
-                                              .then((value) {
-                                            Get.offNamed(RouteHelper
-                                                .getPhoneRegisterPage());
+                                              .fetchAllShops()
+                                              .whenComplete(() async {
+                                            await Provider.of<UserProvider>(
+                                                    context,
+                                                    listen: false)
+                                                .initializeUserData(FirebaseAuth
+                                                    .instance.currentUser!.uid)
+                                                .then((value) {
+                                              Get.offNamed(RouteHelper
+                                                  .getPhoneRegisterPage());
+                                            });
                                           });
                                         }
                                       }));

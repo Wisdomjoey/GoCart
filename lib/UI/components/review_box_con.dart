@@ -11,6 +11,7 @@ class ReviewBoxCon extends StatelessWidget {
   final String name;
   final bool addHPad;
   final double? rad;
+  final double rating;
 
   const ReviewBoxCon(
       {super.key,
@@ -19,7 +20,7 @@ class ReviewBoxCon extends StatelessWidget {
       required this.review,
       required this.name,
       this.addHPad = false,
-      this.rad});
+      this.rad, required this.rating});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class ReviewBoxCon extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const StarRating(rating: 0,),
+              StarRating(rating: rating,),
               Text(
                 date,
                 style: TextStyle(

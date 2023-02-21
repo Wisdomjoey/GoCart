@@ -6,13 +6,16 @@ import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:GOCart/UI/widgets/rate_number_widget.dart';
 import 'package:GOCart/UI/widgets/star_rating_widget.dart';
 import 'package:GOCart/UI/widgets/txt_button_widget.dart';
+import 'package:intl/intl.dart';
 
 import '../../CONSTANTS/constants.dart';
 
 class RatingViewPage extends StatefulWidget {
   final List reviews;
-  
-  const RatingViewPage({super.key, required this.reviews});
+  final double rating;
+
+  const RatingViewPage(
+      {super.key, required this.reviews, required this.rating});
 
   @override
   State<RatingViewPage> createState() => _RatingViewPageState();
@@ -33,7 +36,8 @@ class _RatingViewPageState extends State<RatingViewPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            HeadSedction(text: 'VERIFIED PRODUCT RATINGS (${widget.reviews.length})'),
+            HeadSedction(
+                text: 'VERIFIED PRODUCT RATINGS (${widget.reviews.length})'),
             Container(
               width: double.maxFinite,
               color: Constants.white,
@@ -59,7 +63,7 @@ class _RatingViewPageState extends State<RatingViewPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                '4.9',
+                                widget.rating.toString(),
                                 style: TextStyle(
                                     color: Constants.tetiary,
                                     fontWeight: FontWeight.w600,
@@ -76,7 +80,10 @@ class _RatingViewPageState extends State<RatingViewPage> {
                           SizedBox(
                             height: Dimensions.sizedBoxHeight3,
                           ),
-                          const StarRating(rating: 0,),
+                          StarRating(
+                            rating: widget.rating,
+                            axis: MainAxisAlignment.center,
+                          ),
                           SizedBox(
                             height: Dimensions.sizedBoxHeight4 * 2,
                           ),
@@ -95,11 +102,16 @@ class _RatingViewPageState extends State<RatingViewPage> {
                     children: [
                       RateNumber(
                         rateNo: '5',
-                        rateCount: widget.reviews.where((element) => element[Constants.reviewStarNo] == 5).length.toString(),
-                        value: widget.reviews
+                        rateCount: widget.reviews
                             .where((element) =>
                                 element[Constants.reviewStarNo] == 5)
-                            .length / widget.reviews.length,
+                            .length
+                            .toString(),
+                        value: widget.reviews
+                                .where((element) =>
+                                    element[Constants.reviewStarNo] == 5)
+                                .length /
+                            widget.reviews.length,
                       ),
                       RateNumber(
                         rateNo: '4',
@@ -165,7 +177,8 @@ class _RatingViewPageState extends State<RatingViewPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   HeadSedction(
-                      text: 'COMMENTS FROM VERIFIED PURCHASES (${widget.reviews.where((element) => element[Constants.name] != '').length})'),
+                      text:
+                          'COMMENTS FROM VERIFIED PURCHASES (${widget.reviews.where((element) => element[Constants.name] != '').length})'),
                   Container(
                     padding: EdgeInsets.symmetric(
                         horizontal: Dimensions.sizedBoxWidth4),
@@ -174,12 +187,16 @@ class _RatingViewPageState extends State<RatingViewPage> {
                         return Column(
                           children: [
                             ReviewBoxCon(
-                                date: widget.reviews[widget.reviews.indexOf(e)],
-                                topic: e[Constants.reviewTitle],
-                                review: e[Constants.reviewBody],
-                                name: e[Constants.name],
+                              date: DateFormat("yyyy-MM-dd")
+                                  .format(DateTime.fromMillisecondsSinceEpoch(
+                                      int.parse(e[Constants.updatedAt])))
+                                  .toString(),
+                              topic: e[Constants.reviewTitle],
+                              review: e[Constants.reviewBody],
+                              name: e[Constants.name],
                               addHPad: true,
                               rad: Dimensions.sizedBoxWidth3,
+                              rating: e[Constants.reviewStarNo].toDouble(),
                             ),
                             SizedBox(
                               height: Dimensions.sizedBoxHeight15 / 2,

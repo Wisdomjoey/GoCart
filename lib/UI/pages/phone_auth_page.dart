@@ -46,6 +46,7 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
   void dispose() {
     for (var i = 0; i < 6; i++) {
       controllers[i].dispose();
+      controllers[i].clear();
     }
 
     for (var i = 0; i < 6; i++) {

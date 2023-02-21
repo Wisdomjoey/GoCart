@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:GOCart/PROVIDERS/auth_provider.dart';
 import 'package:GOCart/PROVIDERS/global_provider.dart';
 import 'package:GOCart/UI/pages/local_auth_page.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:GOCart/UI/routes/route_helper.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
@@ -38,11 +40,6 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   void initState() {
-    if (widget.prodId != null) {
-      Provider.of<GlobalProvider>(context, listen: false)
-          .setLink(widget.prodId, context);
-    }
-
     timer1 = Timer(const Duration(milliseconds: 500), ((() {
       setState(() {
         _alignment = Alignment.center;
@@ -66,58 +63,86 @@ class _SplashPageState extends State<SplashPage> {
       });
     })));
     timer4 = Timer(const Duration(milliseconds: 4300), ((() async {
-      _isLoggedIn = FirebaseAuth.instance.currentUser == null ? false : true;
+      await (Connectivity().checkConnectivity()).then((value) async {
+        if (value == ConnectivityResult.wifi ||
+            value == ConnectivityResult.mobile) {
+          if (widget.prodId != null) {
+            Provider.of<GlobalProvider>(context, listen: false)
+                .setLink(widget.prodId, context);
+          }
 
-      if (_isLoggedIn) {
-        await Provider.of<ShopProvider>(context, listen: false)
-            .fetchAllShops()
-            .whenComplete(() async {
-          if (mounted) {
-            await Provider.of<UserProvider>(context, listen: false)
-                .initializeUserData(FirebaseAuth.instance.currentUser!.uid)
+          _isLoggedIn =
+              FirebaseAuth.instance.currentUser == null ? false : true;
+
+          if (_isLoggedIn) {
+            await Provider.of<ShopProvider>(context, listen: false)
+                .fetchAllShops()
                 .whenComplete(() async {
               if (mounted) {
-                await Preferences()
-                    .getListData(Constants.prefsSearchHistory)
-                    .then((value2) {
+                await Provider.of<UserProvider>(context, listen: false)
+                    .initializeUserData(FirebaseAuth.instance.currentUser!.uid)
+                    .whenComplete(() async {
                   if (mounted) {
-                    if (value2 != null) {
-                      Provider.of<GlobalProvider>(context, listen: false)
-                          .setHistory(value2);
-                    }
+                    await Preferences()
+                        .getListData(Constants.prefsSearchHistory)
+                        .then((value2) {
+                      if (mounted) {
+                        Map userData =
+                            Provider.of<UserProvider>(context, listen: false)
+                                .userData;
 
-                    if (Provider.of<UserProvider>(context, listen: false)
-                        .userData[Constants.userPinIsSet]) {
-                      Get.off(() => const LocalAuthPage());
-                    } else {
-                      Map<String, dynamic>? prodData =
+                        if (value2 != null) {
                           Provider.of<GlobalProvider>(context, listen: false)
-                              .prodData;
+                              .setHistory(value2);
+                        }
 
-                      if (prodData != null) {
-                        Get.offNamed(
-                          RouteHelper.getProductDetailsPage(),
-                          arguments: prodData,
-                        );
-                      } else {
-                        Get.offNamed(
-                          RouteHelper.getRoutePage(),
-                          arguments: 0,
-                        );
+                        if (userData[Constants.userIsPhoneVerified]) {
+                          if (userData[Constants.userPinIsSet]) {
+                            Get.off(() => const LocalAuthPage());
+                          } else {
+                            Map<String, dynamic>? prodData =
+                                Provider.of<GlobalProvider>(context,
+                                        listen: false)
+                                    .prodData;
+
+                            if (prodData != null) {
+                              Get.offNamedUntil(
+                                  RouteHelper.getProductDetailsPage(),
+                                  arguments: prodData,
+                                  (route) => false);
+                            } else {
+                              Get.offNamedUntil(
+                                  RouteHelper.getRoutePage(),
+                                  arguments: 0,
+                                  (route) => false);
+                            }
+                          }
+                        } else {
+                          Get.offNamedUntil(RouteHelper.getPhoneRegisterPage(),
+                              (route) => false);
+                        }
                       }
-                    }
+                    });
                   }
                 });
               }
             });
+            // Get.offNamedUntil(RouteHelper.getPhoneRegisterPage(), (route) => false);
+          } else {
+            await Provider.of<AuthProvider>(context, listen: false)
+                .initialize(Status.uninitialized);
+            Get.offNamedUntil(RouteHelper.getIntroPage(), (route) => false);
           }
-        });
-        // Get.offNamedUntil(RouteHelper.getPhoneRegisterPage(), (route) => false);
-      } else {
-        await Provider.of<AuthProvider>(context, listen: false)
-            .initialize(Status.uninitialized);
-        Get.offNamedUntil(RouteHelper.getIntroPage(), (route) => false);
-      }
+        } else {
+          Constants(context)
+              .snackBar('You are not conneted to the internet', Colors.red);
+
+          Timer(
+              const Duration(seconds: 2),
+              (() =>
+                  SystemChannels.platform.invokeMethod('SystemNavigator.pop')));
+        }
+      });
       // Get.offUntil(MaterialPageRoute(builder: ((context) => const LocalAuthPage())), (route) => false);
     })));
 
