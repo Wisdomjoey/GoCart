@@ -228,10 +228,12 @@ class RouteHelper {
           //   String? title = Get.parameters['title'];
           String? title = Get.arguments[0];
           bool? isSearched = Get.arguments[1];
+          bool? isCat = Get.arguments.length > 2 ? Get.arguments[2] : null;
 
           return ProductListPage(
             title: title!,
             isSearched: isSearched!,
+            isCat: isCat,
           );
         }),
     GetPage(
@@ -267,7 +269,8 @@ class RouteHelper {
           List data = Get.arguments;
 
           return RatingViewPage(
-            reviews: data[0], rating: data[1],
+            reviews: data[0],
+            rating: data[1],
           );
         }),
     GetPage(

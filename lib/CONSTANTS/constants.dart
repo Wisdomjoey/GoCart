@@ -45,6 +45,7 @@ class Constants {
   static const String prefsUserPhoneVerified = "phoneVerified";
   static const String prefsUserEmail = "user-email";
   static const String prefsUserIsSeller = "userIsSeller";
+  static const String prefsUserIsRegistered = "userIsRegistered";
   static const String prefsCartData = "cart-data";
   static const String prefsSearchHistory = "search-history";
 
@@ -112,6 +113,20 @@ class Constants {
 
   static const List<String> categories = [
     'Snacks',
+    'Groceries',
+    'Health & Beauty',
+    'Home & Office',
+    'Phones & Tablets',
+    'Computing',
+    'Electronics',
+    'Fashion',
+    'Baby Products',
+    'Gaming',
+    'Sporting Goods',
+    'Automobile'
+  ];
+  static const List<String> categories1 = [
+    'Snacks',
     'Cooked Foods',
     'Groceries',
     'Health & Beauty',
@@ -164,12 +179,6 @@ class Constants {
       {'img': 'assets/images/c88.jpeg', 'label': 'Sweets'},
     ],
     categories[1]: [
-      {'img': 'assets/images/c89.jpeg', 'label': ''},
-      {'img': 'assets/images/c90.jpeg', 'label': ''},
-      {'img': 'assets/images/c91.jpeg', 'label': ''},
-      {'img': 'assets/images/c92.jpeg', 'label': ''},
-    ],
-    categories[2]: [
       {'img': 'assets/images/c1.jpeg', 'label': 'Rice & Grains'},
       {'img': 'assets/images/c2.jpeg', 'label': 'Pasta'},
       {'img': 'assets/images/c3.jpeg', 'label': 'Noodles'},
@@ -187,7 +196,7 @@ class Constants {
       {'img': 'assets/images/c13.jpeg', 'label': 'Air Freshener'},
       {'img': 'assets/images/c14.jpeg', 'label': 'Toilet Paper'},
     ],
-    categories[3]: [
+    categories[2]: [
       {'img': 'assets/images/c17.jpeg', 'label': 'MakeUp'},
       {'img': 'assets/images/c19.jpeg', 'label': 'Fragrances'},
       {'img': 'assets/images/c18.jpeg', 'label': 'Hair Care'},
@@ -195,7 +204,7 @@ class Constants {
       {'img': 'assets/images/c21.jpeg', 'label': 'Oral Care'},
       {'img': 'assets/images/c22.jpeg', 'label': 'Health Care'},
     ],
-    categories[4]: [
+    categories[3]: [
       {'img': 'assets/images/c23.jpeg', 'label': 'Towels'},
       {'img': 'assets/images/c24.jpeg', 'label': 'Bedding'},
       {'img': 'assets/images/c25.jpeg', 'label': 'Furnitures'},
@@ -207,7 +216,7 @@ class Constants {
       {'img': 'assets/images/c31.jpeg', 'label': 'Small Appliances'},
       {'img': 'assets/images/c32.jpeg', 'label': 'Large Appliances'},
     ],
-    categories[5]: [
+    categories[4]: [
       {'img': 'assets/images/c33.jpeg', 'label': 'Smartphones'},
       {'img': 'assets/images/c35.jpeg', 'label': 'Tablets'},
       {'img': 'assets/images/c34.jpeg', 'label': 'iPads'},
@@ -215,7 +224,7 @@ class Constants {
       {'img': 'assets/images/c38.jpeg', 'label': 'Ear Phones'},
       {'img': 'assets/images/c58.jpeg', 'label': 'Smart Watches'},
     ],
-    categories[6]: [
+    categories[5]: [
       {'img': 'assets/images/c39.jpeg', 'label': 'Desktops'},
       {'img': 'assets/images/c40.jpeg', 'label': 'Laptops'},
       {'img': 'assets/images/c41.jpeg', 'label': 'Monitors'},
@@ -226,7 +235,7 @@ class Constants {
       {'img': 'assets/images/c61.jpeg', 'label': 'Printers & Accessories'},
       {'img': 'assets/images/c46.jpeg', 'label': 'Computer Accessories'},
     ],
-    categories[7]: [
+    categories[6]: [
       {'img': 'assets/images/c47.jpeg', 'label': 'Televisions'},
       {'img': 'assets/images/c48.jpeg', 'label': 'Dvd Players'},
       {'img': 'assets/images/c49.jpeg', 'label': 'Home Theatre'},
@@ -235,7 +244,7 @@ class Constants {
       {'img': 'assets/images/c52.jpeg', 'label': 'Inverters & atteries'},
       {'img': 'assets/images/c62.jpeg', 'label': 'Solar Power'},
     ],
-    categories[8]: [
+    categories[7]: [
       {'img': 'assets/images/c53.jpeg', 'label': 'Bags'},
       {'img': 'assets/images/c54.jpeg', 'label': 'Clothing'},
       {'img': 'assets/images/c57.jpeg', 'label': 'Shoes'},
@@ -245,7 +254,7 @@ class Constants {
       {'img': 'assets/images/c59.jpeg', 'label': 'Backpacks'},
       {'img': 'assets/images/c60.jpeg', 'label': 'Umbrellas'},
     ],
-    categories[9]: [
+    categories[8]: [
       {'img': 'assets/images/c63.jpeg', 'label': 'Baby Clothes'},
       {'img': 'assets/images/c64.jpeg', 'label': 'Bay Bibs'},
       {'img': 'assets/images/c65.jpeg', 'label': 'Feeding Bottle'},
@@ -254,19 +263,19 @@ class Constants {
       {'img': 'assets/images/c94.jpeg', 'label': 'Baby Walkers'},
       {'img': 'assets/images/c93.jpeg', 'label': 'Baby Potties'},
     ],
-    categories[10]: [
+    categories[9]: [
       {'img': 'assets/images/c67.jpeg', 'label': 'Play Station'},
       {'img': 'assets/images/c68.jpeg', 'label': 'Xbox'},
       {'img': 'assets/images/c69.jpeg', 'label': 'Nintendo'},
       {'img': 'assets/images/c70.jpeg', 'label': 'Gaming Accessories'},
     ],
-    categories[11]: [
+    categories[10]: [
       {'img': 'assets/images/c71.jpeg', 'label': 'Exercising Equipments'},
       {'img': 'assets/images/c72.jpeg', 'label': 'Exercise Mats'},
       {'img': 'assets/images/c73.jpeg', 'label': 'Jump Ropes'},
       {'img': 'assets/images/c74.jpeg', 'label': 'Sport Clothing'},
     ],
-    categories[12]: [
+    categories[11]: [
       {'img': 'assets/images/c75.jpeg', 'label': 'Car Accessories'},
       {'img': 'assets/images/c76.jpeg', 'label': 'Car Covers'},
       {'img': 'assets/images/c77.jpeg', 'label': 'Car Mats'},

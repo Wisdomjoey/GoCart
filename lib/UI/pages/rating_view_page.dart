@@ -99,73 +99,28 @@ class _RatingViewPageState extends State<RatingViewPage> {
                     width: Dimensions.sizedBoxWidth15,
                   ),
                   Column(
-                    children: [
-                      RateNumber(
-                        rateNo: '5',
-                        rateCount: widget.reviews
-                            .where((element) =>
-                                element[Constants.reviewStarNo] == 5)
-                            .length
-                            .toString(),
-                        value: widget.reviews
-                                .where((element) =>
-                                    element[Constants.reviewStarNo] == 5)
-                                .length /
-                            widget.reviews.length,
-                      ),
-                      RateNumber(
-                        rateNo: '4',
-                        rateCount: widget.reviews
-                            .where((element) =>
-                                element[Constants.reviewStarNo] == 4)
-                            .length
-                            .toString(),
-                        value: widget.reviews
-                                .where((element) =>
-                                    element[Constants.reviewStarNo] == 4)
-                                .length /
-                            widget.reviews.length,
-                      ),
-                      RateNumber(
-                        rateNo: '3',
-                        rateCount: widget.reviews
-                            .where((element) =>
-                                element[Constants.reviewStarNo] == 3)
-                            .length
-                            .toString(),
-                        value: widget.reviews
-                                .where((element) =>
-                                    element[Constants.reviewStarNo] == 3)
-                                .length /
-                            widget.reviews.length,
-                      ),
-                      RateNumber(
-                        rateNo: '2',
-                        rateCount: widget.reviews
-                            .where((element) =>
-                                element[Constants.reviewStarNo] == 2)
-                            .length
-                            .toString(),
-                        value: widget.reviews
-                                .where((element) =>
-                                    element[Constants.reviewStarNo] == 2)
-                                .length /
-                            widget.reviews.length,
-                      ),
-                      RateNumber(
-                        rateNo: '1',
-                        rateCount: widget.reviews
-                            .where((element) =>
-                                element[Constants.reviewStarNo] == 1)
-                            .length
-                            .toString(),
-                        value: widget.reviews
-                                .where((element) =>
-                                    element[Constants.reviewStarNo] == 1)
-                                .length /
-                            widget.reviews.length,
-                      ),
-                    ],
+                    children: [5, 4, 3, 2, 1]
+                        .map(
+                          (e) => RateNumber(
+                            rateNo: e.toString(),
+                            rateCount: widget.reviews.isEmpty
+                                ? '0'
+                                : widget.reviews
+                                    .where((element) =>
+                                        element[Constants.reviewStarNo] == e)
+                                    .length
+                                    .toString(),
+                            value: widget.reviews.isEmpty
+                                ? 0
+                                : widget.reviews
+                                        .where((element) =>
+                                            element[Constants.reviewStarNo] ==
+                                            e)
+                                        .length /
+                                    widget.reviews.length,
+                          ),
+                        )
+                        .toList(),
                   ),
                 ],
               ),

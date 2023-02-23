@@ -720,21 +720,20 @@ class _CartPageState extends State<CartPage> {
                                                           ),
                                                           onTap: () => showDialog(
                                                               context: context,
-                                                              builder: ((context) =>
-                                                                  _showDialog(
-                                                                      context,
-                                                                      prodData[
-                                                                              index]
-                                                                          [
-                                                                          Constants
-                                                                              .uid],
-                                                                      [
-                                                                        Provider.of<CartProvider>(context,
+                                                              builder: ((context) => _showDialog(
+                                                                  context,
+                                                                  prodData[index][Constants.uid],
+                                                                  [
+                                                                    Provider.of<CartProvider>(context, listen: false)
+                                                                            .carts
+                                                                            .isEmpty
+                                                                        ? 0
+                                                                        : Provider.of<CartProvider>(context,
                                                                                 listen: false)
                                                                             .carts[index][Constants.amount]
-                                                                      ],
-                                                                      true,
-                                                                      null))),
+                                                                  ],
+                                                                  true,
+                                                                  null))),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -1003,7 +1002,7 @@ class _CartPageState extends State<CartPage> {
                                             FirebaseAuth
                                                 .instance.currentUser!.uid,
                                             element[Constants.imgUrls][0],
-                                            'You placed an oreder on this product',
+                                            'You placed an order on this product',
                                             'Order');
                                   }
                                   Get.to(() => const OrderCompletePage());
@@ -1153,7 +1152,7 @@ class _CartPageState extends State<CartPage> {
                                   : Text(
                                       'SAVE FOR LATER',
                                       style: TextStyle(
-                                          color: Constants.white,
+                                          color: Constants.tetiary,
                                           fontSize: Dimensions.font14),
                                     ),
                             ),

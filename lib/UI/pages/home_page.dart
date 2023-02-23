@@ -83,7 +83,8 @@ class _HomePageState extends State<HomePage> {
                                     RouteHelper.getProductListPage(),
                                     arguments: [
                                       Constants.categories[e],
-                                      false
+                                      false,
+                                      true
                                     ]),
                               ))
                           .toList(),

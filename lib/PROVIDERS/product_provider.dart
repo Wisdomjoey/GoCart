@@ -247,130 +247,118 @@ class ProductProvider extends ChangeNotifier {
       QuerySnapshot querySnapshot = await productCollectionRef.get();
       List<DocumentSnapshot> documentSnapshot = querySnapshot.docs;
       List products = [];
-      List<String> queries = query.split(' ');
+      List<String> queries = query.trim().toLowerCase().split(' ');
 
-      outer0:
+      outer:
       for (var i = 0; i < documentSnapshot.length; i++) {
-        String name = documentSnapshot[i].get(Constants.name);
-        String description = documentSnapshot[i][Constants.prodDescription];
-        String category = documentSnapshot[i][Constants.prodCategory];
+        String name =
+            documentSnapshot[i].get(Constants.name).trim().toLowerCase();
+        String description =
+            documentSnapshot[i][Constants.prodDescription].trim().toLowerCase();
+        String category =
+            documentSnapshot[i][Constants.prodCategory].trim().toLowerCase();
         List specifications =
             documentSnapshot[i].get(Constants.prodSpecifications);
         List keyFeatures = documentSnapshot[i].get(Constants.prodKeyFeatures);
         List tags = documentSnapshot[i].get(Constants.prodTags);
-        String shopName = documentSnapshot[i].get(Constants.shopName);
+        String shopName =
+            documentSnapshot[i].get(Constants.shopName).trim().toLowerCase();
 
-        outer1:
+        // outer1:
+        // for (var a = 0; a < queries.length; a++) {
+        //   outer2:
+        //   for (var element in specifications) {
+        //     outer3:
+        //     for (var element1 in keyFeatures) {
+        //       outer4:
+        //       for (var element2 in tags) {
+        //         if (name.contains(queries[a])) {
+        //           products.add(documentSnapshot[i].data());
+        //           break outer1;
+        //         } else if (description.contains(queries[a])) {
+        //           products.add(documentSnapshot[i].data());
+        //           break outer1;
+        //         } else if (category.contains(queries[a])) {
+        //           print('yay!!!');
+        //           products.add(documentSnapshot[i].data());
+        //           break outer1;
+        //         } else if (shopName.contains(queries[a])) {
+        //           products.add(documentSnapshot[i].data());
+        //           break outer1;
+        //         } else if (element.trim().toLowerCase().contains(queries[a])) {
+        //           products.add(documentSnapshot[i].data());
+        //           break outer2;
+        //         } else if (element1.trim().toLowerCase().contains(queries[a])) {
+        //           products.add(documentSnapshot[i].data());
+        //           break outer3;
+        //         } else if (element2.trim().toLowerCase().contains(queries[a])) {
+        //           products.add(documentSnapshot[i].data());
+        //           break outer4;
+        //         }
+        //       }
+        //     }
+        //   }
+        // }
+
+        if (documentSnapshot[i].get(Constants.prodCategory) == 'Cooked Foods') {
+          continue outer;
+        }
+
         for (var a = 0; a < queries.length; a++) {
-          outer2:
-          for (var element in specifications) {
-            outer3:
-            for (var element1 in keyFeatures) {
-              for (var element2 in tags) {
-                if (name.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer1;
-                } else if (description.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer1;
-                } else if (category.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer1;
-                } else if (shopName.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer1;
-                } else if (element.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer2;
-                } else if (element1.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer3;
-                } else if (element2.contains(queries[a])) {
-                  products.add(documentSnapshot[i].data());
-                  break outer0;
-                }
-              }
+          if (name.contains(queries[a])) {
+            products.add(documentSnapshot[i].data());
+            continue outer;
+          }
+        }
+
+        for (var a = 0; a < queries.length; a++) {
+          if (description.contains(queries[a])) {
+            products.add(documentSnapshot[i].data());
+            continue outer;
+          }
+        }
+
+        for (var a = 0; a < queries.length; a++) {
+          if (category.contains(queries[a])) {
+            products.add(documentSnapshot[i].data());
+            continue outer;
+          }
+        }
+
+        for (var a = 0; a < queries.length; a++) {
+          for (var b = 0; b < specifications.length; b++) {
+            if (specifications[b].contains(queries[a])) {
+              products.add(documentSnapshot[i].data());
+              continue outer;
+            }
+          }
+        }
+
+        for (var a = 0; a < queries.length; a++) {
+          for (var b = 0; b < keyFeatures.length; b++) {
+            if (keyFeatures[b].contains(queries[a])) {
+              products.add(documentSnapshot[i].data());
+              continue outer;
+            }
+          }
+        }
+
+        for (var a = 0; a < queries.length; a++) {
+          if (shopName.contains(queries[a])) {
+            products.add(documentSnapshot[i].data());
+            continue outer;
+          }
+        }
+
+        for (var a = 0; a < queries.length; a++) {
+          for (var b = 0; b < tags.length; b++) {
+            if (tags[b].contains(queries[a])) {
+              products.add(documentSnapshot[i].data());
+              continue outer;
             }
           }
         }
       }
-
-      // for (var i = 0; i < documentSnapshot.length; i++) {
-      //   String description = documentSnapshot[i][Constants.prodDescription];
-
-      //   for (var a = 0; a < queries.length; a++) {
-      //     if (description.contains(queries[a])) {
-      //       products.add(documentSnapshot[i].data());
-      //       break;
-      //     }
-      //   }
-      // }
-
-      // for (var i = 0; i < documentSnapshot.length; i++) {
-      //   String category = documentSnapshot[i][Constants.prodCategory];
-
-      //   for (var a = 0; a < queries.length; a++) {
-      //     if (category.contains(queries[a])) {
-      //       products.add(documentSnapshot[i].data());
-      //       break;
-      //     }
-      //   }
-      // }
-
-      // for (var i = 0; i < documentSnapshot.length; i++) {
-      //   List specifications =
-      //       documentSnapshot[i].get(Constants.prodSpecifications);
-
-      //   outer1:
-      //   for (var a = 0; a < queries.length; a++) {
-      //     for (var b = 0; b < specifications.length; b++) {
-      //       if (specifications[b].contains(queries[a])) {
-      //         products.add(documentSnapshot[i].data());
-      //         break outer1;
-      //       }
-      //     }
-      //   }
-      // }
-
-      // for (var i = 0; i < documentSnapshot.length; i++) {
-      //   List keyFeatures =
-      //       documentSnapshot[i].get(Constants.prodKeyFeatures);
-
-      //   outer2:
-      //   for (var a = 0; a < queries.length; a++) {
-      //     for (var b = 0; b < keyFeatures.length; b++) {
-      //       if (keyFeatures[b].contains(queries[a])) {
-      //         products.add(documentSnapshot[i].data());
-      //         break outer2;
-      //       }
-      //     }
-      //   }
-      // }
-
-      // for (var i = 0; i < documentSnapshot.length; i++) {
-      //   String shopName = documentSnapshot[i].get(Constants.shopName);
-
-      //   for (var a = 0; a < queries.length; a++) {
-      //     if (shopName.contains(queries[a])) {
-      //       products.add(documentSnapshot[i].data());
-      //       break;
-      //     }
-      //   }
-      // }
-
-      // for (var i = 0; i < documentSnapshot.length; i++) {
-      //   List tags = documentSnapshot[i].get(Constants.prodTags);
-
-      //   outer3:
-      //   for (var a = 0; a < queries.length; a++) {
-      //     for (var b = 0; b < tags.length; b++) {
-      //       if (tags[b].contains(queries[a])) {
-      //         products.add(documentSnapshot[i].data());
-      //         break outer3;
-      //       }
-      //     }
-      //   }
-      // }
 
       _process = Process.processComplete;
       notifyListeners();
@@ -389,7 +377,7 @@ class ProductProvider extends ChangeNotifier {
   Future searchProductByCategory(String categoryQ) async {
     try {
       _process = Process.processing;
-      notifyListeners();
+      // notifyListeners();
       QuerySnapshot querySnapshot = await productCollectionRef.get();
       List<DocumentSnapshot> documentSnapshot = querySnapshot.docs;
       List products = [];
@@ -398,7 +386,7 @@ class ProductProvider extends ChangeNotifier {
         String category = documentSnapshot[i][Constants.prodCategory];
 
         if (category.contains(categoryQ)) {
-          products.add(documentSnapshot[i]);
+          products.add(documentSnapshot[i].data());
         }
       }
 

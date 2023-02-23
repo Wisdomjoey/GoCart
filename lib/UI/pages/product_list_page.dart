@@ -12,9 +12,10 @@ import '../utils/dimensions.dart';
 class ProductListPage extends StatefulWidget {
   final String title;
   final bool isSearched;
+  final bool? isCat;
 
   const ProductListPage(
-      {super.key, required this.title, required this.isSearched});
+      {super.key, required this.title, required this.isSearched, this.isCat});
 
   @override
   State<ProductListPage> createState() => _ProductListPageState();
@@ -51,6 +52,7 @@ class _ProductListPageState extends State<ProductListPage> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.title);
     return Scaffold(
       appBar: HomeAppBar(
         implyLeading: true,
@@ -60,8 +62,11 @@ class _ProductListPageState extends State<ProductListPage> {
         title: widget.title,
       ),
       body: FutureBuilder(
-        future: Provider.of<ProductProvider>(context, listen: false)
-            .searchProducts(widget.title),
+        future: widget.isCat != null
+            ? Provider.of<ProductProvider>(context, listen: false)
+                .searchProductByCategory(widget.title)
+            : Provider.of<ProductProvider>(context, listen: false)
+                .searchProducts(widget.title),
         builder: (context, AsyncSnapshot snapshot) {
           return Container(
             margin: EdgeInsets.only(top: Dimensions.sizedBoxHeight10),
@@ -77,7 +82,7 @@ class _ProductListPageState extends State<ProductListPage> {
                           snapshotDocs: snapshot.data,
                         ),
                       )
-                    :  Column(
+                    : Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Center(

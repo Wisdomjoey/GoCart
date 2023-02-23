@@ -131,7 +131,13 @@ class _SplashPageState extends State<SplashPage> {
           } else {
             await Provider.of<AuthProvider>(context, listen: false)
                 .initialize(Status.uninitialized);
-            Get.offNamedUntil(RouteHelper.getIntroPage(), (route) => false);
+            if (await Preferences()
+                    .getBoolData(Constants.prefsUserIsRegistered) ==
+                true) {
+              Get.offNamedUntil(RouteHelper.getLoginPage(), (route) => false);
+            } else {
+              Get.offNamedUntil(RouteHelper.getIntroPage(), (route) => false);
+            }
           }
         } else {
           Constants(context)

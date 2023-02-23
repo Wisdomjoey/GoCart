@@ -20,7 +20,7 @@ class RateNumber extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 70,
+          width: Dimensions.sizedBoxWidth10 * 7,
           child: Row(
             children: [
               Text(rateNo),

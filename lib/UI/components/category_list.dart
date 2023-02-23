@@ -41,10 +41,8 @@ class CategoryList extends StatelessWidget {
                   minLeadingWidth: Dimensions.sizedBoxWidth4 / 2,
                   visualDensity: VisualDensity(
                       vertical: -(Dimensions.sizedBoxHeight4 / 2)),
-                  onTap: () {
-                    Get.toNamed(RouteHelper.getProductListPage(),
-                        arguments: [cat, false]);
-                  },
+                  onTap: () => Get.toNamed(RouteHelper.getProductListPage(),
+                      arguments: [cat, false, true]),
                 ),
               )),
           Container(

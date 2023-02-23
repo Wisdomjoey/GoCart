@@ -580,7 +580,8 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                                                                               foodProducts[index][Constants.prodMinPrice],
                                                                               foodProducts[index][Constants.uid],
                                                                               data[Constants.shopName],
-                                                                              foodProducts[index][Constants.prodCategory]))));
+                                                                              foodProducts[index][Constants.prodCategory],
+                                                                              foodProducts[index][Constants.userId]))));
                                                                 },
                                                               ),
                                                             ),
@@ -646,8 +647,8 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
     );
   }
 
-  Widget _showDialog(
-      context, double minPrice, String prodId, String shopName, String cat) {
+  Widget _showDialog(context, double minPrice, String prodId, String shopName,
+      String cat, String userId) {
     String currency = Constants(context).currency().currencySymbol;
 
     return Dialog(
@@ -735,22 +736,28 @@ class _ShopDetailsPageState extends State<ShopDetailsPage> {
                     icon: const Icon(Icons.add_shopping_cart_outlined),
                     pressed: () async {
                       if (key.currentState!.validate()) {
-                        Provider.of<GlobalProvider>(context, listen: false)
-                            .setProcess(Processes.waiting);
-
-                        await Provider.of<CartProvider>(context, listen: false)
-                            .addToCart(
-                                FirebaseAuth.instance.currentUser!.uid,
-                                prodId,
-                                double.parse(controller.text.trim()),
-                                shopName,
-                                cat)
-                            .then((value) {
+                        if (userId == FirebaseAuth.instance.currentUser!.uid) {
+                          Constants(context).snackBar(
+                              'You are the owner of this shop', Colors.red);
+                        } else {
                           Provider.of<GlobalProvider>(context, listen: false)
-                              .setProcess(Processes.done);
-                          controller.clear();
-                          Navigator.pop(context);
-                        });
+                              .setProcess(Processes.waiting);
+
+                          await Provider.of<CartProvider>(context,
+                                  listen: false)
+                              .addToCart(
+                                  FirebaseAuth.instance.currentUser!.uid,
+                                  prodId,
+                                  double.parse(controller.text.trim()),
+                                  shopName,
+                                  cat)
+                              .then((value) {
+                            Provider.of<GlobalProvider>(context, listen: false)
+                                .setProcess(Processes.done);
+                            controller.clear();
+                            Navigator.pop(context);
+                          });
+                        }
                       }
                     },
                     child: Provider.of<GlobalProvider>(context).process ==

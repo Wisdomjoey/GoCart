@@ -279,7 +279,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                     height: Dimensions.sizedBoxHeight10,
                                   ),
                                   Text(
-                                    '$currency ${widget.data[Constants.prodNewPrice]}',
+                                    '$currency ${Constants.format.format(widget.data[Constants.prodNewPrice])}',
                                     style: TextStyle(
                                         fontSize: Dimensions.font24,
                                         fontWeight: FontWeight.w500),
@@ -583,8 +583,14 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                                   Container(
                                     padding: EdgeInsets.all(
                                         Dimensions.sizedBoxWidth10),
-                                    child: Text(
-                                        widget.data[Constants.prodDescription]),
+                                    child: Text(widget
+                                                .data[Constants.prodDescription]
+                                                .length >
+                                            500
+                                        ? widget.data[Constants.prodDescription]
+                                            .substring(0, 500) + '...'
+                                        : widget
+                                            .data[Constants.prodDescription]),
                                   )
                                 ],
                               ),

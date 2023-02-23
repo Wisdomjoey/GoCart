@@ -313,7 +313,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 ),
                 DropdownButtonFormField(
                     value: pCat,
-                    items: Constants.categories
+                    items: Constants.categories1
                         .map((e) => DropdownMenuItem(
                               value: e,
                               child: Text(e),
@@ -744,6 +744,7 @@ class _EditProductPageState extends State<EditProductPage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
+                    disabled: _process,
                     child: _process
                         ? SizedBox(
                             width: Dimensions.sizedBoxWidth10 * 2,

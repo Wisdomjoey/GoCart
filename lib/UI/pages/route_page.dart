@@ -1,4 +1,4 @@
-import 'package:GOCart/PROVIDERS/auth_provider.dart';
+import 'package:async/async.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -47,6 +47,17 @@ class _RoutePageState extends State<RoutePage> {
 
   @override
   void initState() {
+    if (mounted) {
+      FirebaseAuth.instance.authStateChanges().listen((event) {
+        AsyncMemoizer().runOnce(() {
+          if (event == null) {
+            Constants(context).snackBar('You are not logged in', Colors.red);
+            Get.offAllNamed(RouteHelper.getLoginPage());
+          }
+        });
+      });
+    }
+
     FirebaseMessaging.onMessage.listen(initInfo);
     FirebaseDynamicLinks.instance.onLink.listen((event) async {
       String prodId = event.link.queryParameters['prodId']!;
@@ -105,15 +116,6 @@ class _RoutePageState extends State<RoutePage> {
       ),
       AccountAppBar()
     ];
-
-    if (mounted) {
-      FirebaseAuth.instance.authStateChanges().listen((event) {
-        if (event == null) {
-          Constants(context).snackBar('You are logged out', Colors.red);
-          Get.offAllNamed(RouteHelper.getLoginPage());
-        }
-      });
-    }
 
     super.initState();
   }

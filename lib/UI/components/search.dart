@@ -60,145 +60,147 @@ class _MySearchDelegateState extends State<_MySearchDelegate> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            Container(
-              margin: EdgeInsets.only(
-                  left: Dimensions.sizedBoxWidth10,
-                  right: Dimensions.sizedBoxWidth10,
-                  top: Dimensions.sizedBoxWidth10),
-              child: Material(
-                color: Constants.white,
-                shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
-                elevation: 5,
-                child: InkWell(
-                  child: Ink(
-                    width: double.maxFinite,
-                    height: Dimensions.sizedBoxHeight10 * 5.5,
-                    decoration: BoxDecoration(
-                        color: Constants.white,
-                        borderRadius: BorderRadius.circular(
-                            Dimensions.sizedBoxWidth10 / 2)),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconButton(
-                            onPressed: (() => Navigator.pop(context)),
-                            splashRadius: 30,
-                            icon: const Icon(
-                              Icons.arrow_back,
-                              color: Constants.grey,
-                            )),
-                        Expanded(
-                          child: TextFormField(
-                            controller: textEditingController,
-                            onChanged: (value) {
-                              setState(() {
-                                suggestions.clear();
-                              });
-
-                              if (value != '') {
-                                for (var element in Constants.suggestions) {
-                                  if (element.toLowerCase().contains(value)) {
-                                    setState(() {
-                                      suggestions.add(element);
-                                    });
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                margin: EdgeInsets.only(
+                    left: Dimensions.sizedBoxWidth10,
+                    right: Dimensions.sizedBoxWidth10,
+                    top: Dimensions.sizedBoxWidth10),
+                child: Material(
+                  color: Constants.white,
+                  shape: RoundedRectangleBorder(
+                      borderRadius:
+                          BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
+                  elevation: 5,
+                  child: InkWell(
+                    child: Ink(
+                      width: double.maxFinite,
+                      height: Dimensions.sizedBoxHeight10 * 5.5,
+                      decoration: BoxDecoration(
+                          color: Constants.white,
+                          borderRadius: BorderRadius.circular(
+                              Dimensions.sizedBoxWidth10 / 2)),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          IconButton(
+                              onPressed: (() => Navigator.pop(context)),
+                              splashRadius: 30,
+                              icon: const Icon(
+                                Icons.arrow_back,
+                                color: Constants.grey,
+                              )),
+                          Expanded(
+                            child: TextFormField(
+                              controller: textEditingController,
+                              onChanged: (value) {
+                                setState(() {
+                                  suggestions.clear();
+                                });
+        
+                                if (value != '') {
+                                  for (var element in Constants.suggestions) {
+                                    if (element.toLowerCase().contains(value)) {
+                                      setState(() {
+                                        suggestions.add(element);
+                                      });
+                                    }
                                   }
                                 }
-                              }
-                            },
-                            onEditingComplete: (() {
-                              if (textEditingController.text != '') {
-                                Get.offNamed(RouteHelper.getProductListPage(),
-                                    arguments: [
-                                      textEditingController.text.trim(),
-                                      true
-                                    ]);
-                              }
-                            }),
-                            autofocus: true,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(
-                                    borderSide: BorderSide.none)),
+                              },
+                              onEditingComplete: (() {
+                                if (textEditingController.text != '') {
+                                  Get.offNamed(RouteHelper.getProductListPage(),
+                                      arguments: [
+                                        textEditingController.text.trim().toLowerCase(),
+                                        true
+                                      ]);
+                                }
+                              }),
+                              autofocus: true,
+                              decoration: const InputDecoration(
+                                  border: OutlineInputBorder(
+                                      borderSide: BorderSide.none)),
+                            ),
                           ),
-                        ),
-                        IconButton(
-                            onPressed: (() {
-                              textEditingController.clear();
-                            }),
-                            splashRadius: 30,
-                            icon: const Icon(
-                              Icons.close,
-                              color: Constants.grey,
-                            )),
-                      ],
+                          IconButton(
+                              onPressed: (() {
+                                textEditingController.clear();
+                              }),
+                              splashRadius: 30,
+                              icon: const Icon(
+                                Icons.close,
+                                color: Constants.grey,
+                              )),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
-            ),
-            SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-                child: Column(
-                  children: [
-                    Column(
-                      children: history.map((e) {
-                        return Container(
-                          color: Colors.transparent,
-                          width: double.maxFinite,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  SizedBox(
-                                    width: Dimensions.sizedBoxWidth10,
-                                  ),
-                                  const Icon(
-                                    Icons.history,
-                                    color: Constants.grey,
-                                    size: 17,
-                                  ),
-                                  SizedBox(
-                                    width: Dimensions.sizedBoxWidth10,
-                                  ),
-                                  Text(e),
-                                ],
-                              ),
-                              const Divider(
-                                color: Constants.grey,
-                              )
-                            ],
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: suggestions.map((e) {
-                        return GestureDetector(
-                          onTap: () {
-                            Get.offNamed(RouteHelper.getProductListPage(),
-                                arguments: [e, false]);
-                          },
-                          child: Container(
+              SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
+                  child: Column(
+                    children: [
+                      Column(
+                        children: history.map((e) {
+                          return Container(
                             color: Colors.transparent,
                             width: double.maxFinite,
-                            padding: EdgeInsets.symmetric(
-                                vertical: Dimensions.sizedBoxHeight10),
-                            child: Text(e),
-                          ),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: Dimensions.sizedBoxWidth10,
+                                    ),
+                                    const Icon(
+                                      Icons.history,
+                                      color: Constants.grey,
+                                      size: 17,
+                                    ),
+                                    SizedBox(
+                                      width: Dimensions.sizedBoxWidth10,
+                                    ),
+                                    Text(e),
+                                  ],
+                                ),
+                                const Divider(
+                                  color: Constants.grey,
+                                )
+                              ],
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: suggestions.map((e) {
+                          return GestureDetector(
+                            onTap: () {
+                              Get.offNamed(RouteHelper.getProductListPage(),
+                                  arguments: [e.trim().toLowerCase(), false]);
+                            },
+                            child: Container(
+                              color: Colors.transparent,
+                              width: double.maxFinite,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: Dimensions.sizedBoxHeight10),
+                              child: Text(e),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            )
-          ],
+              )
+            ],
+          ),
         ),
       ),
     );

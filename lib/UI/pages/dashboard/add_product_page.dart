@@ -199,7 +199,9 @@ class _AddProductPageState extends State<AddProductPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: Dimensions.sizedBoxHeight10,),
+                SizedBox(
+                  height: Dimensions.sizedBoxHeight10,
+                ),
                 Wrap(
                   spacing: Dimensions.sizedBoxWidth10 / 2,
                   children: imgNames.map((e) {
@@ -269,7 +271,7 @@ class _AddProductPageState extends State<AddProductPage> {
                             borderRadius: BorderRadius.all(
                                 Radius.circular(Dimensions.sizedBoxWidth4)))),
                     value: Constants.categories[0],
-                    items: Constants.categories
+                    items: Constants.categories1
                         .map((e) => DropdownMenuItem(
                               value: e,
                               child: Text(e),
@@ -604,6 +606,7 @@ class _AddProductPageState extends State<AddProductPage> {
                   width: double.maxFinite,
                   height: Dimensions.sizedBoxHeight100 / 2,
                   child: ElevatedBtn(
+                    disabled: _process,
                     child: _process
                         ? SizedBox(
                             width: Dimensions.sizedBoxWidth10 * 2,

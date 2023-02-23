@@ -1,3 +1,4 @@
+import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
 import 'package:flutter/material.dart';
@@ -23,239 +24,285 @@ class DashboardPage extends StatelessWidget {
     return totSales.toString();
   }
 
+  calcTotSales1(Map<String, dynamic> data) {
+    int sales = 0;
+
+    for (var element in data[Constants.sales]) {
+      sales += element[Constants.sales] as int;
+    }
+
+    return sales;
+  }
+
   @override
   Widget build(BuildContext context) {
     Map<String, dynamic> data = (Provider.of<ShopProvider>(context)
             .shops
             .where((element) => element[Constants.uid] == shopId)).elementAt(0)
         as Map<String, dynamic>;
+    String currency = Constants(context).currency().currencySymbol;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(Dimensions.sizedBoxWidth15),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            HeadSedction(
-              text: 'Sales Chart',
-              weight: FontWeight.w500,
-              textSize: Dimensions.font18,
-              tMargin: Dimensions.sizedBoxWidth10,
-              bMargin: Dimensions.sizedBoxWidth10 * 2,
-            ),
-            Container(
-              width: double.maxFinite,
-              height: Dimensions.sizedBoxHeight230,
-              padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 / 2),
-              decoration: BoxDecoration(
-                  color: Constants.white,
-                  borderRadius:
-                      BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                legend: Legend(isVisible: true),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: [
-                  LineSeries<_SalesData, String>(
-                      dataSource: data[Constants.sales].isNotEmpty
-                          ? List.generate(
-                              data[Constants.sales].length,
-                              (index) => _SalesData(
-                                  data[Constants.sales][index][Constants.month],
-                                  data[Constants.sales][index]
-                                          [Constants.prodTotalSales]
-                                      .toDouble()))
-                          : [
-                              _SalesData(
-                                  DateFormat('MMM').format(DateTime.now()), 0)
-                            ],
-                      xValueMapper: (_SalesData sales, _) => sales.month,
-                      yValueMapper: (_SalesData sales, _) => sales.sales,
-                      name: 'Sales',
-                      xAxisName: 'Values',
-                      yAxisName: 'Months'),
-                ],
-              ),
-            ),
-            HeadSedction(
-              text: 'Profit Chart',
-              weight: FontWeight.w500,
-              textSize: Dimensions.font18,
-              tMargin: Dimensions.sizedBoxWidth15 * 2,
-              bMargin: Dimensions.sizedBoxWidth10 * 2,
-            ),
-            Container(
-              width: double.maxFinite,
-              height: Dimensions.sizedBoxHeight230,
-              padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 / 2),
-              decoration: BoxDecoration(
-                  color: Constants.white,
-                  borderRadius:
-                      BorderRadius.circular(Dimensions.sizedBoxWidth10 / 2)),
-              child: SfCartesianChart(
-                primaryXAxis: CategoryAxis(),
-                legend: Legend(isVisible: true),
-                tooltipBehavior: TooltipBehavior(enable: true),
-                series: [
-                  LineSeries<_SalesData, String>(
-                      dataSource: data[Constants.sales].isNotEmpty
-                          ? List.generate(
-                              data[Constants.sales].length,
-                              (index) => _SalesData(
-                                  data[Constants.sales][index][Constants.month],
-                                  data[Constants.sales][index]
-                                      [Constants.sales].toDouble()))
-                          : [
-                              _SalesData(
-                                  DateFormat('MMM').format(DateTime.now()), 0)
-                            ],
-                      xValueMapper: (_SalesData sales, _) => sales.month,
-                      yValueMapper: (_SalesData sales, _) => sales.sales,
-                      name: 'Profits',
-                      xAxisName: 'Values',
-                      yAxisName: 'Months'),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: Dimensions.sizedBoxHeight10 * 2,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-                    decoration: BoxDecoration(
-                        color: Constants.white,
-                        borderRadius: BorderRadius.circular(
-                            Dimensions.sizedBoxWidth10 / 2)),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Total Sales',
-                          style: TextStyle(
-                              color: const Color.fromARGB(255, 130, 130, 130),
-                              fontSize: Dimensions.font18,
-                              fontWeight: FontWeight.w500),
+    return FutureBuilder(
+      future: Provider.of<ProductProvider>(context, listen: false)
+          .searchProducts(data[Constants.shopName]),
+      builder: (context, AsyncSnapshot snapshot) {
+        return snapshot.connectionState == ConnectionState.waiting
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Constants.tetiary,
+                ),
+              )
+            : SingleChildScrollView(
+                child: Padding(
+                  padding: EdgeInsets.all(Dimensions.sizedBoxWidth15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      HeadSedction(
+                        text: 'Sales Chart',
+                        weight: FontWeight.w500,
+                        textSize: Dimensions.font18,
+                        tMargin: Dimensions.sizedBoxWidth10,
+                        bMargin: Dimensions.sizedBoxWidth10 * 2,
+                      ),
+                      Container(
+                        width: double.maxFinite,
+                        height: Dimensions.sizedBoxHeight230,
+                        padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 / 2),
+                        decoration: BoxDecoration(
+                            color: Constants.white,
+                            borderRadius: BorderRadius.circular(
+                                Dimensions.sizedBoxWidth10 / 2)),
+                        child: SfCartesianChart(
+                          primaryXAxis: CategoryAxis(),
+                          legend: Legend(isVisible: true),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          series: [
+                            LineSeries<_SalesData, String>(
+                                dataSource: data[Constants.sales].isNotEmpty
+                                    ? List.generate(
+                                        data[Constants.sales].length,
+                                        (index) => _SalesData(
+                                            data[Constants.sales][index]
+                                                [Constants.month],
+                                            data[Constants.sales][index]
+                                                    [Constants.prodTotalSales]
+                                                .toDouble()))
+                                    : [
+                                        _SalesData(
+                                            DateFormat('MMM')
+                                                .format(DateTime.now()),
+                                            0)
+                                      ],
+                                xValueMapper: (_SalesData sales, _) =>
+                                    sales.month,
+                                yValueMapper: (_SalesData sales, _) =>
+                                    sales.sales,
+                                name: 'Sales',
+                                xAxisName: 'Values',
+                                yAxisName: 'Months'),
+                          ],
                         ),
-                        SizedBox(
-                          height: Dimensions.sizedBoxHeight3,
+                      ),
+                      HeadSedction(
+                        text: 'Profit Chart',
+                        weight: FontWeight.w500,
+                        textSize: Dimensions.font18,
+                        tMargin: Dimensions.sizedBoxWidth15 * 2,
+                        bMargin: Dimensions.sizedBoxWidth10 * 2,
+                      ),
+                      Container(
+                        width: double.maxFinite,
+                        height: Dimensions.sizedBoxHeight230,
+                        padding: EdgeInsets.all(Dimensions.sizedBoxWidth10 / 2),
+                        decoration: BoxDecoration(
+                            color: Constants.white,
+                            borderRadius: BorderRadius.circular(
+                                Dimensions.sizedBoxWidth10 / 2)),
+                        child: SfCartesianChart(
+                          primaryXAxis: CategoryAxis(),
+                          legend: Legend(isVisible: true),
+                          tooltipBehavior: TooltipBehavior(enable: true),
+                          series: [
+                            LineSeries<_SalesData, String>(
+                                dataSource: data[Constants.sales].isNotEmpty
+                                    ? List.generate(
+                                        data[Constants.sales].length,
+                                        (index) => _SalesData(
+                                            data[Constants.sales][index]
+                                                [Constants.month],
+                                            data[Constants.sales][index]
+                                                    [Constants.sales]
+                                                .toDouble()))
+                                    : [
+                                        _SalesData(
+                                            DateFormat('MMM')
+                                                .format(DateTime.now()),
+                                            0)
+                                      ],
+                                xValueMapper: (_SalesData sales, _) =>
+                                    sales.month,
+                                yValueMapper: (_SalesData sales, _) =>
+                                    sales.sales,
+                                name: 'Profits',
+                                xAxisName: 'Values',
+                                yAxisName: 'Months'),
+                          ],
                         ),
-                        Text(
-                          data[Constants.sales].isNotEmpty
-                              ? calcTotSales(data)
-                              : '0',
-                          style: TextStyle(fontSize: Dimensions.font15),
-                        )
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: Dimensions.sizedBoxHeight10 * 2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              padding:
+                                  EdgeInsets.all(Dimensions.sizedBoxWidth10),
+                              decoration: BoxDecoration(
+                                  color: Constants.white,
+                                  borderRadius: BorderRadius.circular(
+                                      Dimensions.sizedBoxWidth10 / 2)),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Total Sales',
+                                    style: TextStyle(
+                                        color: const Color.fromARGB(
+                                            255, 130, 130, 130),
+                                        fontSize: Dimensions.font18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    height: Dimensions.sizedBoxHeight3,
+                                  ),
+                                  Text(
+                                    '$currency${Constants.format.format(data[Constants.sales].isNotEmpty ? calcTotSales1(data) : 0)}',
+                                    style:
+                                        TextStyle(fontSize: Dimensions.font15),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: Dimensions.sizedBoxWidth25,
+                          ),
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              padding:
+                                  EdgeInsets.all(Dimensions.sizedBoxWidth10),
+                              decoration: BoxDecoration(
+                                  color: Constants.white,
+                                  borderRadius: BorderRadius.circular(
+                                      Dimensions.sizedBoxWidth10 / 2)),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Total Likes',
+                                    style: TextStyle(
+                                        color: const Color.fromARGB(
+                                            255, 130, 130, 130),
+                                        fontSize: Dimensions.font18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    height: Dimensions.sizedBoxHeight3,
+                                  ),
+                                  Text(
+                                    data[Constants.likes].length.toString(),
+                                    style:
+                                        TextStyle(fontSize: Dimensions.font15),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(
+                        height: Dimensions.sizedBoxHeight10 * 2,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              padding:
+                                  EdgeInsets.all(Dimensions.sizedBoxWidth10),
+                              decoration: BoxDecoration(
+                                  color: Constants.white,
+                                  borderRadius: BorderRadius.circular(
+                                      Dimensions.sizedBoxWidth10 / 2)),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Total Products',
+                                    style: TextStyle(
+                                        color: const Color.fromARGB(
+                                            255, 130, 130, 130),
+                                        fontSize: Dimensions.font18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    height: Dimensions.sizedBoxHeight3,
+                                  ),
+                                  Text(
+                                    snapshot.data.length.toString(),
+                                    style:
+                                        TextStyle(fontSize: Dimensions.font15),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: Dimensions.sizedBoxWidth25,
+                          ),
+                          Expanded(
+                            child: Container(
+                              width: double.maxFinite,
+                              padding:
+                                  EdgeInsets.all(Dimensions.sizedBoxWidth10),
+                              decoration: BoxDecoration(
+                                  color: Constants.white,
+                                  borderRadius: BorderRadius.circular(
+                                      Dimensions.sizedBoxWidth10 / 2)),
+                              child: Column(
+                                children: [
+                                  Text(
+                                    'Total Orders',
+                                    style: TextStyle(
+                                        color: const Color.fromARGB(
+                                            255, 130, 130, 130),
+                                        fontSize: Dimensions.font18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  SizedBox(
+                                    height: Dimensions.sizedBoxHeight3,
+                                  ),
+                                  Text(
+                                    data[Constants.sales].isNotEmpty
+                                        ? calcTotSales(data)
+                                        : '0',
+                                    style:
+                                        TextStyle(fontSize: Dimensions.font15),
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
                   ),
                 ),
-                SizedBox(
-                  width: Dimensions.sizedBoxWidth25,
-                ),
-                Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-                    decoration: BoxDecoration(
-                        color: Constants.white,
-                        borderRadius: BorderRadius.circular(
-                            Dimensions.sizedBoxWidth10 / 2)),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Total Likes',
-                          style: TextStyle(
-                              color: const Color.fromARGB(255, 130, 130, 130),
-                              fontSize: Dimensions.font18,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                          height: Dimensions.sizedBoxHeight3,
-                        ),
-                        Text(
-                          data[Constants.likes].length.toString(),
-                          style: TextStyle(fontSize: Dimensions.font15),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(
-              height: Dimensions.sizedBoxHeight10 * 2,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-                    decoration: BoxDecoration(
-                        color: Constants.white,
-                        borderRadius: BorderRadius.circular(
-                            Dimensions.sizedBoxWidth10 / 2)),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Total Products',
-                          style: TextStyle(
-                              color: const Color.fromARGB(255, 130, 130, 130),
-                              fontSize: Dimensions.font18,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                          height: Dimensions.sizedBoxHeight3,
-                        ),
-                        Text(
-                          '50',
-                          style: TextStyle(fontSize: Dimensions.font15),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: Dimensions.sizedBoxWidth25,
-                ),
-                Expanded(
-                  child: Container(
-                    width: double.maxFinite,
-                    padding: EdgeInsets.all(Dimensions.sizedBoxWidth10),
-                    decoration: BoxDecoration(
-                        color: Constants.white,
-                        borderRadius: BorderRadius.circular(
-                            Dimensions.sizedBoxWidth10 / 2)),
-                    child: Column(
-                      children: [
-                        Text(
-                          'Total Orders',
-                          style: TextStyle(
-                              color: const Color.fromARGB(255, 130, 130, 130),
-                              fontSize: Dimensions.font18,
-                              fontWeight: FontWeight.w500),
-                        ),
-                        SizedBox(
-                          height: Dimensions.sizedBoxHeight3,
-                        ),
-                        Text(
-                          '50',
-                          style: TextStyle(fontSize: Dimensions.font15),
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
+              );
+      },
     );
   }
 }

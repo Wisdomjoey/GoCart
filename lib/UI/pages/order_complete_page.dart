@@ -18,8 +18,8 @@ class OrderCompletePage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Container(
-                width: Dimensions.sizedBoxWidth100 * 2.5,
-                height: Dimensions.sizedBoxWidth100 * 2.5,
+                width: Dimensions.sizedBoxWidth100 * 3,
+                height: Dimensions.sizedBoxWidth100 * 3,
                 decoration: const BoxDecoration(
                     image: DecorationImage(
                         image: AssetImage('assets/images/Delivery.png'), fit: BoxFit.cover)),

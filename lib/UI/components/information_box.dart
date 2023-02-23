@@ -37,7 +37,7 @@ class InformationBox extends StatelessWidget {
             height: Dimensions.sizedBoxHeight10,
           ),
           Text(
-            '${date.hour} : ${date.minute} : ${date.second}',
+            '${date.hour}:${date.minute}:${date.second}',
             style: TextStyle(
                 color: const Color.fromARGB(255, 145, 145, 145),
                 fontSize: Dimensions.font12),

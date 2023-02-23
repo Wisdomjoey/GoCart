@@ -33,7 +33,7 @@ class Preferences {
     sharedPreferences.setInt(key, value);
   }
 
-  saveBoolData(String key, bool value) async {
+  Future saveBoolData(String key, bool value) async {
     SharedPreferences sharedPreferences = await SharedPreferences.getInstance();
 
     sharedPreferences.setBool(key, value);

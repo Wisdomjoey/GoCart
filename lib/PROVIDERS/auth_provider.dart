@@ -1,4 +1,5 @@
 import 'package:GOCart/CONSTANTS/constants.dart';
+import 'package:GOCart/PREFS/preferences.dart';
 import 'package:GOCart/PROVIDERS/user_provider.dart';
 import 'package:GOCart/UI/utils/firebase_actions.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -86,8 +87,10 @@ class AuthProvider extends ChangeNotifier {
           .then((value) async {
         await Provider.of<UserProvider>(context, listen: false)
             .saveUserData(firstName, lastName, email, value.user!.uid)
-            .then((value) {
-          initToken(context);
+            .then((value) async {
+          await Preferences()
+              .saveBoolData(Constants.prefsUserIsRegistered, true)
+              .whenComplete(() => initToken(context));
         });
       });
 
@@ -384,11 +387,15 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future reauthenticate(BuildContext context, String email, String password) async {
+  Future reauthenticate(
+      BuildContext context, String email, String password) async {
     try {
-      AuthCredential credential = EmailAuthProvider.credential(email: email, password: password);
+      AuthCredential credential =
+          EmailAuthProvider.credential(email: email, password: password);
 
-      User? user = (await firebaseAuth.currentUser!.reauthenticateWithCredential(credential)).user;
+      User? user = (await firebaseAuth.currentUser!
+              .reauthenticateWithCredential(credential))
+          .user;
 
       if (user != null) {
         return true;

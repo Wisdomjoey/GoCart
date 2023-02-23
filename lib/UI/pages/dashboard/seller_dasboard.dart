@@ -21,23 +21,17 @@ class SellerDashboard extends StatefulWidget {
 
 class _SellerDashboardState extends State<SellerDashboard> {
   int index = 0;
-  Map<String, dynamic> shopData = {};
-
-  late List<Widget> pages;
 
   List<bool> anchors = [true, false, false];
 
   @override
-  void initState() {
-    super.initState();
-
-    shopData = (Provider.of<ShopProvider>(context, listen: false).shops.where(
-            (element) =>
-                element[Constants.userId] ==
-                FirebaseAuth.instance.currentUser!.uid)).elementAt(0)
+  Widget build(BuildContext context) {
+    Map<String, dynamic> shopData = (Provider.of<ShopProvider>(context).shops.where((element) =>
+            element[Constants.userId] ==
+            FirebaseAuth.instance.currentUser!.uid)).elementAt(0)
         as Map<String, dynamic>;
 
-    pages = [
+    List<Widget> pages = [
       DashboardPage(
         shopId: shopData[Constants.uid],
       ),
@@ -50,10 +44,7 @@ class _SellerDashboardState extends State<SellerDashboard> {
         address: shopData[Constants.shopAddress],
       )
     ];
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(

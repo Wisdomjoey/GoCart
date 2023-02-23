@@ -20,7 +20,7 @@ class GlobalProvider extends ChangeNotifier {
   }
 
   setLink(String? prodId, BuildContext context) async {
-    if (prodId != null) {
+    if (prodId != null && prodId != 'null') {
       await Provider.of<ProductProvider>(context, listen: false)
           .getProductData(prodId)
           .then((value) {

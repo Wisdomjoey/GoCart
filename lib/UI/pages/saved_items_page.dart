@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:GOCart/PROVIDERS/global_provider.dart';
 import 'package:GOCart/PROVIDERS/product_provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -316,51 +317,95 @@ class _SavedItemsPageState extends State<SavedItemsPage> {
                                                   Dimensions.sizedBoxHeight10 *
                                                       4,
                                               child: ElevatedBtn(
-                                                  pressed: () async {
-                                                    await Provider.of<
-                                                                CartProvider>(
+                                                pressed: () async {
+                                                  Provider.of<GlobalProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .setProcess(
+                                                          Processes.waiting);
+
+                                                  await Provider.of<
+                                                              CartProvider>(
+                                                          context,
+                                                          listen: false)
+                                                      .addToCart(
+                                                          FirebaseAuth.instance
+                                                              .currentUser!.uid,
+                                                          savedItems[index]
+                                                              [Constants.uid],
+                                                          savedItems[index][
+                                                              Constants
+                                                                  .prodNewPrice],
+                                                          savedItems[index][
+                                                              Constants
+                                                                  .shopName],
+                                                          savedItems[index][
+                                                              Constants
+                                                                  .prodCategory])
+                                                      .then((value) async {
+                                                    favs.remove(
+                                                        savedItems[index]
+                                                            [Constants.uid]);
+
+                                                    await Provider.of<UserProvider>(
                                                             context,
                                                             listen: false)
-                                                        .addToCart(
-                                                            FirebaseAuth.instance
-                                                                .currentUser!.uid,
-                                                            savedItems[index]
-                                                                [Constants.uid],
-                                                            savedItems[index][
-                                                                Constants
-                                                                    .prodNewPrice],
-                                                            savedItems[index][
-                                                                Constants
-                                                                    .shopName],
-                                                            savedItems[index][
-                                                                Constants
-                                                                    .prodCategory])
-                                                        .then((value) async {
-                                                      favs.remove(
-                                                          savedItems[index]
-                                                              [Constants.uid]);
+                                                        .updateUserData(
+                                                            {
+                                                          Constants
+                                                                  .userFavourites:
+                                                              favs
+                                                        },
+                                                            FirebaseAuth
+                                                                .instance
+                                                                .currentUser!
+                                                                .uid).whenComplete(() =>
+                                                            Provider.of<GlobalProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false)
+                                                                .setProcess(
+                                                                    Processes.done));
 
-                                                      await Provider.of<
-                                                                  UserProvider>(
-                                                              context,
-                                                              listen: false)
-                                                          .updateUserData(
-                                                              {
-                                                            Constants
-                                                                    .userFavourites:
-                                                                favs
-                                                          },
-                                                              FirebaseAuth
-                                                                  .instance
-                                                                  .currentUser!
-                                                                  .uid);
-
-                                                      setState(() {
-                                                        changed = !changed;
-                                                      });
+                                                    setState(() {
+                                                      changed = !changed;
                                                     });
-                                                  },
-                                                  text: 'ADD TO CART'),
+                                                  });
+                                                },
+                                                text: 'ADD TO CART',
+                                                disabled:
+                                                    Provider.of<GlobalProvider>(
+                                                                    context)
+                                                                .process ==
+                                                            Processes.waiting
+                                                        ? true
+                                                        : false,
+                                                child: Provider.of<GlobalProvider>(
+                                                                context)
+                                                            .process ==
+                                                        Processes.waiting
+                                                    ? SizedBox(
+                                                        width: Dimensions
+                                                                .sizedBoxWidth10 *
+                                                            2,
+                                                        height: Dimensions
+                                                                .sizedBoxWidth10 *
+                                                            2,
+                                                        child:
+                                                            const CircularProgressIndicator(
+                                                          color:
+                                                              Constants.white,
+                                                          strokeWidth: 3,
+                                                        ))
+                                                    : Text(
+                                                        'ADD TO CART',
+                                                        style: TextStyle(
+                                                            color:
+                                                                Constants.white,
+                                                            fontSize: Dimensions
+                                                                .font14),
+                                                      ),
+                                              ),
                                             )
                                           ],
                                         )

@@ -10,6 +10,7 @@ import 'package:get/get.dart';
 import 'package:GOCart/UI/utils/dimensions.dart';
 import 'package:GOCart/UI/widgets/box_chip_widget.dart';
 import 'package:GOCart/UI/widgets/head_section_widget.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../components/home_app_bar.dart';
@@ -27,6 +28,7 @@ class OrderDetailsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String currency = Constants(context).currency().currencySymbol;
+    DateTime date = DateTime.parse(DateTime.fromMillisecondsSinceEpoch(int.parse(data[Constants.createdAt])).toString());
 
     return Scaffold(
       appBar: HomeAppBar(
@@ -84,7 +86,7 @@ class OrderDetailsPage extends StatelessWidget {
                               height: Dimensions.sizedBoxHeight3 * 2,
                             ),
                             Text(
-                              'Placed on: 10-23-12',
+                              DateFormat('d-M-y').format(date),
                               style: TextStyle(
                                   fontSize: Dimensions.font12,
                                   color:
@@ -153,7 +155,7 @@ class OrderDetailsPage extends StatelessWidget {
                                           height: Dimensions.sizedBoxHeight10,
                                         ),
                                         Text(
-                                          'On 20-09',
+                                          'On ${DateFormat('d-M').format(date)}',
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               fontSize: Dimensions.font14),
