@@ -301,7 +301,16 @@ class _LoginPageState extends State<LoginPage> {
                                                 'Sign In Succesful!',
                                                 Constants.tetiary);
 
-                                            if (Provider.of<UserProvider>(
+                                            if (!Provider.of<UserProvider>(
+                                                        context,
+                                                        listen: false)
+                                                    .userData[
+                                                Constants
+                                                    .userIsPhoneVerified]) {
+                                              Get.offNamed(RouteHelper
+                                                  .getPhoneRegisterPage());
+                                            } else if (Provider.of<
+                                                            UserProvider>(
                                                         context,
                                                         listen: false)
                                                     .userData[

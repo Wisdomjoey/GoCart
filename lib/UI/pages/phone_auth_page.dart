@@ -33,6 +33,8 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       nodes.add(FocusNode());
     }
 
+    verify();
+
     // for (var i = 0; i < 6; i++) {
     //   controllers[i].addListener(() {
 
@@ -53,34 +55,39 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
       nodes[i].dispose();
     }
 
+    countdown!.cancel();
+
     // countdown!.cancel();
     super.dispose();
   }
 
-  // start() {
-  //   setState(() {
-  //     countdown = Timer.periodic(Duration(seconds: 1), (ticker) {
-  //       if (timer < 1) {
-  //         setState(() {
-  //           timeUp = true;
-  //           ticker.cancel();
-  //         });
-  //       } else {
-  //         setState(() {
-  //           timer--;
-  //         });
-  //       }
-  //       print('object');
-  //     });
-  //   });
-  // }
+  verify() async {
+    await Provider.of<AuthProvider>(context, listen: false)
+        .verifyPhoneNumber(context, widget.phoneNumber);
+
+    start();
+  }
+
+  start() {
+    setState(() {
+      countdown = Timer.periodic(const Duration(seconds: 1), (ticker) {
+        if (timer < 1) {
+          setState(() {
+            timeUp = true;
+            ticker.cancel();
+          });
+        } else {
+          setState(() {
+            timer--;
+          });
+        }
+        print('object');
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    Provider.of<AuthProvider>(context, listen: false)
-        .verifyPhoneNumber(context, widget.phoneNumber);
-    // Future.delayed(Duration.zero, (() => start()));
-
     return Scaffold(
       backgroundColor: Constants.white,
       body: SingleChildScrollView(
@@ -203,14 +210,25 @@ class _PhoneAuthPageState extends State<PhoneAuthPage> {
                   SizedBox(
                     height: Dimensions.sizedBoxHeight10 * 2,
                   ),
-                  Text(
-                    'Retry in ${timer}s',
-                    style: TextStyle(
-                        fontSize: Dimensions.font14,
-                        color: timeUp ? Constants.tetiary : Colors.black,
-                        decoration: timeUp
-                            ? TextDecoration.underline
-                            : TextDecoration.none),
+                  GestureDetector(
+                    onTap: timeUp
+                        ? () async {
+                            setState(() {
+                              timeUp = false;
+                              timer = 60;
+                            });
+                            await verify();
+                          }
+                        : null,
+                    child: Text(
+                      timeUp ? 'Retry' : 'Retry in ${timer}s',
+                      style: TextStyle(
+                          fontSize: Dimensions.font14,
+                          color: timeUp ? Constants.tetiary : Colors.black,
+                          decoration: timeUp
+                              ? TextDecoration.underline
+                              : TextDecoration.none),
+                    ),
                   ),
                 ],
               ),

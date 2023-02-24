@@ -56,6 +56,7 @@ class AuthProvider extends ChangeNotifier {
       if (user != null) {
         _status = Status.authenticated;
         notifyListeners();
+        await Preferences().saveBoolData(Constants.prefsUserIsRegistered, true);
 
         // print('true');
         return true;
@@ -140,7 +141,7 @@ class AuthProvider extends ChangeNotifier {
             // return false;
             return 'User does not exist';
           } else {
-            DocumentSnapshot documentSnapshot = documentSnapshots[0];
+            // DocumentSnapshot documentSnapshot = documentSnapshots[0];
 
             // Preferences().saveListData(Constants.prefsUserFullName, [
             //   documentSnapshot[Constants.userFirstName],

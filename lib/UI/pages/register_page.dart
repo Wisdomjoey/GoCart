@@ -105,6 +105,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   child: Form(
                     key: key,
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -155,7 +156,7 @@ class _RegisterPageState extends State<RegisterPage> {
                             color: Constants.grey,
                           ),
                           help:
-                              'More than 8 and at least 1 capital, 1 lowercase and 1 special characters',
+                              'At least 8 characters with at least 1 capital, 1 lowercase and 1 special characters',
                           error: 'Invalid password',
                           helpMax: 2,
                           val: () => isValidPass(controller4.text),
